@@ -1,28 +1,24 @@
 "use client";
 
+import Link from "next/link";
 import { X } from "lucide-react";
-import { NAV_ITEMS, avatarBg } from "../data";
-import { Avatar } from "./Avatar";
+import { useAuth } from "@/contexts/auth.context";
+import { Avatar } from "@/components/shared/Avatar";
+import { avatarBg } from "@/lib/utils/avatar";
+import { useSidebarHandler } from "./useHandler";
 
 interface SidebarProps {
-  activeNav: string;
-  onNavChange: (id: string) => void;
   mobileOpen: boolean;
   onMobileClose: () => void;
-  userName?: string;
-  userRole?: string;
 }
 
-export function Sidebar({
-  activeNav,
-  onNavChange,
-  mobileOpen,
-  onMobileClose,
-  userName,
-  userRole,
-}: SidebarProps) {
+export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
+  const { navItems, activeId } = useSidebarHandler();
+  const { user } = useAuth();
+
   return (
     <>
+      {/* Mobile backdrop */}
       {mobileOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
@@ -38,6 +34,7 @@ export function Sidebar({
           ${mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"}
         `}
       >
+        {/* Logo */}
         <div className="flex h-16 items-center gap-3 border-b border-slate-100 px-4">
           <div className="relative h-9 w-9 shrink-0">
             <svg viewBox="0 0 100 100" className="h-full w-full drop-shadow">
@@ -57,25 +54,25 @@ export function Sidebar({
           <button
             onClick={onMobileClose}
             className="ml-auto rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 md:hidden"
+            aria-label="Close menu"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
+        {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           <p className="mb-3 hidden px-2 text-[9px] font-semibold uppercase tracking-widest text-slate-400 lg:block">
             Navigation
           </p>
           <ul className="space-y-1">
-            {NAV_ITEMS.map(({ id, label, icon: Icon }) => {
-              const isActive = activeNav === id;
+            {navItems.map(({ id, label, icon: Icon, href }) => {
+              const isActive = activeId === id;
               return (
                 <li key={id}>
-                  <button
-                    onClick={() => {
-                      onNavChange(id);
-                      onMobileClose();
-                    }}
+                  <Link
+                    href={href}
+                    onClick={onMobileClose}
                     className={`
                       group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-150
                       ${
@@ -95,21 +92,27 @@ export function Sidebar({
                     {isActive && (
                       <div className="ml-auto hidden h-1.5 w-1.5 rounded-full bg-poke-red lg:block" />
                     )}
-                  </button>
+                  </Link>
                 </li>
               );
             })}
           </ul>
         </nav>
 
+        {/* Logged-in user card */}
         <div className="border-t border-slate-100 p-4">
           <div className="flex items-center gap-3">
-            <Avatar src={avatarBg(userName ?? "Trainer")} alt={userName ?? "Trainer"} size={36} online />
+            <Avatar
+              src={avatarBg(user?.name ?? "Trainer")}
+              alt={user?.name ?? "Trainer"}
+              size={36}
+              online
+            />
             <div className="hidden flex-1 overflow-hidden lg:block">
               <p className="text-[11px] font-semibold text-slate-800 truncate">
-                {userName ?? "Trainer"}
+                {user?.name ?? "Trainer"}
               </p>
-              <p className="text-[10px] text-slate-400 capitalize">{userRole ?? "Trainer"}</p>
+              <p className="text-[10px] text-slate-400 capitalize">{user?.role ?? "Trainer"}</p>
             </div>
           </div>
         </div>

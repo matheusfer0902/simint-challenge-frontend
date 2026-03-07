@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { MapPin, Zap, Star, Shield, Swords, ChevronRight } from "lucide-react";
 import type { BattleCardData } from "../types";
 import { RANK_COLORS } from "../data";
+import { AppButton } from "@/components/shared/AppButton";
 import { Avatar } from "./Avatar";
 import { RankBadge } from "./RankBadge";
 import { TypeBadge } from "./TypeBadge";
@@ -84,30 +85,22 @@ export function BattleCard({ card }: { card: BattleCardData }) {
           <span className="text-[11px] font-semibold text-slate-700">{card.owner.name}</span>
         </div>
 
-        <button
+        <AppButton
+          variant="primary"
+          fullWidth
+          loading={battling}
+          loadingIndicator={
+            <>
+              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+              Challenging...
+            </>
+          }
+          icon={<Swords className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />}
+          trailingIcon={<ChevronRight className="h-4 w-4" />}
           onClick={handleBattle}
-          className={`group relative w-full overflow-hidden rounded-xl py-3 text-sm font-bold text-white transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-poke-red focus-visible:ring-offset-2 active:scale-[0.98] ${
-            battling
-              ? "bg-orange-500"
-              : "bg-gradient-to-r from-poke-red to-rose-600 hover:shadow-lg hover:shadow-poke-red/25"
-          }`}
         >
-          <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
-          <span className="relative flex items-center justify-center gap-2">
-            {battling ? (
-              <>
-                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                Challenging...
-              </>
-            ) : (
-              <>
-                <Swords className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
-                <span className="font-pixel text-[10px] tracking-wider">BATTLE NOW</span>
-                <ChevronRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-              </>
-            )}
-          </span>
-        </button>
+          <span className="font-pixel text-[10px] tracking-wider">BATTLE NOW</span>
+        </AppButton>
       </div>
     </article>
   );

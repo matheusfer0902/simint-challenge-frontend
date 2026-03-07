@@ -1,29 +1,6 @@
-"use client";
-
-interface AvatarProps {
-  src: string;
-  alt: string;
-  size?: number;
-  ring?: boolean;
-  online?: boolean;
-}
-
-export function Avatar({ src, alt, size = 40, ring = false, online = false }: AvatarProps) {
-  return (
-    <div
-      className={`relative shrink-0 rounded-full ${ring ? "ring-2 ring-poke-red ring-offset-2" : ""}`}
-      style={{ width: size, height: size }}
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={src}
-        alt={alt}
-        className="h-full w-full rounded-full object-cover bg-slate-100"
-        loading="lazy"
-      />
-      {online && (
-        <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-400" />
-      )}
-    </div>
-  );
-}
+/**
+ * Re-export from the canonical shared location.
+ * Dashboard components that import from "./Avatar" continue to work without changes.
+ */
+export { Avatar } from "@/components/shared/Avatar";
+export type { AvatarProps } from "@/components/shared/Avatar";

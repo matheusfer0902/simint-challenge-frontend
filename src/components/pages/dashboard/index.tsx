@@ -1,9 +1,8 @@
 "use client";
 
 import { Pokeball } from "@/components/landing/Pokeball";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { useDashboardHandler } from "./useHandler";
-import { Sidebar } from "./components/Sidebar";
-import { Header } from "./components/Header";
 import { TabBar } from "./components/TabBar";
 import { BattleCard } from "./components/BattleCard";
 import { UserCard } from "./components/UserCard";
@@ -11,16 +10,11 @@ import { EmptyState } from "./components/EmptyState";
 
 export function DashboardPage() {
   const {
-    user,
     isLoading,
-    activeNav,
-    setActiveNav,
     activeTab,
     setActiveTab,
     search,
     setSearch,
-    mobileOpen,
-    setMobileOpen,
     filteredBattles,
     filteredUsers,
     isEmpty,
@@ -41,70 +35,56 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 font-sans">
-      <Sidebar
-        activeNav={activeNav}
-        onNavChange={setActiveNav}
-        mobileOpen={mobileOpen}
-        onMobileClose={() => setMobileOpen(false)}
-        userName={user?.name}
-        userRole={user?.role}
-      />
-
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Header
-          search={search}
-          onSearchChange={setSearch}
-          onMobileMenuOpen={() => setMobileOpen(true)}
-          userName={user?.name}
-        />
-
-        <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="font-pixel text-base text-slate-800 sm:text-lg">Arena</h1>
-              <p className="mt-1 text-sm text-slate-500">
-                {activeTab === "battle"
-                  ? "Challenge teams or find opponents"
-                  : "Connect with other trainers"}
-              </p>
-            </div>
-            <TabBar
-              active={activeTab}
-              onChange={setActiveTab}
-              battleCount={filteredBattles.length}
-              usersCount={filteredUsers.length}
-            />
+    <AppLayout
+      search={search}
+      onSearchChange={setSearch}
+      searchPlaceholder="Search teams, users..."
+    >
+      <div className="px-4 py-6 sm:px-6">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="font-pixel text-base text-slate-800 sm:text-lg">Arena</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              {activeTab === "battle"
+                ? "Challenge teams or find opponents"
+                : "Connect with other trainers"}
+            </p>
           </div>
+          <TabBar
+            active={activeTab}
+            onChange={setActiveTab}
+            battleCount={filteredBattles.length}
+            usersCount={filteredUsers.length}
+          />
+        </div>
 
-          {isEmpty && debouncedSearch ? (
-            <EmptyState query={debouncedSearch} />
-          ) : activeTab === "battle" ? (
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {filteredBattles.map((card, i) => (
-                <div
-                  key={card.id}
-                  className="animate-fadeSlideUp"
-                  style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
-                >
-                  <BattleCard card={card} />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-              {filteredUsers.map((u, i) => (
-                <div
-                  key={u.id}
-                  className="animate-fadeSlideUp"
-                  style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
-                >
-                  <UserCard user={u} />
-                </div>
-              ))}
-            </div>
-          )}
-        </main>
+        {isEmpty && debouncedSearch ? (
+          <EmptyState query={debouncedSearch} />
+        ) : activeTab === "battle" ? (
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {filteredBattles.map((card, i) => (
+              <div
+                key={card.id}
+                className="animate-fadeSlideUp"
+                style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
+              >
+                <BattleCard card={card} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            {filteredUsers.map((u, i) => (
+              <div
+                key={u.id}
+                className="animate-fadeSlideUp"
+                style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
+              >
+                <UserCard user={u} />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <style>{`
@@ -116,6 +96,6 @@ export function DashboardPage() {
           animation: fadeSlideUp 0.35s ease-out;
         }
       `}</style>
-    </div>
+    </AppLayout>
   );
 }

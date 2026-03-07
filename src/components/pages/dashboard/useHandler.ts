@@ -15,11 +15,9 @@ function useDebounce<T>(value: T, delay = 300): T {
 }
 
 export function useDashboardHandler() {
-  const { user, logout, isLoading } = useAuth();
-  const [activeNav, setActiveNav] = useState("home");
+  const { user, isLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>("battle");
   const [search, setSearch] = useState("");
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const debouncedSearch = useDebounce(search, 250);
 
@@ -42,16 +40,11 @@ export function useDashboardHandler() {
 
   return {
     user,
-    logout,
     isLoading,
-    activeNav,
-    setActiveNav,
     activeTab,
     setActiveTab,
     search,
     setSearch,
-    mobileOpen,
-    setMobileOpen,
     filteredBattles,
     filteredUsers,
     isEmpty,

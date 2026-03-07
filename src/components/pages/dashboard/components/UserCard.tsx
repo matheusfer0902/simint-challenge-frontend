@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { Zap, MapPin, Star, UserPlus } from "lucide-react";
 import type { UserCardData } from "../types";
+import { AppButton } from "@/components/shared/AppButton";
 import { Avatar } from "./Avatar";
 
 export function UserCard({ user }: { user: UserCardData }) {
@@ -73,29 +74,18 @@ export function UserCard({ user }: { user: UserCardData }) {
           </div>
         </div>
 
-        <button
+        <AppButton
+          variant={following ? "secondary" : "primary"}
+          size="md"
+          fullWidth
+          loading={loading}
+          icon={<UserPlus className="h-3.5 w-3.5" />}
           onClick={toggleFollow}
-          disabled={loading}
-          className={`group relative w-full overflow-hidden rounded-xl py-2.5 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-poke-red focus-visible:ring-offset-2 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 ${
-            following
-              ? "border-2 border-slate-200 bg-white text-slate-700 hover:border-poke-red/30 hover:text-poke-red"
-              : "bg-gradient-to-r from-poke-red to-rose-600 text-white hover:shadow-lg hover:shadow-poke-red/20"
-          }`}
         >
-          <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
-          <span className="relative flex items-center justify-center gap-1.5">
-            {loading ? (
-              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current/30 border-t-current" />
-            ) : (
-              <>
-                <UserPlus className="h-3.5 w-3.5" />
-                <span className="font-pixel text-[9px] tracking-wider">
-                  {following ? "FOLLOWING" : "FOLLOW"}
-                </span>
-              </>
-            )}
+          <span className="font-pixel text-[9px] tracking-wider">
+            {following ? "FOLLOWING" : "FOLLOW"}
           </span>
-        </button>
+        </AppButton>
       </div>
     </article>
   );

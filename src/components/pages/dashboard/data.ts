@@ -1,11 +1,10 @@
-import { Home, BookOpen, Layers, Dumbbell } from "lucide-react";
 import type { BattleCardData, UserCardData } from "./types";
+import { avatarBg } from "@/lib/utils/avatar";
+
+export { avatarBg };
 
 export const sprite = (id: number) =>
   `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
-
-export const avatarBg = (seed: string) =>
-  `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(seed)}&backgroundColor=b6e3f4`;
 
 export const RANK_COLORS: Record<string, string> = {
   S: "from-yellow-400 to-orange-400",
@@ -170,9 +169,3 @@ export const USER_CARDS: UserCardData[] = [
   },
 ];
 
-export const NAV_ITEMS = [
-  { id: "home", label: "Home", icon: Home, href: "#" },
-  { id: "collections", label: "Collections", icon: Layers, href: "#" },
-  { id: "pokemons", label: "Pokémon", icon: BookOpen, href: "#" },
-  { id: "train", label: "Train", icon: Dumbbell, href: "#" },
-];
