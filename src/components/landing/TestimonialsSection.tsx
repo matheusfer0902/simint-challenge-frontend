@@ -5,38 +5,38 @@ import { TestimonialCard } from "@/components/landing/TestimonialCard";
 const testimonials = [
   {
     name: "Ash Ketchum",
-    role: "Treinador Pokémon",
-    quote: "O Poke Center revolucionou como eu gerencio meus Pokémons. Interface incrível e muito fácil de usar!",
+    role: "Pokémon Trainer",
+    quote: "Poke Center revolutionized how I manage my Pokémon. Incredible interface and very easy to use!",
     delay: 0,
   },
   {
     name: "Prof. Oak",
-    role: "Pesquisador Pokémon",
-    quote: "Como pesquisador, preciso de dados precisos. Este sistema oferece tudo que eu preciso e muito mais.",
+    role: "Pokémon Researcher",
+    quote: "As a researcher, I need accurate data. This system offers everything I need and much more.",
     delay: 100,
   },
   {
     name: "Misty",
-    role: "Líder de Ginásio",
-    quote: "Organização perfeita! Consigo acompanhar todos os meus Pokémons aquáticos sem complicação.",
+    role: "Gym Leader",
+    quote: "Perfect organization! I can keep track of all my Water-type Pokémon without any complications.",
     delay: 200,
   },
   {
     name: "Brock",
-    role: "Treinador Pokémon",
-    quote: "A segurança do sistema me dá tranquilidade. Sei que meus dados estão protegidos.",
+    role: "Pokémon Trainer",
+    quote: "The system's security gives me peace of mind. I know my data is protected.",
     delay: 300,
   },
   {
-    name: "Enfermeira Joy",
-    role: "Centro Pokémon",
-    quote: "A eficiência me lembra nossas máquinas de cura. Rápido, confiável e sempre funcionando!",
+    name: "Nurse Joy",
+    role: "Pokémon Center",
+    quote: "The efficiency reminds me of our healing machines. Fast, reliable, and always working!",
     delay: 400,
   },
   {
     name: "Gary Oak",
-    role: "Treinador Elite",
-    quote: "Melhor sistema que já usei. A busca avançada economiza muito do meu tempo.",
+    role: "Elite Trainer",
+    quote: "Best system I've ever used. The advanced search saves me a lot of time.",
     delay: 500,
   },
 ];
@@ -48,13 +48,13 @@ export function TestimonialsSection() {
         <div className="text-center mb-16">
           <Badge className="mb-4 bg-poke-yellow/20 text-poke-gold border-poke-yellow/30">
             <Star className="w-3.5 h-3.5 mr-1.5" />
-            Depoimentos
+            Testimonials
           </Badge>
           <h2 className="font-pixel text-2xl sm:text-3xl text-poke-dark-gray mb-4">
-            O que dizem os treinadores
+            What the trainers say
           </h2>
           <p className="text-poke-dark-gray/70 max-w-2xl mx-auto">
-            Veja a experiência de quem já utiliza o Poke Center para gerenciar seus Pokémons.
+            See the experience of those who already use Poke Center to manage their Pokémon.
           </p>
         </div>
 

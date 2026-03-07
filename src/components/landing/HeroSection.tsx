@@ -37,18 +37,18 @@ export function HeroSection() {
           >
             <Badge className="mb-6 bg-poke-cyan/20 text-poke-blue border-poke-cyan/30 hover:bg-poke-cyan/30 px-4 py-1.5">
               <Shield className="w-3.5 h-3.5 mr-1.5" />
-              Sistema Restrito
+              Restricted System
             </Badge>
 
             <h2 className="font-pixel text-3xl sm:text-4xl lg:text-5xl text-poke-dark-gray leading-tight mb-6">
-              Gerencie seus
-              <span className="block text-gradient-red mt-2">Pokémons</span>
-              como um Mestre
+              Manage your
+              <span className="block text-gradient-red mt-2">Pokémon</span>
+              like a Master
             </h2>
 
             <p className="text-poke-dark-gray/70 text-lg mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Sistema exclusivo para treinadores e pesquisadores. Cadastre,
-              organize e acompanhe seus Pokémons com a eficiência de um Centro Pokémon.
+              Exclusive system for trainers and researchers. Register,
+              organize, and track your Pokémon with the efficiency of a Pokémon Center.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -57,7 +57,7 @@ export function HeroSection() {
                 className="bg-poke-red hover:bg-poke-dark-red text-white btn-glow text-base px-8"
               >
                 <Sparkles className="w-5 h-5 mr-2" />
-                Começar Agora
+                Get Started
                 <ChevronRight className="w-5 h-5 ml-1" />
               </Button>
               <Button
@@ -66,15 +66,15 @@ export function HeroSection() {
                 className="border-2 border-poke-dark-gray/20 text-poke-dark-gray hover:bg-poke-gray text-base px-8"
               >
                 <Search className="w-5 h-5 mr-2" />
-                Saiba Mais
+                Learn More
               </Button>
             </div>
 
             <div className="mt-10 flex flex-wrap gap-4 justify-center lg:justify-start">
               {[
-                { icon: Shield, text: "Seguro" },
-                { icon: Zap, text: "Rápido" },
-                { icon: Database, text: "Confiável" },
+                { icon: Shield, text: "Secure" },
+                { icon: Zap, text: "Fast" },
+                { icon: Database, text: "Reliable" },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-center gap-2 text-poke-dark-gray/60 text-sm">
                   <Icon className="w-4 h-4 text-poke-cyan" />
@@ -118,7 +118,7 @@ export function HeroSection() {
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div className="bg-poke-dark-gray/50 rounded p-2">
-                        <span className="text-poke-cyan/60">TIPO</span>
+                        <span className="text-poke-cyan/60">TYPE</span>
                         <p className="text-poke-cyan font-medium">Grass/Poison</p>
                       </div>
                       <div className="bg-poke-dark-gray/50 rounded p-2">

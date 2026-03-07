@@ -7,11 +7,11 @@ import { Pokeball } from "@/components/landing/Pokeball";
 import { useRouter } from "next/navigation";
 
 const navItems = [
-  { label: "Funcionalidades", id: "funcionalidades" },
-  { label: "Como Funciona", id: "como-funciona" },
-  { label: "Pokémons", id: "pokemons" },
-  { label: "Estatísticas", id: "estatisticas" },
-  { label: "Depoimentos", id: "depoimentos" },
+  { label: "Features", id: "funcionalidades" },
+  { label: "How it Works", id: "como-funciona" },
+  { label: "Pokémon", id: "pokemons" },
+  { label: "Statistics", id: "estatisticas" },
+  { label: "Testimonials", id: "depoimentos" },
 ];
 
 export function Header() {
@@ -47,7 +47,7 @@ export function Header() {
                 POKE CENTER
               </h1>
               <p className="text-[10px] text-poke-dark-gray/60 hidden sm:block">
-                Sistema de Gerenciamento
+                Management System
               </p>
             </div>
           </div>
@@ -116,7 +116,7 @@ export function Header() {
                 </Button>
                 <Button className="flex-1 bg-poke-red hover:bg-poke-dark-red text-white">
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Acessar
+                  Register
                 </Button>
               </div>
             </nav>

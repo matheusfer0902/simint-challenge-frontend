@@ -11,57 +11,57 @@ export function FeaturesSection() {
         <div className="text-center mb-16">
           <Badge className="mb-4 bg-poke-red/10 text-poke-red border-poke-red/20">
             <Cpu className="w-3.5 h-3.5 mr-1.5" />
-            Funcionalidades
+            Features
           </Badge>
           <h2 className="font-pixel text-2xl sm:text-3xl text-poke-dark-gray mb-4">
-            Tudo que você precisa
+            Everything you need
           </h2>
           <p className="text-poke-dark-gray/70 max-w-2xl mx-auto">
-            Um sistema completo inspirado nos Centros Pokémon, com todas as ferramentas
-            para gerenciar sua coleção de Pokémons de forma eficiente.
+            A complete system inspired by Pokémon Centers, with all the tools
+            to manage your Pokémon collection efficiently.
           </p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <FeatureCard
             icon={Database}
-            title="CRUD Completo"
-            description="Crie, leia, atualize e exclua registros de Pokémons com interface intuitiva e responsiva."
+            title="Complete CRUD"
+            description="Create, read, update, and delete Pokémon records with an intuitive and responsive interface."
             color="bg-gradient-to-br from-poke-red to-poke-dark-red"
             delay={0}
           />
           <FeatureCard
             icon={Search}
-            title="Busca Avançada"
-            description="Encontre Pokémons rapidamente por nome, tipo, número ou características específicas."
+            title="Advanced Search"
+            description="Find Pokémon quickly by name, type, number, or specific characteristics."
             color="bg-gradient-to-br from-poke-blue to-poke-light-blue"
             delay={100}
           />
           <FeatureCard
             icon={Shield}
-            title="Acesso Restrito"
-            description="Sistema seguro exclusivo para treinadores e pesquisadores autorizados."
+            title="Restricted Access"
+            description="Secure system exclusive to authorized trainers and researchers."
             color="bg-gradient-to-br from-poke-cyan to-poke-blue"
             delay={200}
           />
           <FeatureCard
             icon={Activity}
-            title="Estatísticas"
-            description="Acompanhe estatísticas detalhadas de cada Pokémon: HP, ataque, defesa e mais."
+            title="Statistics"
+            description="Track detailed statistics of each Pokémon: HP, attack, defense, and more."
             color="bg-gradient-to-br from-poke-pink to-poke-red"
             delay={300}
           />
           <FeatureCard
             icon={Globe}
-            title="Multi-plataforma"
-            description="Acesse de qualquer dispositivo com interface otimizada para desktop e mobile."
+            title="Multi-platform"
+            description="Access from any device with an interface optimized for desktop and mobile."
             color="bg-gradient-to-br from-poke-yellow to-orange-400"
             delay={400}
           />
           <FeatureCard
             icon={Zap}
             title="Performance"
-            description="Sistema rápido e eficiente construído com as melhores tecnologias do mercado."
+            description="Fast and efficient system built with the best technologies on the market."
             color="bg-gradient-to-br from-green-400 to-emerald-500"
             delay={500}
           />

@@ -27,21 +27,21 @@ export function StatsSection() {
         <div className="text-center mb-16">
           <Badge className="mb-4 bg-white/20 text-white border-white/30">
             <Activity className="w-3.5 h-3.5 mr-1.5" />
-            Estatísticas
+            Statistics
           </Badge>
           <h2 className="font-pixel text-2xl sm:text-3xl text-white mb-4">
-            Dados impressionantes
+            Impressive data
           </h2>
           <p className="text-white/80 max-w-2xl mx-auto">
-            Números que mostram a confiança dos treinadores e pesquisadores no nosso sistema.
+            Numbers that show the trust trainers and researchers have in our system.
           </p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          <StatCard value="1000+" label="Treinadores" icon={User} delay={0} />
-          <StatCard value="50000+" label="Pokémons" icon={Database} delay={100} />
+          <StatCard value="1000+" label="Trainers" icon={User} delay={0} />
+          <StatCard value="50000+" label="Pokémon" icon={Database} delay={100} />
           <StatCard value="99%" label="Uptime" icon={Zap} delay={200} />
-          <StatCard value="24" label="Suporte" icon={Heart} delay={300} />
+          <StatCard value="24" label="Support" icon={Heart} delay={300} />
         </div>
       </div>
     </section>
