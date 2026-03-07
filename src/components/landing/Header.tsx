@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Sparkles, Lock, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Pokeball } from "@/components/landing/Pokeball";
+import { useRouter } from "next/navigation";
 
 const navItems = [
   { label: "Funcionalidades", id: "funcionalidades" },
@@ -16,6 +17,7 @@ const navItems = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -66,13 +68,17 @@ export function Header() {
             <Button
               variant="ghost"
               className="text-poke-dark-gray hover:text-poke-red hover:bg-poke-red/10"
+              onClick={() => router.push('/auth/register')}
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              Register
+            </Button>
+            <Button
+              className="bg-poke-red hover:bg-poke-dark-red text-white btn-glow"
+              onClick={() => router.push('/auth/login')}
             >
               <Lock className="w-4 h-4 mr-2" />
               Login
-            </Button>
-            <Button className="bg-poke-red hover:bg-poke-dark-red text-white btn-glow">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Acessar
             </Button>
           </div>
 
