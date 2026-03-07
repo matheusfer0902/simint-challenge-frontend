@@ -38,12 +38,12 @@ export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
           <Pokeball size={80} />
           <h1 className="font-pixel text-lg leading-relaxed">POKE CENTER</h1>
           <p className="text-white/75 text-sm leading-relaxed">
-            Sistema exclusivo para treinadores e pesquisadores autorizados.
+            Exclusive system for authorized trainers and researchers.
           </p>
 
           <div className="flex items-center gap-2 justify-center text-white/60 text-xs mt-4">
             <Shield className="h-3.5 w-3.5" />
-            Sistema Seguro • 24/7
+            Secure System • 24/7
           </div>
         </div>
 
@@ -66,7 +66,7 @@ export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
             href="/"
             className="mb-6 inline-flex items-center gap-1.5 text-xs text-poke-dark-gray/50 transition-colors hover:text-poke-red"
           >
-            ← Voltar para a página inicial
+            ← Back to the home page
           </Link>
 
           <div className="mb-8">

@@ -20,36 +20,36 @@ export function HowItWorksSection() {
           <div>
             <Badge className="mb-4 bg-poke-cyan/20 text-poke-blue border-poke-cyan/30">
               <Activity className="w-3.5 h-3.5 mr-1.5" />
-              Como Funciona
+              How it Works
             </Badge>
             <h2 className="font-pixel text-2xl sm:text-3xl text-poke-dark-gray mb-6">
-              Comece em 4 passos
+              Get started in 4 steps
             </h2>
             <p className="text-poke-dark-gray/70 mb-8">
-              Processo simples e rápido inspirado na eficiência dos Centros Pokémon.
-              Comece a gerenciar sua coleção em minutos.
+              Simple and fast process inspired by the efficiency of Pokémon Centers.
+              Start managing your collection in minutes.
             </p>
 
             <div className="space-y-2">
               <ProcessStep
                 number={1}
-                title="Crie sua conta"
-                description="Registre-se como treinador ou pesquisador para obter acesso ao sistema."
+                title="Create your account"
+                description="Register as a trainer or researcher to gain access to the system."
               />
               <ProcessStep
                 number={2}
-                title="Adicione Pokémons"
-                description="Cadastre seus Pokémons com todas as informações necessárias."
+                title="Add Pokémon"
+                description="Register your Pokémon with all the necessary information."
               />
               <ProcessStep
                 number={3}
-                title="Organize sua coleção"
-                description="Crie categorias, filtros e organize do seu jeito."
+                title="Organize your collection"
+                description="Create categories, filters, and organize it your way."
               />
               <ProcessStep
                 number={4}
-                title="Acompanhe estatísticas"
-                description="Monitore o progresso e evolução dos seus Pokémons."
+                title="Track statistics"
+                description="Monitor the progress and evolution of your Pokémon."
                 isLast
               />
             </div>
@@ -62,8 +62,8 @@ export function HowItWorksSection() {
                   <Heart className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-pixel text-sm text-poke-dark-gray">Máquina de Cura</h4>
-                  <p className="text-poke-dark-gray/60 text-sm">Restaurando Pokémons...</p>
+                  <h4 className="font-pixel text-sm text-poke-dark-gray">Healing Machine</h4>
+                  <p className="text-poke-dark-gray/60 text-sm">Restoring Pokémon...</p>
                 </div>
               </div>
 

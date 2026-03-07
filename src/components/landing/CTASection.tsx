@@ -18,11 +18,11 @@ export function CTASection() {
             </div>
 
             <h2 className="font-pixel text-xl sm:text-2xl text-white mb-4">
-              Pronto para começar?
+              Ready to get started?
             </h2>
             <p className="text-white/80 mb-8 max-w-xl mx-auto">
-              Junte-se a milhares de treinadores e pesquisadores que já utilizam
-              o Poke Center para gerenciar seus Pokémons.
+              Join thousands of trainers and researchers who already use
+              Poke Center to manage their Pokémon.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -31,7 +31,7 @@ export function CTASection() {
                 className="bg-white text-poke-red hover:bg-poke-gray text-base px-8 shadow-lg"
               >
                 <Sparkles className="w-5 h-5 mr-2" />
-                Criar Conta
+                Create Account
               </Button>
               <Button
                 size="lg"
@@ -39,12 +39,12 @@ export function CTASection() {
                 className="border-2 border-white text-white hover:bg-white/10 text-base px-8"
               >
                 <Lock className="w-5 h-5 mr-2" />
-                Fazer Login
+                Login
               </Button>
             </div>
 
             <p className="text-white/60 text-sm mt-6">
-              Sistema restrito • Acesso autorizado apenas
+              Restricted system • Authorized access only
             </p>
           </div>
         </div>

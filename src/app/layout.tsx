@@ -11,9 +11,9 @@ const pressStart2P = Press_Start_2P({
 });
 
 export const metadata: Metadata = {
-  title: "Poke Center — Sistema de Gerenciamento",
+  title: "Poke Center",
   description:
-    "Sistema exclusivo para treinadores e pesquisadores. Cadastre, organize e acompanhe seus Pokémons com a eficiência de um Centro Pokémon.",
+    "Exclusive system for trainers and researchers. Register, organize and track your Pokémons with the efficiency of a Pokémon Center.",
 };
 
 export default function RootLayout({
@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
+    <html lang="en">
       <body className={`${pressStart2P.variable} font-sans`}>
         <AuthProvider>{children}</AuthProvider>
       </body>

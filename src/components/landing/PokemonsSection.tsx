@@ -4,13 +4,13 @@ import { PokemonCard } from "@/components/landing/PokemonCard";
 import { Pokeball } from "@/components/landing/Pokeball";
 
 const pokemons = [
-  { name: "Pikachu", number: "#025", types: ["Elétrico"], image: "/pikachu.png", delay: 0 },
-  { name: "Charizard", number: "#006", types: ["Fogo", "Voador"], image: "/charizard.png", delay: 100 },
-  { name: "Bulbasaur", number: "#001", types: ["Planta", "Veneno"], image: "/bulbasaur.png", delay: 200 },
-  { name: "Squirtle", number: "#007", types: ["Água"], image: "/squirtle.png", delay: 300 },
-  { name: "Mewtwo", number: "#150", types: ["Psíquico"], image: "/mewtwo.png", delay: 400 },
-  { name: "Lucario", number: "#448", types: ["Lutador", "Aço"], image: "/lucario.png", delay: 500 },
-  { name: "Gengar", number: "#094", types: ["Fantasma", "Veneno"], image: "/gengar.png", delay: 600 },
+  { name: "Pikachu", number: "#025", types: ["Electric"], image: "/pikachu.png", delay: 0 },
+  { name: "Charizard", number: "#006", types: ["Fire", "Flying"], image: "/charizard.png", delay: 100 },
+  { name: "Bulbasaur", number: "#001", types: ["Grass", "Poison"], image: "/bulbasaur.png", delay: 200 },
+  { name: "Squirtle", number: "#007", types: ["Water"], image: "/squirtle.png", delay: 300 },
+  { name: "Mewtwo", number: "#150", types: ["Psychic"], image: "/mewtwo.png", delay: 400 },
+  { name: "Lucario", number: "#448", types: ["Fighting", "Steel"], image: "/lucario.png", delay: 500 },
+  { name: "Gengar", number: "#094", types: ["Ghost", "Poison"], image: "/gengar.png", delay: 600 },
 ];
 
 export function PokemonsSection() {
@@ -22,14 +22,14 @@ export function PokemonsSection() {
         <div className="text-center mb-16">
           <Badge className="mb-4 bg-poke-yellow/20 text-poke-gold border-poke-yellow/30">
             <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-            Galeria
+            Gallery
           </Badge>
           <h2 className="font-pixel text-2xl sm:text-3xl text-poke-dark-gray mb-4">
-            Conheça alguns Pokémons
+            Meet some Pokémon
           </h2>
           <p className="text-poke-dark-gray/70 max-w-2xl mx-auto">
-            Nossa Pokédex conta com centenas de Pokémons registrados.
-            Veja alguns dos mais populares que você pode gerenciar.
+            Our Pokédex features hundreds of registered Pokémon.
+            See some of the most popular ones you can manage.
           </p>
         </div>
 
@@ -42,8 +42,8 @@ export function PokemonsSection() {
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-poke-red/10 flex items-center justify-center">
                 <Pokeball size={50} />
               </div>
-              <p className="font-pixel text-sm text-poke-dark-gray mb-2">E muito mais!</p>
-              <p className="text-poke-dark-gray/60 text-sm">+900 Pokémons</p>
+              <p className="font-pixel text-sm text-poke-dark-gray mb-2">And much more!</p>
+              <p className="text-poke-dark-gray/60 text-sm">900+ Pokémon</p>
             </div>
           </div>
         </div>
