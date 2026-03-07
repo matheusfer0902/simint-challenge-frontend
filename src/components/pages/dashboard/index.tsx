@@ -1,11 +1,31 @@
 "use client";
 
-import { LogOut, User } from "lucide-react";
 import { Pokeball } from "@/components/landing/Pokeball";
 import { useDashboardHandler } from "./useHandler";
+import { Sidebar } from "./components/Sidebar";
+import { Header } from "./components/Header";
+import { TabBar } from "./components/TabBar";
+import { BattleCard } from "./components/BattleCard";
+import { UserCard } from "./components/UserCard";
+import { EmptyState } from "./components/EmptyState";
 
 export function DashboardPage() {
-  const { user, logout, isLoading } = useDashboardHandler();
+  const {
+    user,
+    isLoading,
+    activeNav,
+    setActiveNav,
+    activeTab,
+    setActiveTab,
+    search,
+    setSearch,
+    mobileOpen,
+    setMobileOpen,
+    filteredBattles,
+    filteredUsers,
+    isEmpty,
+    debouncedSearch,
+  } = useDashboardHandler();
 
   if (isLoading) {
     return (
@@ -21,46 +41,81 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-poke-gray/20 p-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <Pokeball size={36} />
-            <span className="font-pixel text-sm text-poke-red">POKE CENTER</span>
-          </div>
-          <button
-            onClick={logout}
-            className="flex items-center gap-2 rounded-xl border-2 border-poke-gray px-4 py-2 text-sm text-poke-dark-gray/70 transition-all hover:border-poke-red/40 hover:text-poke-red"
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </button>
-        </div>
+    <div className="flex h-screen overflow-hidden bg-slate-50 font-sans">
+      <Sidebar
+        activeNav={activeNav}
+        onNavChange={setActiveNav}
+        mobileOpen={mobileOpen}
+        onMobileClose={() => setMobileOpen(false)}
+        userName={user?.name}
+        userRole={user?.role}
+      />
 
-        <div className="rounded-2xl border-2 border-poke-gray/50 bg-white p-8 shadow-sm">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-poke-cyan to-poke-blue flex items-center justify-center">
-              <User className="h-7 w-7 text-white" />
-            </div>
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <Header
+          search={search}
+          onSearchChange={setSearch}
+          onMobileMenuOpen={() => setMobileOpen(true)}
+          userName={user?.name}
+        />
+
+        <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="font-pixel text-sm text-poke-dark-gray">
-                Hello, {user?.name}!
-              </h1>
-              <p className="mt-1 text-xs text-poke-dark-gray/60 capitalize">
-                {user?.role === "trainer" ? "Trainer" : "Researcher"}
+              <h1 className="font-pixel text-base text-slate-800 sm:text-lg">Arena</h1>
+              <p className="mt-1 text-sm text-slate-500">
+                {activeTab === "battle"
+                  ? "Challenge teams or find opponents"
+                  : "Connect with other trainers"}
               </p>
             </div>
+            <TabBar
+              active={activeTab}
+              onChange={setActiveTab}
+              battleCount={filteredBattles.length}
+              usersCount={filteredUsers.length}
+            />
           </div>
-          <p className="text-sm text-poke-dark-gray/70">
-            You are authenticated. From here you can build the rest of the
-            dashboard by consuming the services in{" "}
-            <code className="rounded bg-poke-gray px-1 py-0.5 text-xs">
-              lib/api/
-            </code>
-            .
-          </p>
-        </div>
+
+          {isEmpty && debouncedSearch ? (
+            <EmptyState query={debouncedSearch} />
+          ) : activeTab === "battle" ? (
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {filteredBattles.map((card, i) => (
+                <div
+                  key={card.id}
+                  className="animate-fadeSlideUp"
+                  style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
+                >
+                  <BattleCard card={card} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+              {filteredUsers.map((u, i) => (
+                <div
+                  key={u.id}
+                  className="animate-fadeSlideUp"
+                  style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
+                >
+                  <UserCard user={u} />
+                </div>
+              ))}
+            </div>
+          )}
+        </main>
       </div>
+
+      <style>{`
+        @keyframes fadeSlideUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeSlideUp {
+          animation: fadeSlideUp 0.35s ease-out;
+        }
+      `}</style>
     </div>
   );
 }
