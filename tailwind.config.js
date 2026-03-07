@@ -120,6 +120,19 @@ module.exports = {
           "0%": { transform: "translateY(-100%)" },
           "100%": { transform: "translateY(100%)" },
         },
+        shake: {
+          "0%, 100%": { transform: "translateX(0)" },
+          "15%": { transform: "translateX(-5px)" },
+          "30%": { transform: "translateX(5px)" },
+          "45%": { transform: "translateX(-4px)" },
+          "60%": { transform: "translateX(4px)" },
+          "75%": { transform: "translateX(-2px)" },
+          "90%": { transform: "translateX(2px)" },
+        },
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -131,6 +144,8 @@ module.exports = {
         "bounce-slow": "bounce-slow 2s ease-in-out infinite",
         "spin-slow": "spin-slow 8s linear infinite",
         "scanline": "scanline 4s linear infinite",
+        shake: "shake 0.5s ease-in-out",
+        shimmer: "shimmer 0.6s ease-in-out",
       },
     },
   },
