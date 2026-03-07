@@ -58,14 +58,7 @@ export function AppHeader({
       </div>
 
       <div className="flex items-center gap-2 ml-auto">
-        <div className="relative">
-          <AppButton variant="icon" aria-label="Notifications">
-            <Bell className="h-5 w-5" />
-          </AppButton>
-          <span className="pointer-events-none absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-poke-red ring-2 ring-white" />
-        </div>
-
-        <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 transition-colors hover:border-slate-300">
+        <div className="flex items-center gap-2 rounded-xl px-3 py-1.5 transition-colors hover:border-slate-300">
           <Avatar
             src={avatarBg(user?.name ?? "Trainer")}
             alt={user?.name ?? "Trainer"}

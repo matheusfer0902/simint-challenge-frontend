@@ -4,9 +4,7 @@ export interface AvatarProps {
   src: string;
   alt: string;
   size?: number;
-  /** Adds a poke-red ring around the avatar. */
   ring?: boolean;
-  /** Shows a green online indicator dot. */
   online?: boolean;
 }
 
