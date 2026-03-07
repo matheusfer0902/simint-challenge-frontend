@@ -14,7 +14,7 @@ export default function DashboardPage() {
           <div className="animate-spin">
             <Pokeball size={56} animate={false} />
           </div>
-          <p className="font-pixel text-xs text-poke-dark-gray/60">Carregando...</p>
+          <p className="font-pixel text-xs text-poke-dark-gray/60">Loading...</p>
         </div>
       </div>
     );
@@ -33,7 +33,7 @@ export default function DashboardPage() {
             className="flex items-center gap-2 rounded-xl border-2 border-poke-gray px-4 py-2 text-sm text-poke-dark-gray/70 transition-all hover:border-poke-red/40 hover:text-poke-red"
           >
             <LogOut className="h-4 w-4" />
-            Sair
+            Logout
           </button>
         </div>
 
@@ -44,16 +44,15 @@ export default function DashboardPage() {
             </div>
             <div>
               <h1 className="font-pixel text-sm text-poke-dark-gray">
-                Olá, {user?.name}!
+                Hello, {user?.name}!
               </h1>
               <p className="mt-1 text-xs text-poke-dark-gray/60 capitalize">
-                {user?.role === "trainer" ? "Treinador" : "Pesquisador"}
+                {user?.role === "trainer" ? "Trainer" : "Researcher"}
               </p>
             </div>
           </div>
           <p className="text-sm text-poke-dark-gray/70">
-            Você está autenticado. A partir daqui você pode construir o restante
-            do dashboard consumindo os serviços em{" "}
+            You are authenticated. From here you can build the rest of the dashboard by consuming the services in{" "}
             <code className="rounded bg-poke-gray px-1 py-0.5 text-xs">
               lib/api/
             </code>

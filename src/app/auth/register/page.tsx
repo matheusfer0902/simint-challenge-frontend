@@ -14,10 +14,10 @@ type RegisterFields = Record<keyof RegisterDto | "confirmPassword", string>;
 
 function passwordStrength(password: string): { level: 0 | 1 | 2 | 3; label: string } {
   if (password.length === 0) return { level: 0, label: "" };
-  if (password.length < 6) return { level: 1, label: "Fraca" };
+  if (password.length < 6) return { level: 1, label: "Weak" };
   if (password.length < 10 || !/[A-Z]/.test(password) || !/\d/.test(password))
-    return { level: 2, label: "Média" };
-  return { level: 3, label: "Forte" };
+    return { level: 2, label: "Medium" };
+  return { level: 3, label: "Strong" };
 }
 
 const strengthColors: Record<number, string> = {
@@ -30,16 +30,16 @@ const strengthColors: Record<number, string> = {
 function validate(values: RegisterFields): Partial<RegisterFields> {
   const errors: Partial<RegisterFields> = {};
   if (!values.name || values.name.trim().length < 2)
-    errors.name = "Nome deve ter pelo menos 2 caracteres.";
-  if (!values.email) errors.email = "E-mail é obrigatório.";
+    errors.name = "Name must have at least 2 characters.";
+  if (!values.email) errors.email = "Email is required.";
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email))
-    errors.email = "Formato de e-mail inválido.";
-  if (!values.password) errors.password = "Senha é obrigatória.";
+    errors.email = "Invalid email format.";
+  if (!values.password) errors.password = "Password is required.";
   else if (values.password.length < 6)
-    errors.password = "Mínimo de 6 caracteres.";
+    errors.password = "Minimum 6 characters.";
   if (values.confirmPassword !== values.password)
-    errors.confirmPassword = "As senhas não coincidem.";
-  if (!values.role) errors.role = "Selecione um tipo de conta.";
+    errors.confirmPassword = "Passwords do not match.";
+  if (!values.role) errors.role = "Select an account type.";
   return errors;
 }
 
@@ -70,8 +70,8 @@ export default function RegisterPage() {
 
   return (
     <AuthLayout
-      title="Criar conta"
-      subtitle="Junte-se a milhares de treinadores e pesquisadores."
+      title="Create account"
+      subtitle="Join thousands of trainers and researchers."
     >
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
         {globalError && (
@@ -83,13 +83,13 @@ export default function RegisterPage() {
 
         <div>
           <label className="mb-2 block font-pixel text-[10px] text-poke-dark-gray/70 uppercase tracking-wider">
-            Tipo de conta
+            Account type
           </label>
           <div className="grid grid-cols-2 gap-3">
             {(
               [
-                { value: "trainer", label: "Treinador", Icon: Sword },
-                { value: "researcher", label: "Pesquisador", Icon: FlaskConical },
+                { value: "trainer", label: "Trainer", Icon: Sword },
+                { value: "researcher", label: "Researcher", Icon: FlaskConical },
               ] as const
             ).map(({ value, label, Icon }) => {
               const active = values.role === value;
@@ -125,7 +125,7 @@ export default function RegisterPage() {
         <AuthInput
           id="name"
           type="text"
-          label="Nome completo"
+          label="Full name"
           placeholder="Ash Ketchum"
           value={values.name}
           onChange={(v) => handleChange("name", v)}
@@ -138,7 +138,7 @@ export default function RegisterPage() {
         <AuthInput
           id="email"
           type="email"
-          label="E-mail"
+          label="Email"
           placeholder="ash@pokecenter.com"
           value={values.email}
           onChange={(v) => handleChange("email", v)}
@@ -152,7 +152,7 @@ export default function RegisterPage() {
           <AuthInput
             id="password"
             type={showPassword ? "text" : "password"}
-            label="Senha"
+            label="Password"
             placeholder="••••••••"
             value={values.password}
             onChange={(v) => handleChange("password", v)}
@@ -165,7 +165,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={() => setShowPassword((s) => !s)}
                 className="text-poke-dark-gray/40 transition-colors hover:text-poke-red focus:outline-none"
-                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -185,7 +185,7 @@ export default function RegisterPage() {
               </div>
               {strength.label && (
                 <p className={`text-xs ${strengthColors[strength.level].replace("bg-", "text-")}`}>
-                  Força: {strength.label}
+                  Strength: {strength.label}
                 </p>
               )}
             </div>
@@ -195,7 +195,7 @@ export default function RegisterPage() {
         <AuthInput
           id="confirmPassword"
           type={showPassword ? "text" : "password"}
-          label="Confirmar senha"
+          label="Confirm password"
           placeholder="••••••••"
           value={values.confirmPassword}
           onChange={(v) => handleChange("confirmPassword", v)}
@@ -205,16 +205,16 @@ export default function RegisterPage() {
           disabled={isPending}
         />
 
-        <AuthButton isPending={isPending} label="Criar conta" icon={<ArrowRight className="h-4 w-4" />} />
+        <AuthButton isPending={isPending} label="Create account" icon={<ArrowRight className="h-4 w-4" />} />
       </form>
 
       <p className="mt-6 text-center text-sm text-poke-dark-gray/60">
-        Já tem conta?{" "}
+        Already have an account?{" "}
         <Link
           href="/auth/login"
           className="font-medium text-poke-red transition-colors hover:text-poke-dark-red underline underline-offset-2"
         >
-          Fazer login
+          Sign in
         </Link>
       </p>
     </AuthLayout>

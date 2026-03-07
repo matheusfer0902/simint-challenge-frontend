@@ -15,12 +15,12 @@ type LoginFields = Record<keyof LoginDto, string>;
 
 function validate(values: LoginFields): Partial<LoginFields> {
   const errors: Partial<LoginFields> = {};
-  if (!values.email) errors.email = "E-mail é obrigatório.";
+  if (!values.email) errors.email = "Email is required.";
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email))
-    errors.email = "Formato de e-mail inválido.";
-  if (!values.password) errors.password = "Senha é obrigatória.";
+    errors.email = "Invalid email format.";
+  if (!values.password) errors.password = "Password is required.";
   else if (values.password.length < 6)
-    errors.password = "Mínimo de 6 caracteres.";
+    errors.password = "Minimum 6 characters.";
   return errors;
 }
 
@@ -44,8 +44,8 @@ export default function LoginPage() {
 
   return (
     <AuthLayout
-      title="Bem-vindo de volta!"
-      subtitle="Acesse o sistema e gerencie seus Pokémons."
+      title="Welcome back!"
+      subtitle="Access the system and manage your Pokémon."
     >
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
         {globalError && (
@@ -58,7 +58,7 @@ export default function LoginPage() {
         <AuthInput
           id="email"
           type="email"
-          label="E-mail"
+          label="Email"
           placeholder="ash@pokecenter.com"
           value={values.email}
           onChange={(v) => handleChange("email", v)}
@@ -71,7 +71,7 @@ export default function LoginPage() {
         <AuthInput
           id="password"
           type={showPassword ? "text" : "password"}
-          label="Senha"
+          label="Password"
           placeholder="••••••••"
           value={values.password}
           onChange={(v) => handleChange("password", v)}
@@ -84,7 +84,7 @@ export default function LoginPage() {
               type="button"
               onClick={() => setShowPassword((s) => !s)}
               className="text-poke-dark-gray/40 transition-colors hover:text-poke-red focus:outline-none"
-              aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? (
                 <EyeOff className="h-4 w-4" />
@@ -100,20 +100,20 @@ export default function LoginPage() {
             href="/auth/forgot-password"
             className="text-xs text-poke-dark-gray/60 transition-colors hover:text-poke-red"
           >
-            Esqueceu a senha?
+            Forgot password?
           </Link>
         </div>
 
-        <AuthButton isPending={isPending} label="Entrar" icon={<ArrowRight className="h-4 w-4" />} />
+        <AuthButton isPending={isPending} label="Sign In" icon={<ArrowRight className="h-4 w-4" />} />
       </form>
 
       <p className="mt-6 text-center text-sm text-poke-dark-gray/60">
-        Não tem conta?{" "}
+        Don't have an account?{" "}
         <Link
           href="/auth/register"
           className="font-medium text-poke-red transition-colors hover:text-poke-dark-red underline underline-offset-2"
         >
-          Criar conta
+          Create account
         </Link>
       </p>
     </AuthLayout>

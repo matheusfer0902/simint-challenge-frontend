@@ -37,7 +37,7 @@ export function AuthButton({ isPending, label, icon }: AuthButtonProps) {
             <span className="h-4 w-4 animate-spin">
               <Pokeball size={16} animate={false} />
             </span>
-            <span>Aguarde...</span>
+            <span>Wait...</span>
           </>
         ) : (
           <>
