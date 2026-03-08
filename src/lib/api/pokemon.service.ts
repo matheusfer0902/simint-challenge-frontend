@@ -28,14 +28,29 @@ export interface CatchPokemonDto {
   location: string;
 }
 
-export interface CreatePokemonDto {
+export interface CreatePokemonPayload {
   name: string;
   types: string[];
   id: number;
   level: number;
   hp: number;
   currentHp: number;
+  baseAttack: number;
+  baseDefense: number;
+  baseSpeed: number;
+  sprite: File;
+}
+
+export interface CreatePokemonConflictItemDto {
+  id: number;
+  name: string;
+  types: string[];
   spriteUrl: string;
+}
+
+export interface CreatePokemonConflictsDto {
+  nameConflict?: CreatePokemonConflictItemDto;
+  pokedexConflict?: CreatePokemonConflictItemDto;
 }
 
 export interface CreatePokemonResponseDto {
@@ -57,8 +72,21 @@ class PokemonService {
     return httpClient.get<PokemonDto[]>("/pokemon/wild-area");
   }
 
-  async create(data: CreatePokemonDto): Promise<CreatePokemonResponseDto> {
-    return httpClient.put<CreatePokemonResponseDto>("/pokemon", data);
+  async create(data: CreatePokemonPayload): Promise<CreatePokemonResponseDto> {
+    const form = new FormData();
+    form.append("name", data.name);
+    data.types.forEach((t) => form.append("types", t));
+    form.append("id", String(data.id));
+    form.append("level", String(data.level));
+    form.append("hp", String(data.hp));
+    form.append("currentHp", String(data.currentHp));
+    form.append("baseAttack", String(data.baseAttack));
+    form.append("baseDefense", String(data.baseDefense));
+    form.append("baseSpeed", String(data.baseSpeed));
+    if (data.sprite) {
+      form.append("sprite", data.sprite);
+    }
+    return httpClient.postForm<CreatePokemonResponseDto>("/pokemon", form);
   }
 
   async catch(data: CatchPokemonDto): Promise<CatchPokemonResponseDto> {
