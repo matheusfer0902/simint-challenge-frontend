@@ -132,6 +132,16 @@ class PokemonService {
   async delete(pokemonId: number): Promise<void> {
     return httpClient.delete<void>(`/pokemon/${pokemonId}`);
   }
+
+  /** Cura até 6 pokémons pelo id. Corpo: { ids: number[] }. Retorna { healed: PokemonDto[] } */
+  async heal(ids: number[]): Promise<{ healed: PokemonDto[] }> {
+    return httpClient.post<{ healed: PokemonDto[] }>("/pokemon/heal", { ids });
+  }
+
+  /** Aumenta o nível do pokémon em 1. :id = id do pokémon. */
+  async train(id: number): Promise<{ pokemon: PokemonDto }> {
+    return httpClient.post<{ pokemon: PokemonDto }>(`/pokemon/train/${id}`, {});
+  }
 }
 
 export const pokemonService = new PokemonService();

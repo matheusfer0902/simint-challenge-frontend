@@ -362,13 +362,6 @@ function GymStage({
           ))}
         </div>
 
-        <XpBar
-          xp={state.xp}
-          xpToNext={pokemon.xpToNext}
-          isLevelUp={state.phase === "level-up" || state.phase === "celebrating"}
-          accent={tc.accent}
-        />
-
         <div className="mt-5 space-y-2.5">
           <button
             onClick={onTrain}
@@ -389,16 +382,6 @@ function GymStage({
                   <Candy className="h-4 w-4" /> DAR RARE CANDY <TrendingUp className="h-4 w-4" />
                 </>
               )}
-            </span>
-          </button>
-
-          <button
-            onClick={onTrain}
-            disabled={isBusy}
-            className="group relative w-full overflow-hidden rounded-2xl border-2 border-slate-200 bg-white py-3.5 font-pixel text-[10px] tracking-widest text-slate-600 transition-all hover:border-red-200 hover:text-red-600 disabled:opacity-40"
-          >
-            <span className="flex items-center justify-center gap-2">
-              <Dumbbell className="h-4 w-4" /> TREINAR INTENSAMENTE <Flame className="h-4 w-4" />
             </span>
           </button>
         </div>
@@ -525,7 +508,7 @@ const CSS_KEYFRAMES = `
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function TrainingPage() {
-  const { roster, selectedIdx, setSelectedIdx, pokemon, state, train } = useTrainHandler();
+  const { roster, loading, selectedIdx, setSelectedIdx, pokemon, state, train, trainError, clearTrainError } = useTrainHandler();
 
   return (
     <AppLayout>
@@ -542,12 +525,35 @@ export function TrainingPage() {
 
         <div className="mb-6 h-px bg-gradient-to-r from-red-500/30 via-slate-200 to-transparent" />
 
-        <div className="mb-6">
-          <p className="mb-3 font-pixel text-[8px] uppercase tracking-widest text-slate-400">Selecione o Pokémon</p>
-          <PokemonSelector roster={roster} selected={selectedIdx} onChange={setSelectedIdx} />
-        </div>
+        {loading ? (
+          <div className="flex min-h-[200px] items-center justify-center">
+            <div className="h-10 w-10 animate-spin rounded-full border-2 border-red-500/30 border-t-red-500" />
+          </div>
+        ) : roster.length === 0 ? (
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 py-12 text-center">
+            <p className="text-slate-600">Você ainda não tem Pokémon para treinar.</p>
+            <p className="mt-1 text-sm text-slate-400">Capture ou crie Pokémon na área de Pokémon.</p>
+          </div>
+        ) : (
+          <>
+            <div className="mb-6">
+              <p className="mb-3 font-pixel text-[8px] uppercase tracking-widest text-slate-400">Selecione o Pokémon</p>
+              <PokemonSelector roster={roster} selected={selectedIdx} onChange={setSelectedIdx} />
+            </div>
 
-        <GymStage pokemon={pokemon} state={state} onTrain={train} />
+            {pokemon && (
+              <>
+                {trainError && (
+                  <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    {trainError}
+                    <button type="button" onClick={clearTrainError} className="ml-2 underline">Fechar</button>
+                  </div>
+                )}
+                <GymStage pokemon={pokemon} state={state} onTrain={train} />
+              </>
+            )}
+          </>
+        )}
       </div>
 
       <style>{CSS_KEYFRAMES}</style>

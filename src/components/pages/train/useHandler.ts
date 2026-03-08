@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useReducer, useCallback } from "react";
+import { pokemonService } from "@/lib/api/pokemon.service";
+import type { MyPokemonDto } from "@/lib/api/pokemon.service";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPES & DATA
@@ -23,17 +25,39 @@ export interface TrainPokemon {
   cry?: string;
 }
 
-const sp = (id: number) =>
-  `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+const DEFAULT_TRAIN_POKEMON: TrainPokemon = {
+  id: 0,
+  name: "",
+  type: "normal",
+  level: 1,
+  hp: 0,
+  maxHp: 1,
+  attack: 0,
+  defense: 0,
+  speed: 0,
+  xp: 0,
+  xpToNext: 1000,
+  sprite: "",
+};
 
-export const TRAINING_ROSTER: TrainPokemon[] = [
-  { id: 94, name: "Gengar", type: "ghost", secondType: "poison", level: 34, hp: 60, maxHp: 60, attack: 65, defense: 60, speed: 110, xp: 980, xpToNext: 1000, sprite: sp(94) },
-  { id: 25, name: "Pikachu", type: "electric", level: 31, hp: 35, maxHp: 35, attack: 55, defense: 30, speed: 90, xp: 620, xpToNext: 1000, sprite: sp(25) },
-  { id: 6, name: "Charizard", type: "fire", secondType: "flying", level: 37, hp: 78, maxHp: 78, attack: 84, defense: 78, speed: 100, xp: 750, xpToNext: 1200, sprite: sp(6) },
-  { id: 1, name: "Bulbasaur", type: "grass", secondType: "poison", level: 29, hp: 45, maxHp: 45, attack: 49, defense: 49, speed: 45, xp: 440, xpToNext: 900, sprite: sp(1) },
-  { id: 7, name: "Squirtle", type: "water", level: 28, hp: 44, maxHp: 44, attack: 48, defense: 65, speed: 43, xp: 590, xpToNext: 900, sprite: sp(7) },
-  { id: 149, name: "Dragonite", type: "dragon", secondType: "flying", level: 54, hp: 91, maxHp: 91, attack: 134, defense: 95, speed: 80, xp: 390, xpToNext: 1500, sprite: sp(149) },
-];
+function mapMyPokemonToTrain(dto: MyPokemonDto): TrainPokemon {
+  const [type] = dto.types ?? ["normal"];
+  return {
+    id: dto.id,
+    name: dto.name,
+    type,
+    secondType: dto.types?.[1],
+    level: dto.level,
+    hp: dto.currentHp ?? dto.hp,
+    maxHp: dto.hp,
+    attack: dto.baseAttack ?? 0,
+    defense: dto.baseDefense ?? 0,
+    speed: dto.baseSpeed ?? 0,
+    xp: 0,
+    xpToNext: 1000,
+    sprite: dto.spriteUrl ?? "",
+  };
+}
 
 export type Phase = "idle" | "bouncing" | "xp-fill" | "level-up" | "celebrating";
 
@@ -75,7 +99,10 @@ function trainReducer(state: TrainState, action: TrainAction): TrainState {
   }
 }
 
-function useTraining(pokemon: TrainPokemon) {
+function useTraining(
+  pokemon: TrainPokemon,
+  onLevelUpComplete?: (pokemonId: number, newLevel: number) => void
+) {
   const [state, dispatch] = useReducer(trainReducer, {
     phase: "idle",
     xp: pokemon.xp,
@@ -88,45 +115,111 @@ function useTraining(pokemon: TrainPokemon) {
     dispatch({ type: "RESET_POKEMON", xp: pokemon.xp, level: pokemon.level });
   }, [pokemon.id]);
 
-  const train = useCallback(() => {
-    if (state.phase !== "idle") return;
-    dispatch({ type: "INITIATE" });
+  const train = useCallback(
+    (levelFromApi?: number) => {
+      if (state.phase !== "idle") return;
+      dispatch({ type: "INITIATE" });
 
-    setTimeout(() => {
-      dispatch({ type: "BOUNCE_END" });
-      const remaining = pokemon.xpToNext - state.xp;
-      const gain = Math.max(Math.min(Math.floor(Math.random() * 100) + 60, remaining + 20), 40);
-      const newXp = state.xp + gain;
-
-      if (newXp >= pokemon.xpToNext) {
+      if (levelFromApi != null) {
         setTimeout(() => {
-          dispatch({ type: "TRIGGER_LEVEL_UP", newLevel: state.level + 1, overflowXp: newXp - pokemon.xpToNext });
-          setTimeout(() => dispatch({ type: "CELEBRATE_END" }), 3800);
-        }, 1300);
-      } else {
-        setTimeout(() => {
-          dispatch({ type: "XP_GAINED", xpGain: gain, newXp });
-        }, 300);
+          dispatch({ type: "BOUNCE_END" });
+          setTimeout(() => {
+            dispatch({ type: "TRIGGER_LEVEL_UP", newLevel: levelFromApi, overflowXp: 0 });
+            setTimeout(() => {
+              dispatch({ type: "CELEBRATE_END" });
+              onLevelUpComplete?.(pokemon.id, levelFromApi);
+            }, 3800);
+          }, 1300);
+        }, 650);
+        setTimeout(() => dispatch({ type: "PARTICLES_OFF" }), 1500);
+        return;
       }
 
-      setTimeout(() => dispatch({ type: "PARTICLES_OFF" }), 1500);
-    }, 650);
-  }, [state.phase, state.xp, state.level, pokemon.id, pokemon.xpToNext]);
+      setTimeout(() => {
+        dispatch({ type: "BOUNCE_END" });
+        const remaining = pokemon.xpToNext - state.xp;
+        const gain = Math.max(Math.min(Math.floor(Math.random() * 100) + 60, remaining + 20), 40);
+        const newXp = state.xp + gain;
+
+        if (newXp >= pokemon.xpToNext) {
+          setTimeout(() => {
+            dispatch({ type: "TRIGGER_LEVEL_UP", newLevel: state.level + 1, overflowXp: newXp - pokemon.xpToNext });
+            setTimeout(() => dispatch({ type: "CELEBRATE_END" }), 3800);
+          }, 1300);
+        } else {
+          setTimeout(() => {
+            dispatch({ type: "XP_GAINED", xpGain: gain, newXp });
+          }, 300);
+        }
+
+        setTimeout(() => dispatch({ type: "PARTICLES_OFF" }), 1500);
+      }, 650);
+    },
+    [state.phase, state.xp, state.level, pokemon.id, pokemon.xpToNext, onLevelUpComplete]
+  );
 
   return { state, train };
 }
 
 export function useTrainHandler() {
+  const [roster, setRoster] = useState<TrainPokemon[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedIdx, setSelectedIdx] = useState(0);
-  const pokemon = TRAINING_ROSTER[selectedIdx];
-  const { state, train } = useTraining(pokemon);
+  const [trainError, setTrainError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    pokemonService
+      .getMyPokemons()
+      .then((list) => {
+        if (cancelled) return;
+        const mapped = list.map(mapMyPokemonToTrain);
+        setRoster(mapped);
+        setSelectedIdx((i) => (i >= mapped.length ? 0 : i));
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const onLevelUpComplete = useCallback((pokemonId: number, newLevel: number) => {
+    setRoster((prev) =>
+      prev.map((p) => (p.id === pokemonId ? { ...p, level: newLevel } : p))
+    );
+  }, []);
+
+  const safeIdx = roster.length ? Math.min(selectedIdx, roster.length - 1) : 0;
+  const pokemon = roster[safeIdx] ?? null;
+  const { state, train } = useTraining(
+    pokemon ?? DEFAULT_TRAIN_POKEMON,
+    onLevelUpComplete
+  );
+
+  const handleTrain = useCallback(async () => {
+    if (!pokemon || state.phase !== "idle") return;
+    setTrainError(null);
+    try {
+      const res = await pokemonService.train(pokemon.id);
+      train(res.pokemon.level);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Erro ao treinar.";
+      setTrainError(message);
+    }
+  }, [pokemon, state.phase, train]);
 
   return {
-    roster: TRAINING_ROSTER,
-    selectedIdx,
+    roster,
+    loading,
+    selectedIdx: safeIdx,
     setSelectedIdx,
-    pokemon,
+    pokemon: pokemon ?? null,
     state,
-    train,
+    train: handleTrain,
+    trainError,
+    clearTrainError: () => setTrainError(null),
   };
 }

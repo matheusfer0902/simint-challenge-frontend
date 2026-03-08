@@ -97,9 +97,14 @@ function MachineSlot({
   );
 }
 
-function HealMachine({ state }: { state: HealState }) {
+function HealMachine({ state, tray }: { state: HealState; tray: HealPokemon[] }) {
   const running = state.phase === "loading" || state.phase === "sequencing";
   const done = state.phase === "done";
+  const isIdleOrDone = state.phase === "idle" || state.phase === "done";
+  const loadedSlots = isIdleOrDone
+    ? Array.from({ length: 6 }, (_, i) => i < tray.length)
+    : state.loadedSlots;
+  const slotCount = isIdleOrDone ? tray.length : state.litSlots.filter(Boolean).length;
 
   return (
     <div className="relative overflow-hidden rounded-3xl border-2 border-slate-700 bg-gradient-to-b from-slate-700 to-slate-900 shadow-2xl">
@@ -129,7 +134,7 @@ function HealMachine({ state }: { state: HealState }) {
         </div>
         <div className="flex items-center gap-1.5">
           <Zap className={`h-4 w-4 ${running ? "text-yellow-400 animate-pulse" : done ? "text-emerald-400" : "text-slate-600"}`} />
-          <span className="font-pixel text-[8px] text-slate-500">{state.litSlots.filter(Boolean).length}/6</span>
+          <span className="font-pixel text-[8px] text-slate-500">{slotCount}/6</span>
         </div>
       </div>
 
@@ -150,7 +155,7 @@ function HealMachine({ state }: { state: HealState }) {
               <MachineSlot
                 key={i}
                 index={i}
-                isLoaded={state.loadedSlots[i]}
+                isLoaded={loadedSlots[i]}
                 isActive={state.activeSlot === i}
                 isLit={state.litSlots[i]}
               />
@@ -161,7 +166,7 @@ function HealMachine({ state }: { state: HealState }) {
         <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-950">
           <div
             className="h-full rounded-full bg-gradient-to-r from-red-500 to-emerald-500 transition-all duration-700"
-            style={{ width: `${(state.litSlots.filter(Boolean).length / 6) * 100}%` }}
+            style={{ width: `${(slotCount / 6) * 100}%` }}
           />
         </div>
       </div>
@@ -172,7 +177,7 @@ function HealMachine({ state }: { state: HealState }) {
             <div
               key={i}
               className={`h-2 w-2 rounded-full transition-all ${
-                state.litSlots[i] ? "bg-emerald-400 shadow shadow-emerald-400/60" : state.activeSlot === i ? "bg-yellow-400 animate-pulse" : state.loadedSlots[i] ? "bg-red-500" : "bg-slate-700"
+                state.litSlots[i] ? "bg-emerald-400 shadow shadow-emerald-400/60" : state.activeSlot === i ? "bg-yellow-400 animate-pulse" : loadedSlots[i] ? "bg-red-500" : "bg-slate-700"
               }`}
             />
           ))}
@@ -194,6 +199,8 @@ function PatientCard({
   activeSlot,
   isLit,
   isHealing,
+  isInTray,
+  onClick,
 }: {
   pokemon: HealPokemon;
   currentHp: number;
@@ -201,6 +208,8 @@ function PatientCard({
   activeSlot: number;
   isLit: boolean;
   isHealing: boolean;
+  isInTray: boolean;
+  onClick: () => void;
 }) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const tc = getTC(pokemon.type);
@@ -210,9 +219,12 @@ function PatientCard({
   const isActive = activeSlot === slotIndex;
 
   return (
-    <div
-      className={`relative overflow-hidden rounded-2xl border bg-white shadow-sm transition-all duration-400
-      ${isActive ? "border-yellow-400 shadow-yellow-400/30 scale-[1.04]" : isLit ? "border-emerald-300 shadow-emerald-200/40" : "border-slate-200/80"}`}
+    <button
+      type="button"
+      onClick={onClick}
+      className={`relative w-full overflow-hidden rounded-2xl border bg-white text-left shadow-sm transition-all duration-400
+      ${isActive ? "border-yellow-400 shadow-yellow-400/30 scale-[1.04]" : isLit ? "border-emerald-300 shadow-emerald-200/40" : isInTray ? "border-red-400 ring-2 ring-red-400/40 shadow-red-200/30" : "border-slate-200/80"}
+      hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-400/50`}
     >
       <div className={`h-1 w-full bg-gradient-to-r ${tc.gradient}`} />
 
@@ -254,9 +266,11 @@ function PatientCard({
           </div>
           <div className="relative h-3 overflow-hidden rounded-full bg-slate-100 shadow-inner">
             <div
-              className="h-full rounded-full relative transition-all"
+              className="h-full rounded-full relative transition-all min-w-0"
               style={{
-                width: `${Math.min((currentHp / pokemon.maxHp) * 100, 100)}%`,
+                width: pokemon.maxHp > 0
+                  ? `${Math.max((currentHp / pokemon.maxHp) * 100, currentHp === 0 ? 4 : 0)}%`
+                  : "0%",
                 background: barColor,
                 transitionDuration: isHealing ? "0.5s" : "0.2s",
                 boxShadow: isLit ? "0 0 8px #22c55e88" : undefined,
@@ -272,7 +286,7 @@ function PatientCard({
           </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -336,11 +350,10 @@ const HEAL_CSS = `
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function HealPage() {
-  const { team, state, heal } = useHealHandler();
+  const { team, loading, tray, addToTray, removeFromTray, isInTray, trayIndex, state, heal, healError, clearHealError } = useHealHandler();
 
   const isRunning = ["loading", "sequencing", "filling"].includes(state.phase);
   const isDone = state.phase === "done";
-  const injured = team.filter((p) => p.hp < p.maxHp || p.status !== "healthy").length;
 
   return (
     <AppLayout>
@@ -353,70 +366,87 @@ export function HealPage() {
           </nav>
           <h1 className="font-pixel text-2xl text-red-500 sm:text-3xl">CENTRO DE RECUPERAÇÃO</h1>
           <p className="mt-1.5 text-sm text-slate-500">Restaure a saúde do seu time completo.</p>
-
-          <div className="mt-3 flex flex-wrap gap-2">
-            {[
-              { label: `${injured} machucados`, color: "text-orange-700 bg-orange-50 border-orange-200" },
-              { label: `${team.filter((p) => p.hp === 0).length} desmaiados`, color: "text-red-700 bg-red-50 border-red-200" },
-              { label: `${team.length} no time`, color: "text-blue-700 bg-blue-50 border-blue-200" },
-            ].map(({ label, color }) => (
-              <div key={label} className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold ${color}`}>
-                <Heart className="h-3 w-3" />
-                {label}
-              </div>
-            ))}
-          </div>
         </div>
 
         <div className="mb-6 h-px bg-gradient-to-r from-red-500/30 via-slate-200 to-transparent" />
 
-        <div className="mb-6">
-          <HealMachine state={state} />
-        </div>
+        {loading ? (
+          <div className="mb-6 flex min-h-[200px] items-center justify-center">
+            <div className="h-10 w-10 animate-spin rounded-full border-2 border-red-500/30 border-t-red-500" />
+          </div>
+        ) : (
+          <>
+            <div className="mb-6">
+              <HealMachine state={state} tray={tray} />
+            </div>
 
-        <button
-          onClick={heal}
-          disabled={isRunning}
-          className={`group relative mb-6 w-full overflow-hidden rounded-2xl py-5 font-pixel text-[11px] tracking-widest text-white shadow-xl transition-all duration-200 focus:outline-none active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70
-            ${isDone ? "bg-gradient-to-r from-emerald-500 to-green-600 shadow-emerald-500/25 hover:shadow-xl" : isRunning ? "bg-slate-600" : "bg-gradient-to-r from-red-500 to-rose-600 shadow-red-500/30 hover:scale-[1.01] hover:shadow-2xl"}`}
-        >
-          <Shimmer />
-          <span className="relative flex items-center justify-center gap-3">
-            {isRunning ? (
-              <>
-                <Spinner /> CURANDO TIME...
-              </>
-            ) : isDone ? (
-              <>
-                <CheckCircle2 className="h-5 w-5" /> TIME CURADO! CURAR NOVAMENTE?
-              </>
-            ) : (
-              <>
-                <Heart className="h-5 w-5" /> CURAR TIME COMPLETO <Sparkles className="h-5 w-5" />
-              </>
+            {healError && (
+              <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {healError}
+                <button type="button" onClick={clearHealError} className="ml-2 underline">Fechar</button>
+              </div>
             )}
-          </span>
-        </button>
 
-        <div>
-          <div className="mb-3 flex items-center gap-2">
-            <div className="h-3.5 w-1 rounded-full bg-red-500" />
-            <h2 className="font-pixel text-[9px] uppercase tracking-widest text-slate-500">STATUS DO TIME</h2>
-          </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-            {team.map((p, i) => (
-              <PatientCard
-                key={p.id}
-                pokemon={p}
-                currentHp={state.displayHp[i] ?? p.hp}
-                slotIndex={i}
-                activeSlot={state.activeSlot}
-                isLit={state.litSlots[i]}
-                isHealing={state.phase === "filling"}
-              />
-            ))}
-          </div>
-        </div>
+            <button
+              onClick={heal}
+              disabled={isRunning || tray.length === 0}
+              className={`group relative mb-6 w-full overflow-hidden rounded-2xl py-5 font-pixel text-[11px] tracking-widest text-white shadow-xl transition-all duration-200 focus:outline-none active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70
+                ${isDone ? "bg-gradient-to-r from-emerald-500 to-green-600 shadow-emerald-500/25 hover:shadow-xl" : isRunning ? "bg-slate-600" : "bg-gradient-to-r from-red-500 to-rose-600 shadow-red-500/30 hover:scale-[1.01] hover:shadow-2xl"}`}
+            >
+              <Shimmer />
+              <span className="relative flex items-center justify-center gap-3">
+                {isRunning ? (
+                  <>
+                    <Spinner /> CURANDO TIME...
+                  </>
+                ) : isDone ? (
+                  <>
+                    <CheckCircle2 className="h-5 w-5" /> POKEMONS CURADOS! CURAR NOVAMENTE?
+                  </>
+                ) : (
+                  <>
+                    <Heart className="h-5 w-5" /> CURAR POKEMONS <Sparkles className="h-5 w-5" />
+                  </>
+                )}
+              </span>
+            </button>
+
+            <div>
+              <div className="mb-3 flex items-center gap-2">
+                <div className="h-3.5 w-1 rounded-full bg-red-500" />
+                <h2 className="font-pixel text-[9px] uppercase tracking-widest text-slate-500">STATUS DOS POKEMONS</h2>
+              </div>
+              <p className="mb-3 text-[10px] text-slate-500">Clique em um Pokémon para colocá-lo na bandeja de recuperação (máx. 6).</p>
+              {team.length === 0 ? (
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 py-12 text-center">
+                  <p className="text-slate-600">Você ainda não tem Pokémon.</p>
+                  <p className="mt-1 text-sm text-slate-400">Capture ou crie Pokémon na área de Pokémon.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+                  {team.map((p, i) => {
+                    const idx = trayIndex(p);
+                    const useDisplayHp = idx >= 0 && (state.phase === "filling" || state.phase === "done");
+                    const currentHp = useDisplayHp ? (state.displayHp[idx] ?? p.hp) : p.hp;
+                    return (
+                      <PatientCard
+                        key={p.id}
+                        pokemon={p}
+                        currentHp={currentHp}
+                        slotIndex={idx >= 0 ? idx : i}
+                        activeSlot={state.activeSlot}
+                        isLit={idx >= 0 && state.litSlots[idx]}
+                        isHealing={state.phase === "filling"}
+                        isInTray={isInTray(p)}
+                        onClick={() => (isInTray(p) ? removeFromTray(p) : addToTray(p))}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
 
       <SuccessToast visible={state.showToast} />

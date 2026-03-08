@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useReducer, useCallback, useRef, useEffect } from "react";
+import { pokemonService } from "@/lib/api/pokemon.service";
+import type { MyPokemonDto } from "@/lib/api/pokemon.service";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPES & DATA
@@ -19,17 +21,22 @@ export interface HealPokemon {
   status: PokeStatus;
 }
 
-const sp = (id: number) =>
-  `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
-
-export const HEAL_TEAM: HealPokemon[] = [
-  { id: 25, name: "Pikachu", type: "electric", level: 32, hp: 6, maxHp: 35, sprite: sp(25), status: "poisoned" },
-  { id: 6, name: "Charizard", type: "fire", level: 37, hp: 18, maxHp: 78, sprite: sp(6), status: "burned" },
-  { id: 1, name: "Bulbasaur", type: "grass", level: 30, hp: 0, maxHp: 45, sprite: sp(1), status: "fainted" },
-  { id: 7, name: "Squirtle", type: "water", level: 30, hp: 44, maxHp: 44, sprite: sp(7), status: "healthy" },
-  { id: 94, name: "Gengar", type: "ghost", level: 35, hp: 14, maxHp: 60, sprite: sp(94), status: "frozen" },
-  { id: 149, name: "Dragonite", type: "dragon", level: 54, hp: 42, maxHp: 91, sprite: sp(149), status: "paralyzed" },
-];
+function mapMyPokemonToHeal(dto: MyPokemonDto): HealPokemon {
+  const type = dto.types?.[0] ?? "normal";
+  const maxHp = dto.hp;
+  const currentHp = dto.currentHp ?? dto.hp;
+  const status: PokeStatus = currentHp <= 0 ? "fainted" : "healthy";
+  return {
+    id: dto.id,
+    name: dto.name,
+    type,
+    level: dto.level,
+    hp: currentHp,
+    maxHp,
+    sprite: dto.spriteUrl ?? "",
+    status,
+  };
+}
 
 export type HealPhase = "idle" | "loading" | "sequencing" | "filling" | "done";
 
@@ -102,8 +109,8 @@ const SLOT_ACTIVE = 360;
 const HP_STEPS = 50;
 const HP_TICK_MS = 22;
 
-function useHeal(team: HealPokemon[]) {
-  const initialHp = team.map((p) => p.hp);
+function useHeal(tray: HealPokemon[], onDone?: () => void) {
+  const initialHp = Array.from({ length: 6 }, (_, i) => tray[i]?.hp ?? 0);
   const [state, dispatch] = useReducer(healReducer, {
     phase: "idle",
     loadedSlots: Array(6).fill(false),
@@ -126,9 +133,12 @@ function useHeal(team: HealPokemon[]) {
 
   const heal = useCallback(() => {
     if (state.phase !== "idle" && state.phase !== "done") return;
+    if (tray.length === 0) return;
     clearTimers();
+    const slotCount = Math.min(tray.length, 6);
+    const resetHp = Array.from({ length: 6 }, (_, i) => tray[i]?.hp ?? 0);
     if (state.phase === "done") {
-      dispatch({ type: "RESET", initialHp });
+      dispatch({ type: "RESET", initialHp: resetHp });
       after(80, () => dispatch({ type: "BEGIN" }));
     } else {
       dispatch({ type: "BEGIN" });
@@ -136,25 +146,25 @@ function useHeal(team: HealPokemon[]) {
 
     let cursor = 200;
 
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < slotCount; i++) {
       const c = cursor + i * 130;
       after(c, () => dispatch({ type: "LOAD_SLOT", idx: i }));
     }
-    cursor += 6 * 130 + 200;
+    cursor += slotCount * 130 + 200;
 
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < slotCount; i++) {
       const c = cursor + i * SLOT_DELAY;
       after(c, () => dispatch({ type: "ACTIVATE_SLOT", idx: i }));
       after(c + SLOT_ACTIVE, () => dispatch({ type: "LIT_SLOT", idx: i }));
     }
-    const allLit = cursor + 6 * SLOT_DELAY + SLOT_ACTIVE + 200;
+    const allLit = cursor + slotCount * SLOT_DELAY + SLOT_ACTIVE + 200;
     after(allLit, () => dispatch({ type: "DEACTIVATE" }));
 
     const fillStart = allLit + 300;
     after(fillStart, () => dispatch({ type: "START_FILL" }));
 
-    for (let i = 0; i < team.length; i++) {
-      const { hp, maxHp } = team[i];
+    for (let i = 0; i < tray.length; i++) {
+      const { hp, maxHp } = tray[i];
       if (hp === maxHp) continue;
       const diff = maxHp - hp;
       const stepSize = diff / HP_STEPS;
@@ -166,23 +176,95 @@ function useHeal(team: HealPokemon[]) {
       }
     }
 
-    const doneAt = fillStart + team.length * 60 + HP_STEPS * HP_TICK_MS + 400;
-    after(doneAt, () => dispatch({ type: "DONE" }));
+    const doneAt = fillStart + tray.length * 60 + HP_STEPS * HP_TICK_MS + 400;
+    after(doneAt, () => {
+      dispatch({ type: "DONE" });
+      onDone?.();
+    });
     after(doneAt + 4500, () => dispatch({ type: "HIDE_TOAST" }));
-  }, [state.phase, team]);
+  }, [state.phase, tray, onDone]);
 
   useEffect(() => () => clearTimers(), []);
 
   return { state, heal };
 }
 
+const MAX_TRAY = 6;
+
 export function useHealHandler() {
-  const [team] = useState(HEAL_TEAM);
-  const { state, heal } = useHeal(team);
+  const [team, setTeam] = useState<HealPokemon[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [tray, setTray] = useState<HealPokemon[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    pokemonService
+      .getMyPokemons()
+      .then((list) => {
+        if (cancelled) return;
+        setTeam(list.map(mapMyPokemonToHeal));
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const onHealDone = useCallback(() => {
+    setTeam((prev) =>
+      prev.map((p) => (tray.some((t) => t.id === p.id) ? { ...p, hp: p.maxHp } : p))
+    );
+  }, [tray]);
+
+  const { state, heal: runHealAnimation } = useHeal(tray, onHealDone);
+  const [healError, setHealError] = useState<string | null>(null);
+
+  const heal = useCallback(async () => {
+    if (tray.length === 0 || (state.phase !== "idle" && state.phase !== "done")) return;
+    setHealError(null);
+    try {
+      await pokemonService.heal(tray.map((p) => p.id));
+      runHealAnimation();
+    } catch (e) {
+      setHealError(e instanceof Error ? e.message : "Erro ao curar.");
+    }
+  }, [tray, state.phase, runHealAnimation]);
+
+  const addToTray = useCallback((p: HealPokemon) => {
+    setTray((prev) => {
+      if (prev.some((t) => t.id === p.id) || prev.length >= MAX_TRAY) return prev;
+      return [...prev, p];
+    });
+  }, []);
+
+  const removeFromTray = useCallback((p: HealPokemon) => {
+    setTray((prev) => prev.filter((t) => t.id !== p.id));
+  }, []);
+
+  const isInTray = useCallback(
+    (p: HealPokemon) => tray.some((t) => t.id === p.id),
+    [tray]
+  );
+
+  const trayIndex = useCallback(
+    (p: HealPokemon) => tray.findIndex((t) => t.id === p.id),
+    [tray]
+  );
 
   return {
     team,
+    loading,
+    tray,
+    addToTray,
+    removeFromTray,
+    isInTray,
+    trayIndex,
     state,
     heal,
+    healError,
+    clearHealError: () => setHealError(null),
   };
 }
