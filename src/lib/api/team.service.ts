@@ -104,6 +104,58 @@ export interface RegisterBattleResponseDto {
   message: string;
 }
 
+/** Body opcional para POST /teams/:id/share-link */
+export interface ShareLinkBody {
+  expiresInDays?: number;
+}
+
+/** Resposta 201 de POST /teams/:id/share-link */
+export interface ShareLinkResponseDto {
+  token: string;
+}
+
+/** Pokémon no time compartilhado (GET /teams/shared/:token) */
+export interface PokemonSummarySharedDto {
+  id: number;
+  uuid: string;
+  name: string;
+  spriteUrl: string;
+  types: string[];
+  level: number;
+  hp: number;
+  currentHp: number;
+  baseAttack: number;
+  baseDefense: number;
+  baseSpeed: number;
+  region: string | null;
+  locations: string[];
+}
+
+/** Membro no time compartilhado */
+export interface TeamMemberDetailSharedDto {
+  id: string;
+  teamId: string;
+  pokemonId: number;
+  nickname: string | null;
+  level: number | null;
+  pokemon: PokemonSummarySharedDto;
+}
+
+/** Resposta 200 de GET /teams/shared/:token */
+export interface TeamSharedResponseDto {
+  id: string;
+  name: string;
+  description: string | null;
+  isPublic: boolean;
+  grade: "S" | "A" | "B" | "C";
+  wins: number;
+  losses: number;
+  battles: number;
+  members: TeamMemberDetailSharedDto[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export type TeamFilter = "public" | "private";
 
 export interface ListTeamsParams {
@@ -154,6 +206,39 @@ class TeamService {
     );
   }
 
+  /** Gera link de compartilhamento (apenas dono, time privado). Retorna a URL completa. */
+  async createShareLink(
+    teamId: string,
+    options?: { expiresInDays?: number }
+  ): Promise<{ token: string; shareUrl: string }> {
+    const body: ShareLinkBody =
+      options?.expiresInDays != null && options.expiresInDays >= 1
+        ? { expiresInDays: options.expiresInDays }
+        : {};
+    const res = await httpClient.post<ShareLinkResponseDto>(
+      `/teams/${teamId}/share-link`,
+      Object.keys(body).length > 0 ? body : undefined
+    );
+    const origin =
+      typeof window !== "undefined" ? window.location.origin : "";
+    const shareUrl = `${origin}/teams/shared/${res.token}`;
+    return { token: res.token, shareUrl };
+  }
+
+  /** Obtém time por token de compartilhamento (rota pública). Retorna null se 404. */
+  async getSharedTeam(token: string): Promise<TeamSharedResponseDto | null> {
+    try {
+      return await httpClient.get<TeamSharedResponseDto>(
+        `/teams/shared/${encodeURIComponent(token)}`
+      );
+    } catch (e: unknown) {
+      if (e && typeof e === "object" && "apiError" in e) {
+        const err = e as { apiError: { status: number } };
+        if (err.apiError.status === 404) return null;
+      }
+      throw e;
+    }
+  }
 }
 
 export const teamService = new TeamService();

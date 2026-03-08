@@ -25,13 +25,15 @@ export function PokemonSlotCard({ pokemon, slot, onRemove, onAddClick }: Pokemon
           <p className="font-pixel text-[9px] text-slate-400">SLOT {slot + 1}</p>
           <p className="mt-0.5 text-xs text-slate-400">Empty</p>
         </div>
-        <button
-          type="button"
-          onClick={onAddClick}
-          className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-semibold text-slate-500 transition-all hover:border-poke-red/30 hover:text-poke-red focus:outline-none focus-visible:ring-2 focus-visible:ring-poke-red focus-visible:ring-offset-2"
-        >
-          + Add Pokémon
-        </button>
+        {onAddClick != null && (
+          <button
+            type="button"
+            onClick={onAddClick}
+            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-semibold text-slate-500 transition-all hover:border-poke-red/30 hover:text-poke-red focus:outline-none focus-visible:ring-2 focus-visible:ring-poke-red focus-visible:ring-offset-2"
+          >
+            + Add Pokémon
+          </button>
+        )}
       </div>
     );
   }
