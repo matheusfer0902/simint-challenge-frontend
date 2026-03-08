@@ -20,6 +20,7 @@ export function DetailModal({ pokemon, onClose }: DetailModalProps) {
   if (!pokemon) return null;
 
   const { gradient } = getMeta(pokemon.types[0]);
+  const dexNumber = `#${pokemon.id.toString().padStart(3, "0")}`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
@@ -34,9 +35,9 @@ export function DetailModal({ pokemon, onClose }: DetailModalProps) {
           </button>
           <PokemonAvatar pokemon={pokemon} size={110} />
           <div className="text-center">
-            <p className="font-pixel text-[9px] text-white/70">{pokemon.dexNumber}</p>
-            <h2 className="font-pixel text-[14px] text-white">{pokemon.name.toUpperCase()}</h2>
-            <p className="mt-0.5 text-xs text-white/70">{pokemon.region}</p>
+            <p className="font-pixel text-[9px] text-white/70">{dexNumber}</p>
+            <h2 className="font-pixel text-[14px] capitalize text-white">{pokemon.name.toUpperCase()}</h2>
+            <p className="mt-0.5 text-xs capitalize text-white/70">{pokemon.location?.replace(/-/g, " ") ?? ""}</p>
           </div>
           <div className="flex gap-1.5">
             {pokemon.types.map((t) => (
@@ -49,10 +50,10 @@ export function DetailModal({ pokemon, onClose }: DetailModalProps) {
 
         <div className="space-y-3 p-6">
           <p className="font-pixel text-[9px] uppercase tracking-widest text-slate-400">Base Stats</p>
-          <StatBar label="HP"  value={pokemon.stats.hp}      color="bg-emerald-400" />
-          <StatBar label="ATK" value={pokemon.stats.attack}  color="bg-red-400" />
-          <StatBar label="DEF" value={pokemon.stats.defense} color="bg-blue-400" />
-          <StatBar label="SPD" value={pokemon.stats.speed}   color="bg-yellow-400" />
+          <StatBar label="HP"  value={pokemon.hp}          color="bg-emerald-400" />
+          <StatBar label="ATK" value={pokemon.baseAttack}  color="bg-red-400" />
+          <StatBar label="DEF" value={pokemon.baseDefense} color="bg-blue-400" />
+          <StatBar label="SPD" value={pokemon.baseSpeed}   color="bg-yellow-400" />
 
           <div className="mt-2 flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
             <div className="text-center">
@@ -61,16 +62,19 @@ export function DetailModal({ pokemon, onClose }: DetailModalProps) {
             </div>
             <div className="h-10 w-px bg-slate-200" />
             <div className="text-center">
-              <p className="font-pixel text-[9px] text-slate-400">STATUS</p>
-              <div className="relative">
-                <StatusTag tag={pokemon.tag} />
-                {pokemon.tag === "wild" && <span className="font-pixel text-[9px] text-slate-500">WILD</span>}
-              </div>
+              <p className="font-pixel text-[9px] text-slate-400">HP</p>
+              <p className="font-pixel text-base text-slate-800">
+                {pokemon.currentHp}/{pokemon.hp}
+              </p>
             </div>
             <div className="h-10 w-px bg-slate-200" />
-            <div className="text-center">
-              <p className="font-pixel text-[9px] text-slate-400">SHINY</p>
-              <p className="font-pixel text-[10px] text-slate-800">{pokemon.shiny ? "✨ YES" : "NO"}</p>
+            <div className="relative text-center">
+              <p className="font-pixel text-[9px] text-slate-400">STATUS</p>
+              {pokemon.tag !== "wild" ? (
+                <StatusTag tag={pokemon.tag} />
+              ) : (
+                <span className="font-pixel text-[9px] text-slate-500">WILD</span>
+              )}
             </div>
           </div>
 

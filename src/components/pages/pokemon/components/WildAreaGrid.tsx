@@ -1,15 +1,35 @@
 "use client";
 
 import { Globe } from "lucide-react";
-import { WILD_POKEMON } from "../data";
 import type { PokemonData } from "../types";
 import { PokemonCard } from "./PokemonCard";
 
 interface WildAreaGridProps {
-  onDetails: (p: PokemonData) => void;
+  pokemon: PokemonData[];
+  loading: boolean;
+  onCatch: (p: PokemonData) => Promise<boolean>;
 }
 
-export function WildAreaGrid({ onDetails }: WildAreaGridProps) {
+function WildCardSkeleton() {
+  return (
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm">
+      <div className="flex flex-col items-center gap-2 bg-slate-100 pb-3 pt-6 animate-pulse">
+        <div className="h-[66px] w-[66px] rounded-full bg-slate-200" />
+        <div className="h-4 w-12 rounded-full bg-slate-200" />
+      </div>
+      <div className="flex flex-col gap-2.5 p-4">
+        <div className="h-3 w-20 rounded bg-slate-200 animate-pulse" />
+        <div className="h-2.5 w-14 rounded bg-slate-100 animate-pulse" />
+        <div className="flex gap-1">
+          <div className="h-4 w-12 rounded-full bg-slate-200 animate-pulse" />
+        </div>
+        <div className="mt-2 h-8 w-full rounded-xl bg-slate-200 animate-pulse" />
+      </div>
+    </div>
+  );
+}
+
+export function WildAreaGrid({ pokemon, loading, onCatch }: WildAreaGridProps) {
   return (
     <div>
       <div className="mb-6 overflow-hidden rounded-2xl bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 p-6 shadow-lg">
@@ -24,17 +44,40 @@ export function WildAreaGrid({ onDetails }: WildAreaGridProps) {
             </p>
           </div>
           <div className="ml-auto hidden items-center gap-1 rounded-full bg-red-500/20 px-3 py-1.5 sm:flex">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-red-400" />
+            <span className={`h-2 w-2 rounded-full bg-red-400 ${loading ? "animate-pulse" : "animate-pulse"}`} />
             <span className="text-[10px] font-semibold text-red-400">LIVE</span>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {WILD_POKEMON.map((p, i) => (
-          <PokemonCard key={p.id} pokemon={p} index={i} onDetails={onDetails} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <WildCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : pokemon.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="mb-4 opacity-25">
+            <svg viewBox="0 0 100 100" className="mx-auto h-16 w-16">
+              <path d="M50 5 A45 45 0 0 1 95 50 L50 50 Z" fill="#ef4444" />
+              <path d="M50 95 A45 45 0 0 1 5 50 L50 50 Z" fill="#e2e8f0" />
+              <rect x="5" y="47" width="90" height="6" fill="#94a3b8" />
+              <circle cx="50" cy="50" r="14" fill="#94a3b8" />
+              <circle cx="50" cy="50" r="10" fill="#f1f5f9" />
+              <circle cx="50" cy="50" r="6" fill="#cbd5e1" />
+            </svg>
+          </div>
+          <p className="font-pixel text-[10px] text-slate-500">No wild Pokémon found</p>
+          <p className="mt-1 text-sm text-slate-400">The wild area is quiet right now.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {pokemon.map((p, i) => (
+            <PokemonCard key={p.uuid} pokemon={p} index={i} onAction={onCatch} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

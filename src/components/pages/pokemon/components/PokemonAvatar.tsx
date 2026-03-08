@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles } from "lucide-react";
 import { getMeta } from "../data";
 import type { PokemonData } from "../types";
 
@@ -26,7 +25,7 @@ export function PokemonAvatar({ pokemon, size = 96 }: PokemonAvatarProps) {
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={pokemon.sprite}
+        src={pokemon.spriteUrl}
         alt={pokemon.name}
         className={`relative z-10 object-contain drop-shadow-xl transition-all duration-500 ${
           loaded ? "scale-100 opacity-100" : "scale-90 opacity-0"
@@ -35,12 +34,6 @@ export function PokemonAvatar({ pokemon, size = 96 }: PokemonAvatarProps) {
         loading="lazy"
         onLoad={() => setLoaded(true)}
       />
-
-      {pokemon.shiny && (
-        <div className="absolute -right-1 -top-1 z-20 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 shadow-lg">
-          <Sparkles className="h-2.5 w-2.5 text-white" />
-        </div>
-      )}
     </div>
   );
 }
