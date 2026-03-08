@@ -9,20 +9,21 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
-import { authService, type LoginDto, type RegisterDto, type UserDto } from "@/lib/api/auth.service";
+import { authService, type LoginDto, type RegisterDto } from "@/lib/api/auth.service";
+import { userService, type MeDto } from "@/lib/api/user.service";
 import { HttpError } from "@/lib/api/http-client";
 
 interface AuthState {
-  user: UserDto | null;
+  user: MeDto | null;
   isLoading: boolean;
   isAuthenticated: boolean;
 }
 
 type AuthAction =
   | { type: "BOOTSTRAP_START" }
-  | { type: "BOOTSTRAP_SUCCESS"; payload: UserDto }
+  | { type: "BOOTSTRAP_SUCCESS"; payload: MeDto }
   | { type: "BOOTSTRAP_FAILURE" }
-  | { type: "LOGIN_SUCCESS"; payload: UserDto }
+  | { type: "LOGIN_SUCCESS"; payload: MeDto }
   | { type: "LOGOUT" };
 
 function authReducer(state: AuthState, action: AuthAction): AuthState {
@@ -52,6 +53,7 @@ interface AuthContextValue extends AuthState {
   login: (credentials: LoginDto) => Promise<void>;
   register: (data: RegisterDto) => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -77,8 +79,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     dispatch({ type: "BOOTSTRAP_START" });
 
-    authService
-      .me()
+    userService
+      .getMe()
       .then((user) => {
         setAuthIndicatorCookie();
         dispatch({ type: "BOOTSTRAP_SUCCESS", payload: user });
@@ -101,8 +103,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = useCallback(
     async (credentials: LoginDto) => {
-      const { user } = await authService.login(credentials);
+      await authService.login(credentials);
       setAuthIndicatorCookie();
+      const user = await userService.getMe();
       dispatch({ type: "LOGIN_SUCCESS", payload: user });
       router.push("/dashboard");
     },
@@ -111,8 +114,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const register = useCallback(
     async (data: RegisterDto) => {
-      const { user } = await authService.register(data);
+      await authService.register(data);
       setAuthIndicatorCookie();
+      const user = await userService.getMe();
       dispatch({ type: "LOGIN_SUCCESS", payload: user });
       router.push("/dashboard");
     },
@@ -131,8 +135,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [router]);
 
+  const refreshUser = useCallback(async () => {
+    const user = await userService.getMe();
+    dispatch({ type: "BOOTSTRAP_SUCCESS", payload: user });
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ ...state, login, register, logout }}>
+    <AuthContext.Provider value={{ ...state, login, register, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

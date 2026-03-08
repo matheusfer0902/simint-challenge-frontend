@@ -89,6 +89,7 @@ export function AppInput({
           aria-describedby={hasError && errorId ? errorId : undefined}
           value={onChange !== undefined ? (value ?? "") : value}
           onChange={onChange ? (e) => onChange(e.target.value) : undefined}
+          readOnly={value !== undefined && onChange === undefined}
           className={inputCls}
           {...rest}
         />
