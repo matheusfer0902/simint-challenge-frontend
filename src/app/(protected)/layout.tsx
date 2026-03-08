@@ -1,22 +1,34 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/auth.context";
+import { canAccess } from "@/lib/roles";
+
+const DASHBOARD_PATH = "/dashboard";
 
 export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.replace("/auth/login");
     }
   }, [isLoading, isAuthenticated, router]);
+
+  useEffect(() => {
+    if (isLoading || !isAuthenticated || !user) return;
+    const allowed = canAccess(user.role, pathname);
+    if (!allowed) {
+      router.replace(DASHBOARD_PATH);
+    }
+  }, [isLoading, isAuthenticated, user, pathname, router]);
 
   if (isLoading || !isAuthenticated) {
     return (

@@ -1,9 +1,11 @@
 "use client";
 
+import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { Home, BookOpen, Layers, Dumbbell, List, Heart, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { useAuth } from "@/contexts/auth.context"; 
+import { useAuth } from "@/contexts/auth.context";
+import { canAccess } from "@/lib/roles";
 
 export interface NavItem {
   id: string;
@@ -22,15 +24,27 @@ export const NAV_ITEMS: NavItem[] = [
   { id: "user", label: "Users", icon: Users, href: "/users" },
 ];
 
+function isActiveItem(href: string, pathname: string): boolean {
+  const isDashboard = href === "/dashboard";
+  return isDashboard
+    ? pathname === "/dashboard"
+    : pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export function useSidebarHandler() {
   const pathname = usePathname();
   const { user, logout, isLoading } = useAuth();
 
-  const activeId =
-    NAV_ITEMS.find((item) => {
-      if (item.href === "/dashboard") return pathname === "/dashboard";
-      return pathname === item.href || pathname.startsWith(item.href + "/");
-    })?.id ?? "home";
+  const navItems = useMemo(
+    () =>
+      user
+        ? NAV_ITEMS.filter((item) => canAccess(user.role, item.href))
+        : [],
+    [user]
+  );
 
-  return { navItems: NAV_ITEMS, activeId, user, logout, isLoading };
+  const activeId =
+    navItems.find((item) => isActiveItem(item.href, pathname))?.id ?? "home";
+
+  return { navItems, activeId, user, logout, isLoading };
 }
