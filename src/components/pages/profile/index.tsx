@@ -27,41 +27,41 @@ export function ProfilePage() {
 
   return (
     <AppLayout>
-      <div className="mx-auto max-w-xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-xl px-4 py-6 sm:px-6 animate-fadeSlideUp">
         <Link
           href="/dashboard"
-          className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-poke-red transition-colors"
+          className="mb-6 inline-flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-poke-red"
         >
           <ArrowLeft className="h-4 w-4" />
           Voltar ao dashboard
         </Link>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
           <div className="mb-6 flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-poke-red/10">
               <Pencil className="h-6 w-6 text-poke-red" />
             </div>
             <div>
-              <h1 className="text-xl font-semibold text-slate-900">Meus dados</h1>
-              <p className="text-sm text-slate-500">Atualize seu perfil. Deixe a senha em branco para não alterar.</p>
+              <h1 className="font-pixel text-base text-slate-800 sm:text-lg">Meus dados</h1>
+              <p className="mt-1 text-sm text-slate-500">Atualize seu perfil. Deixe a senha em branco para não alterar.</p>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} noValidate className="space-y-5">
             {globalError && (
-              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 font-pixel text-[10px] text-red-800">
                 {globalError}
               </div>
             )}
             {success && (
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 font-pixel text-[10px] text-emerald-800">
                 Dados atualizados com sucesso.
               </div>
             )}
 
             {canEditRole ? (
               <div>
-                <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-500">
+                <label className="mb-2 block font-pixel text-[9px] uppercase tracking-widest text-slate-500">
                   Tipo de conta
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -79,7 +79,7 @@ export function ProfilePage() {
                         onClick={() => handleChange("role", value)}
                         disabled={isPending}
                         className={`
-                          flex items-center justify-center gap-2 rounded-xl border-2 py-3 text-sm font-medium
+                          flex items-center justify-center gap-2 rounded-xl border-2 py-3 font-pixel text-[10px] tracking-wider
                           transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-poke-red/50
                           ${
                             active
@@ -94,14 +94,14 @@ export function ProfilePage() {
                     );
                   })}
                 </div>
-                {errors.role && <p className="mt-1.5 text-xs text-red-600">{errors.role}</p>}
+                {errors.role && <p className="mt-1.5 font-pixel text-[9px] text-red-600">{errors.role}</p>}
               </div>
             ) : (
               <div>
-                <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-500">
+                <label className="mb-2 block font-pixel text-[9px] uppercase tracking-widest text-slate-500">
                   Tipo de conta
                 </label>
-                <p className="rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-700">
+                <p className="rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 font-pixel text-[11px] text-slate-700">
                   {formatRole(values.role)}
                 </p>
               </div>
@@ -133,7 +133,7 @@ export function ProfilePage() {
             />
 
             <div className="space-y-1">
-              <p className="text-xs text-slate-500">Deixe em branco para não alterar a senha.</p>
+              <p className="font-pixel text-[9px] uppercase tracking-widest text-slate-500">Deixe em branco para não alterar a senha.</p>
               <AppInput
                 id="password"
                 type={showPassword ? "text" : "password"}
@@ -148,7 +148,7 @@ export function ProfilePage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword((s) => !s)}
-                    className="text-slate-400 hover:text-slate-600"
+                    className="text-slate-400 transition-colors hover:text-poke-red"
                     aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -173,11 +173,20 @@ export function ProfilePage() {
               disabled={isPending}
               className="w-full"
             >
-              {isPending ? "Salvando…" : "Salvar alterações"}
+              <span className="font-pixel text-[10px] tracking-wider">
+                {isPending ? "SALVANDO…" : "SALVAR ALTERAÇÕES"}
+              </span>
             </AppButton>
           </form>
         </div>
       </div>
+      <style>{`
+        @keyframes fadeSlideUp {
+          from { opacity: 0; transform: translateY(14px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeSlideUp { animation: fadeSlideUp 0.35s ease-out; }
+      `}</style>
     </AppLayout>
   );
 }

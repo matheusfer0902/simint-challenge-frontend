@@ -32,6 +32,7 @@ import {
 import { PokemonSlotCard } from "./PokemonSlotCard";
 import { PickPokemonModal } from "./PickPokemonModal";
 import { ShareTeamBox } from "./ShareTeamBox";
+import { ShareLinkBox } from "./ShareLinkBox";
 import { EditTeamModal } from "./EditTeamModal";
 import { RegisterBattleButtons } from "./RegisterBattleButtons";
 
@@ -40,6 +41,8 @@ interface TeamDetailViewProps {
   loading: boolean;
   error: string | null;
   onBack: () => void;
+  /** Rótulo do botão voltar (ex.: "Voltar" na página de time compartilhado) */
+  backLabel?: string;
   onUpdateTeam: (
     teamId: string,
     data: { name?: string; description?: string; isPublic?: boolean }
@@ -57,6 +60,7 @@ export function TeamDetailView({
   loading,
   error,
   onBack,
+  backLabel = "Back to My Teams",
   onUpdateTeam,
   onDeleteTeam,
   onShareTeam,
@@ -93,7 +97,7 @@ export function TeamDetailView({
           className="mb-4 flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-poke-red"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to My Teams
+          {backLabel}
         </button>
         <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-6 text-center text-red-700">
           {error || "Time não encontrado."}
@@ -123,7 +127,7 @@ export function TeamDetailView({
           className="mb-4 flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-poke-red"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to My Teams
+          {backLabel}
         </button>
 
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 shadow-2xl">
@@ -352,7 +356,9 @@ export function TeamDetailView({
               Compartilhar time
             </h2>
           </div>
-          <ShareTeamBox team={team} onShare={onShareTeam} />
+          <div className="mb-6 space-y-6">
+            <ShareLinkBox teamId={team.id} />
+          </div>
         </>
       )}
 
