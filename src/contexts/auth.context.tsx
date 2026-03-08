@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useReducer,
+  useRef,
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -75,9 +76,13 @@ function clearAuthIndicatorCookie() {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const router = useRouter();
+  // Prevents the global unauthorized handler from firing during bootstrap or
+  // active auth flows, where a 401 is either expected or handled locally.
+  const suppressUnauthorized = useRef(false);
 
   useEffect(() => {
     dispatch({ type: "BOOTSTRAP_START" });
+    suppressUnauthorized.current = true;
 
     userService
       .getMe()
@@ -88,11 +93,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       .catch(() => {
         clearAuthIndicatorCookie();
         dispatch({ type: "BOOTSTRAP_FAILURE" });
+      })
+      .finally(() => {
+        suppressUnauthorized.current = false;
       });
   }, []);
 
   useEffect(() => {
     const handleUnauthorized = () => {
+      if (suppressUnauthorized.current) return;
       dispatch({ type: "LOGOUT" });
       router.replace("/auth/login");
     };
@@ -103,10 +112,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = useCallback(
     async (credentials: LoginDto) => {
-      await authService.login(credentials);
+      // The login response already carries the user — no need for a separate
+      // GET /me, which would fail in production due to cross-origin cookie timing.
+      const { user } = await authService.login(credentials);
       setAuthIndicatorCookie();
-      const user = await userService.getMe();
-      dispatch({ type: "LOGIN_SUCCESS", payload: user });
+      const meData: MeDto = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        followedBy: [],
+        following: [],
+      };
+      dispatch({ type: "LOGIN_SUCCESS", payload: meData });
       router.push("/dashboard");
     },
     [router]
@@ -114,10 +132,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const register = useCallback(
     async (data: RegisterDto) => {
-      await authService.register(data);
+      const { user } = await authService.register(data);
       setAuthIndicatorCookie();
-      const user = await userService.getMe();
-      dispatch({ type: "LOGIN_SUCCESS", payload: user });
+      const meData: MeDto = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        followedBy: [],
+        following: [],
+      };
+      dispatch({ type: "LOGIN_SUCCESS", payload: meData });
       router.push("/dashboard");
     },
     [router]

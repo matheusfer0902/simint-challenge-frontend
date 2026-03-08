@@ -75,6 +75,7 @@ export function LoginPage() {
         <div className="flex justify-end">
           <Link
             href="/auth/forgot-password"
+            prefetch={false}
             className="text-xs text-poke-dark-gray/60 transition-colors hover:text-poke-red"
           >
             Forgot password?
