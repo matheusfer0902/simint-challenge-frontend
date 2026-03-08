@@ -344,8 +344,7 @@ export function HealPage() {
 
   return (
     <AppLayout>
-      <div className="p-4 sm:p-6 lg:p-8">
-        <div className="mx-auto max-w-2xl">
+      <div className="px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-6">
           <nav className="mb-1.5 flex items-center gap-1.5 text-[10px] text-slate-400">
             <span>Dashboard</span>
@@ -417,25 +416,6 @@ export function HealPage() {
               />
             ))}
           </div>
-        </div>
-
-        <div
-          className={`mt-6 overflow-hidden rounded-2xl border p-4 transition-all duration-500 ${isDone ? "border-emerald-200 bg-emerald-50" : "border-slate-200 bg-white"}`}
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">👩‍⚕️</span>
-            <div>
-              <p className="font-pixel text-[9px] text-slate-700">ENFERMEIRA JOY</p>
-              <p className="mt-0.5 text-sm text-slate-600">
-                {isDone
-                  ? "Seus Pokémon estão completamente recuperados! Cuide bem deles! 💚"
-                  : isRunning
-                    ? "Não se preocupe, vamos curar todos em instantes... ✨"
-                    : "Bem-vindo ao Centro Pokémon! Posso restaurar os seus Pokémon à plena saúde!"}
-              </p>
-            </div>
-          </div>
-        </div>
         </div>
       </div>
 

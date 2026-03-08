@@ -529,8 +529,7 @@ export function TrainingPage() {
 
   return (
     <AppLayout>
-      <div className="p-4 sm:p-6 lg:p-8">
-        <div className="mx-auto max-w-xl">
+      <div className="px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-6">
           <nav className="mb-1.5 flex items-center gap-1.5 text-[10px] text-slate-400">
             <span>Dashboard</span>
@@ -549,7 +548,6 @@ export function TrainingPage() {
         </div>
 
         <GymStage pokemon={pokemon} state={state} onTrain={train} />
-        </div>
       </div>
 
       <style>{CSS_KEYFRAMES}</style>
