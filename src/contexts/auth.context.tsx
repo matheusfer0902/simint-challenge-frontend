@@ -60,6 +60,16 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+const AUTH_INDICATOR_COOKIE = "app_auth";
+
+function setAuthIndicatorCookie() {
+  document.cookie = `${AUTH_INDICATOR_COOKIE}=1; path=/; max-age=86400; SameSite=Lax`;
+}
+
+function clearAuthIndicatorCookie() {
+  document.cookie = `${AUTH_INDICATOR_COOKIE}=; path=/; max-age=0; SameSite=Lax`;
+}
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const router = useRouter();
@@ -69,8 +79,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     authService
       .me()
-      .then((user) => dispatch({ type: "BOOTSTRAP_SUCCESS", payload: user }))
-      .catch(() => dispatch({ type: "BOOTSTRAP_FAILURE" }));
+      .then((user) => {
+        setAuthIndicatorCookie();
+        dispatch({ type: "BOOTSTRAP_SUCCESS", payload: user });
+      })
+      .catch(() => {
+        clearAuthIndicatorCookie();
+        dispatch({ type: "BOOTSTRAP_FAILURE" });
+      });
   }, []);
 
   useEffect(() => {
@@ -86,6 +102,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = useCallback(
     async (credentials: LoginDto) => {
       const { user } = await authService.login(credentials);
+      setAuthIndicatorCookie();
       dispatch({ type: "LOGIN_SUCCESS", payload: user });
       router.push("/dashboard");
     },
@@ -95,6 +112,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const register = useCallback(
     async (data: RegisterDto) => {
       const { user } = await authService.register(data);
+      setAuthIndicatorCookie();
       dispatch({ type: "LOGIN_SUCCESS", payload: user });
       router.push("/dashboard");
     },
@@ -107,6 +125,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (error) {
       if (!(error instanceof HttpError)) throw error;
     } finally {
+      clearAuthIndicatorCookie();
       dispatch({ type: "LOGOUT" });
       router.replace("/auth/login");
     }
