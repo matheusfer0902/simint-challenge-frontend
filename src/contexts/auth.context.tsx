@@ -116,6 +116,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // the response body doesn't contain recognisable user fields (same-origin dev).
   const resolveUser = useCallback(
     async (response: { user?: UserDto } | UserDto): Promise<MeDto> => {
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[auth] resolveUser response:", JSON.stringify(response));
+      } else {
+        console.log("[auth] resolveUser keys:", Object.keys(response as object));
+      }
+
       const candidate =
         (response as { user?: UserDto }).user ??
         (response as unknown as UserDto);
