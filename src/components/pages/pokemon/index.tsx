@@ -1,13 +1,11 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { usePokemonHandler } from "./useHandler";
-import { YOUR_POKEMON, WILD_POKEMON } from "./data";
 import { PokemonTabBar } from "./components/PokemonTabBar";
 import { YourPokemonGrid } from "./components/YourPokemonGrid";
 import { WildAreaGrid } from "./components/WildAreaGrid";
-import { NewPokemonModal } from "./components/NewPokemonModal";
+import { CreatePokemonModal } from "@/components/modal/create-pokemon";
 import { DetailModal } from "./components/DetailModal";
 
 export function PokemonPage() {
@@ -19,27 +17,37 @@ export function PokemonPage() {
     setDetailPokemon,
     handleTabChange,
     handleDetails,
+    handleCatch,
+    handleCreateSuccess,
     search,
     handleSearchChange,
+    filter,
+    setFilterParam,
+    counts,
+    countsLoaded,
+    myPokemon,
+    wildPokemon,
+    myLoading,
+    wildLoading,
   } = usePokemonHandler();
+
+  const stats = [
+    { label: "Total",    value: countsLoaded ? counts.all     : "—", color: "text-slate-700" },
+    { label: "Created",  value: countsLoaded ? counts.created : "—", color: "text-emerald-600" },
+    { label: "Captured", value: countsLoaded ? counts.captured : "—", color: "text-blue-600" },
+  ];
 
   return (
     <AppLayout search={search} onSearchChange={handleSearchChange} searchPlaceholder="Search Pokémon">
       <div className="px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-6">
-
           <h1 className="font-pixel text-2xl text-poke-red sm:text-3xl">POKÉMON MANAGER</h1>
           <p className="mt-1.5 text-sm text-slate-500">
             Manage your collection, explore wild areas, and register new Pokémon.
           </p>
 
           <div className="mt-4 flex flex-wrap gap-3">
-            {[
-              { label: "Total",    value: YOUR_POKEMON.length,                                     color: "text-slate-700" },
-              { label: "Created",  value: YOUR_POKEMON.filter((p) => p.tag === "created").length,  color: "text-emerald-600" },
-              { label: "Captured", value: YOUR_POKEMON.filter((p) => p.tag === "captured").length, color: "text-blue-600" },
-              { label: "Wild",     value: WILD_POKEMON.length,                                     color: "text-orange-600" },
-            ].map(({ label, value, color }) => (
+            {stats.map(({ label, value, color }) => (
               <div key={label} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
                 <span className={`font-pixel text-sm ${color}`}>{value}</span>
                 <span className="text-[10px] text-slate-500">{label}</span>
@@ -54,11 +62,30 @@ export function PokemonPage() {
 
         <div className="mb-6 h-px bg-gradient-to-r from-poke-red/30 via-slate-200 to-transparent" />
 
-        {activeTab === "your-pokemon" && <YourPokemonGrid onDetails={handleDetails} />}
-        {activeTab === "wild-area"    && <WildAreaGrid onDetails={handleDetails} />}
+        {activeTab === "your-pokemon" && (
+          <YourPokemonGrid
+            pokemon={myPokemon}
+            loading={myLoading}
+            onDetails={handleDetails}
+            filter={filter}
+            onFilterChange={setFilterParam}
+            counts={counts}
+          />
+        )}
+        {activeTab === "wild-area" && (
+          <WildAreaGrid
+            pokemon={wildPokemon}
+            loading={wildLoading}
+            onCatch={handleCatch}
+          />
+        )}
       </div>
 
-      <NewPokemonModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <CreatePokemonModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSuccess={handleCreateSuccess}
+      />
       <DetailModal pokemon={detailPokemon} onClose={() => setDetailPokemon(null)} />
 
       <style>{`

@@ -1,8 +1,6 @@
 "use client";
 
 import { Filter } from "lucide-react";
-import { AppInput } from "@/components/shared/AppInput";
-import { Search, X } from "lucide-react";
 import { FILTER_OPTIONS } from "../data";
 import type { FilterOption } from "../types";
 
@@ -10,11 +8,9 @@ interface FilterBarProps {
   active: FilterOption;
   onChange: (f: FilterOption) => void;
   counts: Record<FilterOption, number>;
-  search: string;
-  onSearchChange: (v: string) => void;
 }
 
-export function FilterBar({ active, onChange, counts, search, onSearchChange }: FilterBarProps) {
+export function FilterBar({ active, onChange, counts }: FilterBarProps) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-wrap items-center gap-1.5">

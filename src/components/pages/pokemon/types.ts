@@ -1,23 +1,22 @@
-export type PokemonTag = "created" | "captured" | "wild";
-export type FilterOption = "all" | "created" | "captured";
+export type PokemonStatus = "captured" | "created";
+export type PokemonTag = PokemonStatus | "wild";
+export type FilterOption = "all" | "captured" | "created";
 export type PageTab = "your-pokemon" | "wild-area" | "new-pokemon";
-
-export interface PokemonStat {
-  hp: number;
-  attack: number;
-  defense: number;
-  speed: number;
-}
 
 export interface PokemonData {
   id: number;
-  dexNumber: string;
+  uuid: string;
   name: string;
+  spriteUrl: string;
   types: string[];
   level: number;
-  stats: PokemonStat;
-  tag: PokemonTag;
-  sprite: string;
-  shiny?: boolean;
+  hp: number;
+  currentHp: number;
+  baseAttack: number;
+  baseDefense: number;
+  baseSpeed: number;
   region: string;
+  location: string;
+  creatorId: string | null;
+  tag: PokemonTag;
 }

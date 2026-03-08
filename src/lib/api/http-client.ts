@@ -2,6 +2,7 @@ export interface ApiError {
     status: number;
     message: string;
     errors?: Record<string, string[]>;
+    conflicts?: unknown;
   }
   
   export class HttpError extends Error {
@@ -32,10 +33,14 @@ export interface ApiError {
     }
   
     async request<T>(endpoint: string, init: RequestInit = {}): Promise<T> {
+      const isFormData = typeof init.body !== "undefined" && init.body instanceof FormData;
       const baseInit: RequestInit = {
-        headers: { "Content-Type": "application/json", ...init.headers },
         credentials: "include",
         ...init,
+        headers: {
+          ...(isFormData ? {} : { "Content-Type": "application/json" }),
+          ...init.headers,
+        },
       };
   
       const finalInit = await this.applyRequestInterceptors(baseInit);
@@ -62,6 +67,14 @@ export interface ApiError {
         ...init,
         method: "POST",
         body: body !== undefined ? JSON.stringify(body) : undefined,
+      });
+    }
+
+    postForm<T>(endpoint: string, formData: FormData, init?: RequestInit): Promise<T> {
+      return this.request<T>(endpoint, {
+        ...init,
+        method: "POST",
+        body: formData,
       });
     }
   
@@ -113,6 +126,7 @@ export interface ApiError {
           status: response.status,
           message: data.message ?? apiError.message,
           errors: data.errors,
+          conflicts: data.conflicts,
         };
       } catch {}
   
