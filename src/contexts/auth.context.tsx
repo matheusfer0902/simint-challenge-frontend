@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
-import { authService, type LoginDto, type RegisterDto } from "@/lib/api/auth.service";
+import { authService, type LoginDto, type RegisterDto, type UserDto } from "@/lib/api/auth.service";
 import { userService, type MeDto } from "@/lib/api/user.service";
 import { HttpError } from "@/lib/api/http-client";
 
@@ -102,6 +102,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const handleUnauthorized = () => {
       if (suppressUnauthorized.current) return;
+      clearAuthIndicatorCookie();
       dispatch({ type: "LOGOUT" });
       router.replace("/auth/login");
     };
@@ -110,42 +111,63 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
   }, [router]);
 
+  // Extracts user data from the auth response regardless of whether the backend
+  // returns { user: UserDto } or UserDto directly. Falls back to GET /me when
+  // the response body doesn't contain recognisable user fields (same-origin dev).
+  const resolveUser = useCallback(
+    async (response: { user?: UserDto } | UserDto): Promise<MeDto> => {
+      const candidate =
+        (response as { user?: UserDto }).user ??
+        (response as unknown as UserDto);
+
+      if (candidate?.id && candidate?.username && candidate?.email && candidate?.role) {
+        return {
+          id: candidate.id,
+          username: candidate.username,
+          email: candidate.email,
+          role: candidate.role,
+          followedBy: [],
+          following: [],
+        };
+      }
+
+      // Fallback for same-origin development environments where the login
+      // response may not carry user fields but the session cookie works.
+      return userService.getMe();
+    },
+    []
+  );
+
   const login = useCallback(
     async (credentials: LoginDto) => {
-      // The login response already carries the user — no need for a separate
-      // GET /me, which would fail in production due to cross-origin cookie timing.
-      const { user } = await authService.login(credentials);
-      setAuthIndicatorCookie();
-      const meData: MeDto = {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        followedBy: [],
-        following: [],
-      };
-      dispatch({ type: "LOGIN_SUCCESS", payload: meData });
-      router.push("/dashboard");
+      suppressUnauthorized.current = true;
+      try {
+        const response = await authService.login(credentials);
+        const meData = await resolveUser(response as { user?: UserDto } | UserDto);
+        setAuthIndicatorCookie();
+        dispatch({ type: "LOGIN_SUCCESS", payload: meData });
+        router.push("/dashboard");
+      } finally {
+        suppressUnauthorized.current = false;
+      }
     },
-    [router]
+    [router, resolveUser]
   );
 
   const register = useCallback(
     async (data: RegisterDto) => {
-      const { user } = await authService.register(data);
-      setAuthIndicatorCookie();
-      const meData: MeDto = {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        followedBy: [],
-        following: [],
-      };
-      dispatch({ type: "LOGIN_SUCCESS", payload: meData });
-      router.push("/dashboard");
+      suppressUnauthorized.current = true;
+      try {
+        const response = await authService.register(data);
+        const meData = await resolveUser(response as { user?: UserDto } | UserDto);
+        setAuthIndicatorCookie();
+        dispatch({ type: "LOGIN_SUCCESS", payload: meData });
+        router.push("/dashboard");
+      } finally {
+        suppressUnauthorized.current = false;
+      }
     },
-    [router]
+    [router, resolveUser]
   );
 
   const logout = useCallback(async () => {
