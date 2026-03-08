@@ -8,7 +8,7 @@ interface EditTeamModalProps {
   team: Team;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (data: { name: string; description: string }) => void;
+  onSave: (data: { name: string; description: string }) => void | Promise<void>;
 }
 
 export function EditTeamModal({
@@ -18,22 +18,28 @@ export function EditTeamModal({
   onSave,
 }: EditTeamModalProps) {
   const [name, setName] = useState(team.name);
-  const [description, setDescription] = useState(team.description);
+  const [description, setDescription] = useState(team.description ?? "");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       setName(team.name);
-      setDescription(team.description);
+      setDescription(team.description ?? "");
     }
   }, [isOpen, team.name, team.description]);
 
-  if (!isOpen) return null;
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({ name, description });
-    onClose();
+    setSaving(true);
+    try {
+      await onSave({ name, description });
+      onClose();
+    } finally {
+      setSaving(false);
+    }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -84,9 +90,10 @@ export function EditTeamModal({
           </div>
           <button
             type="submit"
-            className="w-full rounded-xl bg-gradient-to-r from-poke-red to-rose-600 py-3 font-pixel text-[10px] tracking-wider text-white transition-all hover:shadow-lg hover:shadow-poke-red/30 focus:outline-none active:scale-[0.98]"
+            disabled={saving}
+            className="w-full rounded-xl bg-gradient-to-r from-poke-red to-rose-600 py-3 font-pixel text-[10px] tracking-wider text-white transition-all hover:shadow-lg hover:shadow-poke-red/30 focus:outline-none active:scale-[0.98] disabled:opacity-70"
           >
-            SAVE CHANGES
+            {saving ? "SALVANDO..." : "SAVE CHANGES"}
           </button>
         </form>
       </div>

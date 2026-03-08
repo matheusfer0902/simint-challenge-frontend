@@ -1,37 +1,73 @@
 "use client";
 
+import { useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { useTeamsHandler } from "./useHandler";
 import { TeamListView } from "./components/TeamListView";
-import { TeamDetailView } from "./components/TeamDetailView";
+
+const SEARCH_DEBOUNCE_MS = 400;
 
 export function TeamsPage() {
+  const router = useRouter();
   const {
-    view,
     teams,
-    selectedTeam,
-    handleViewTeam,
-    handleBackToList,
-    updateTeam,
-    removePokemonFromTeam,
-    clearAllPokemonFromTeam,
+    total,
+    page,
+    limit,
+    search,
+    filter,
+    listLoading,
+    listError,
+    fetchTeams,
+    setSearch,
+    setFilter,
+    setPage,
+    createTeam,
   } = useTeamsHandler();
 
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const handleHeaderSearchChange = useCallback(
+    (value: string) => {
+      setSearch(value);
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+      searchDebounceRef.current = setTimeout(() => {
+        searchDebounceRef.current = null;
+        fetchTeams({ page: 1, search: value, filter });
+      }, SEARCH_DEBOUNCE_MS);
+    },
+    [setSearch, fetchTeams, filter]
+  );
+
+  const handleViewTeam = useCallback(
+    (id: string) => {
+      router.push(`/teams/${id}`);
+    },
+    [router]
+  );
+
   return (
-    <AppLayout>
+    <AppLayout
+      search={search}
+      onSearchChange={handleHeaderSearchChange}
+      searchPlaceholder="Buscar times…"
+    >
       <div className="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
-        {view === "list" && (
-          <TeamListView teams={teams} onViewTeam={handleViewTeam} />
-        )}
-        {view === "detail" && selectedTeam && (
-          <TeamDetailView
-            team={selectedTeam}
-            onBack={handleBackToList}
-            onUpdateTeam={updateTeam}
-            onRemovePokemon={removePokemonFromTeam}
-            onClearAll={clearAllPokemonFromTeam}
-          />
-        )}
+        <TeamListView
+          teams={teams}
+          total={total}
+          page={page}
+          limit={limit}
+          search={search}
+          filter={filter}
+          loading={listLoading}
+          error={listError}
+          onViewTeam={handleViewTeam}
+          onFilterChange={setFilter}
+          onPageChange={setPage}
+          onFetchTeams={fetchTeams}
+          onCreateTeam={createTeam}
+        />
       </div>
       <style>{`
         @keyframes fadeSlideUp {

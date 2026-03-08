@@ -1,18 +1,76 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Trophy, TrendingUp, Star } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Plus, Trophy, TrendingUp, Star, Loader2 } from "lucide-react";
 import type { Team } from "../types";
+import type { TeamFilter } from "@/lib/api/team.service";
 import { TeamCard } from "./TeamCard";
 import { CreateTeamModal } from "./CreateTeamModal";
 
 interface TeamListViewProps {
   teams: Team[];
+  total: number;
+  page: number;
+  limit: number;
+  search: string;
+  filter: TeamFilter | "";
+  loading: boolean;
+  error: string | null;
   onViewTeam: (id: string) => void;
+  onFilterChange: (value: TeamFilter | "") => void;
+  onPageChange: (page: number) => void;
+  onFetchTeams: (opts?: { page?: number; search?: string; filter?: TeamFilter | "" }) => void;
+  onCreateTeam: (data: {
+    name: string;
+    description: string;
+    isPublic?: boolean;
+    members?: { pokemonId: number }[];
+  }) => Promise<Team>;
 }
 
-export function TeamListView({ teams, onViewTeam }: TeamListViewProps) {
+export function TeamListView({
+  teams,
+  total,
+  page,
+  limit,
+  search,
+  filter,
+  loading,
+  error,
+  onViewTeam,
+  onFilterChange,
+  onPageChange,
+  onFetchTeams,
+  onCreateTeam,
+}: TeamListViewProps) {
   const [createOpen, setCreateOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+  const totalWins = teams.reduce((acc, t) => acc + t.wins, 0);
+  const sRankCount = teams.filter((t) => t.grade === "S").length;
+
+  const handleFilterClick = useCallback(
+    (value: TeamFilter | "") => {
+      onFilterChange(value);
+      onFetchTeams({ page: 1, search, filter: value });
+      onPageChange(1);
+    },
+    [search, onFilterChange, onFetchTeams, onPageChange]
+  );
+
+  const handleCreateSuccess = useCallback(
+    async (data: { name: string; description: string; isPublic?: boolean }) => {
+      setSubmitting(true);
+      try {
+        await onCreateTeam(data);
+        setCreateOpen(false);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [onCreateTeam]
+  );
 
   return (
     <div>
@@ -33,15 +91,15 @@ export function TeamListView({ teams, onViewTeam }: TeamListViewProps) {
             {[
               {
                 icon: <Trophy className="h-3 w-3 text-yellow-500" />,
-                label: `${teams.length} Teams`,
+                label: `${total} Teams`,
               },
               {
                 icon: <TrendingUp className="h-3 w-3 text-emerald-500" />,
-                label: "432 Total Wins",
+                label: `${totalWins} Total Wins`,
               },
               {
                 icon: <Star className="h-3 w-3 text-amber-400" />,
-                label: "2 S-Rank Teams",
+                label: `${sRankCount} S-Rank Teams`,
               },
             ].map(({ icon, label }) => (
               <div
@@ -66,21 +124,80 @@ export function TeamListView({ teams, onViewTeam }: TeamListViewProps) {
 
       <div className="mb-6 h-px bg-gradient-to-r from-poke-red/30 via-slate-200 to-transparent" />
 
-      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-        {teams.map((team, i) => (
-          <div
-            key={team.id}
-            className="animate-fadeSlideUp"
-            style={{ animationDelay: `${i * 80}ms`, animationFillMode: "both" }}
-          >
-            <TeamCard team={team} onView={onViewTeam} />
-          </div>
-        ))}
+      <div className="mb-6 flex flex-wrap items-center justify-end gap-2">
+        <div className="flex gap-2">
+          {(["", "public", "private"] as const).map((f) => (
+            <button
+              key={f || "all"}
+              type="button"
+              onClick={() => handleFilterClick(f)}
+              className={`rounded-xl border px-3 py-2 text-xs font-semibold transition-all ${
+                filter === f
+                  ? "border-poke-red bg-poke-red/10 text-poke-red"
+                  : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+              }`}
+            >
+              {f === "" ? "Todos" : f === "public" ? "Públicos" : "Privados"}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {error && (
+        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      {loading ? (
+        <div className="flex min-h-[200px] items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-poke-red" />
+        </div>
+      ) : (
+        <>
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {teams.map((team, i) => (
+              <div
+                key={team.id}
+                className="animate-fadeSlideUp"
+                style={{ animationDelay: `${i * 80}ms`, animationFillMode: "both" }}
+              >
+                <TeamCard team={team} onView={onViewTeam} />
+              </div>
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="mt-8 flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => onFetchTeams({ page: page - 1 })}
+                disabled={page <= 1}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 disabled:opacity-50 hover:bg-slate-50"
+              >
+                Anterior
+              </button>
+              <span className="px-4 text-sm text-slate-600">
+                Página {page} de {totalPages}
+              </span>
+              <button
+                type="button"
+                onClick={() => onFetchTeams({ page: page + 1 })}
+                disabled={page >= totalPages}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 disabled:opacity-50 hover:bg-slate-50"
+              >
+                Próxima
+              </button>
+            </div>
+          )}
+        </>
+      )}
 
       <CreateTeamModal
         isOpen={createOpen}
         onClose={() => setCreateOpen(false)}
+        onSubmit={handleCreateSuccess}
+        loading={submitting}
       />
     </div>
   );

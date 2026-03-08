@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Users, Globe, Lock } from "lucide-react";
 import { RANK_STYLE } from "../data";
 import type { Team } from "../types";
+import { membersToSlots } from "../types";
 import { PokemonMiniSlot } from "./PokemonMiniSlot";
 import { EmptySlot } from "./EmptySlot";
 import { RankBadge } from "./RankBadge";
@@ -15,9 +16,11 @@ interface TeamCardProps {
 
 export function TeamCard({ team, onView }: TeamCardProps) {
   const [hovered, setHovered] = useState(false);
-  const winRate = Math.round(
-    (team.wins / (team.wins + team.losses)) * 100
-  );
+  const winRate =
+    team.battles > 0
+      ? Math.round((team.wins / team.battles) * 100)
+      : 0;
+  const slots = membersToSlots(team.members);
 
   return (
     <article
@@ -25,7 +28,7 @@ export function TeamCard({ team, onView }: TeamCardProps) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div className={`h-1.5 w-full bg-gradient-to-r ${RANK_STYLE[team.rank]}`} />
+      <div className={`h-1.5 w-full bg-gradient-to-r ${RANK_STYLE[team.grade]}`} />
       <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 opacity-[0.04]">
         <svg viewBox="0 0 100 100" className="h-full w-full">
           <path d="M50 5 A45 45 0 0 1 95 50 L50 50 Z" fill="#000" />
@@ -54,14 +57,14 @@ export function TeamCard({ team, onView }: TeamCardProps) {
               )}
             </span>
           </div>
-          <RankBadge rank={team.rank} />
+          <RankBadge rank={team.grade} />
         </div>
         <p className="mb-4 line-clamp-2 text-xs leading-relaxed text-slate-500">
           {team.description}
         </p>
         <div className="mb-4 flex flex-wrap gap-1.5">
           {[0, 1, 2, 3, 4, 5].map((i) => {
-            const p = team.pokemon[i];
+            const p = slots[i];
             return p ? (
               <PokemonMiniSlot key={i} pokemon={p} />
             ) : (
@@ -96,7 +99,7 @@ export function TeamCard({ team, onView }: TeamCardProps) {
               Slots
             </p>
             <p className="font-pixel text-sm text-slate-700">
-              {team.pokemon.filter(Boolean).length}/6
+              {team.members.length}/6
             </p>
           </div>
         </div>

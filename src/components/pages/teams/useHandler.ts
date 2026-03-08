@@ -1,86 +1,121 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { MOCK_TEAMS } from "./data";
+import { useState, useCallback, useEffect } from "react";
+import { teamService } from "@/lib/api/team.service";
+import type { TeamDto, TeamMemberSummaryDto } from "@/lib/api/team.service";
 import type { Team } from "./types";
+import type { TeamFilter } from "@/lib/api/team.service";
 
-export type TeamsView = "list" | "detail";
+function dtoToTeam(dto: TeamDto): Team {
+  const members: Team["members"] = (dto.members ?? []).map(
+    (m: TeamMemberSummaryDto) => ({
+      id: m.id,
+      teamId: m.teamId,
+      pokemonId: m.pokemonId,
+      nickname: m.nickname,
+      level: m.level,
+    })
+  );
+  return {
+    id: dto.id,
+    name: dto.name,
+    description: dto.description ?? null,
+    isPublic: dto.isPublic,
+    grade: dto.grade,
+    wins: dto.wins,
+    losses: dto.losses,
+    battles: dto.battles,
+    members,
+    createdAt: dto.createdAt,
+    updatedAt: dto.updatedAt,
+    accessRole: dto.accessRole,
+  };
+}
+
+const DEFAULT_PAGE = 1;
+const DEFAULT_LIMIT = 10;
 
 export function useTeamsHandler() {
-  const [view, setView] = useState<TeamsView>("list");
-  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
-  const [teams, setTeams] = useState<Team[]>(() =>
-    JSON.parse(JSON.stringify(MOCK_TEAMS))
-  );
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(DEFAULT_PAGE);
+  const [limit] = useState(DEFAULT_LIMIT);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<TeamFilter | "">("");
+  const [listLoading, setListLoading] = useState(false);
+  const [listError, setListError] = useState<string | null>(null);
 
-  const selectedTeam =
-    selectedTeamId != null
-      ? teams.find((t) => t.id === selectedTeamId) ?? teams[0]
-      : null;
-
-  const handleViewTeam = useCallback((id: string) => {
-    setSelectedTeamId(id);
-    setView("detail");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
-
-  const handleBackToList = useCallback(() => {
-    setView("list");
-    setSelectedTeamId(null);
-  }, []);
-
-  const updateTeam = useCallback(
-    (
-      teamId: string,
-      patch: { name?: string; description?: string; isPublic?: boolean }
-    ) => {
-      setTeams((prev) =>
-        prev.map((t) =>
-          t.id !== teamId
-            ? t
-            : {
-                ...t,
-                ...(patch.name != null && { name: patch.name }),
-                ...(patch.description != null && {
-                  description: patch.description,
-                }),
-                ...(patch.isPublic != null && { isPublic: patch.isPublic }),
-              }
-        )
-      );
+  const fetchTeams = useCallback(
+    async (opts?: { page?: number; search?: string; filter?: TeamFilter | "" }) => {
+      setListLoading(true);
+      setListError(null);
+      try {
+        const nextSearch = opts?.search !== undefined ? opts.search : search;
+        const nextFilter = opts?.filter !== undefined ? opts.filter : filter;
+        const res = await teamService.list({
+          page: opts?.page ?? page,
+          limit,
+          search: nextSearch.trim() || undefined,
+          filter: nextFilter === "" ? undefined : nextFilter || undefined,
+        });
+        setTeams(res.data.map(dtoToTeam));
+        setTotal(res.total);
+        if (opts?.page != null) setPage(opts.page);
+        if (opts?.search !== undefined) setSearch(opts.search);
+        if (opts?.filter !== undefined) setFilter(opts.filter);
+      } catch (e) {
+        const message = e instanceof Error ? e.message : "Erro ao carregar times.";
+        setListError(message);
+        setTeams([]);
+        setTotal(0);
+      } finally {
+        setListLoading(false);
+      }
     },
-    []
+    [page, limit, search, filter]
   );
 
-  const removePokemonFromTeam = useCallback((teamId: string, slotIndex: number) => {
-    setTeams((prev) =>
-      prev.map((t) => {
-        if (t.id !== teamId) return t;
-        const next = [...t.pokemon];
-        next[slotIndex] = null;
-        return { ...t, pokemon: next };
-      })
-    );
+  useEffect(() => {
+    fetchTeams();
   }, []);
 
-  const clearAllPokemonFromTeam = useCallback((teamId: string) => {
-    setTeams((prev) =>
-      prev.map((t) =>
-        t.id !== teamId ? t : { ...t, pokemon: Array(6).fill(null) }
-      )
-    );
-  }, []);
+  const refreshList = useCallback(() => {
+    fetchTeams({ page, search, filter });
+  }, [fetchTeams, page, search, filter]);
+
+  const createTeam = useCallback(
+    async (data: {
+      name: string;
+      description: string;
+      isPublic?: boolean;
+      members?: { pokemonId: number }[];
+    }) => {
+      const dto = await teamService.create({
+        name: data.name,
+        description: data.description,
+        isPublic: data.isPublic,
+        members: data.members?.length ? data.members : undefined,
+      });
+      await refreshList();
+      return dtoToTeam(dto);
+    },
+    [refreshList]
+  );
 
   return {
-    view,
     teams,
-    selectedTeam,
-    selectedTeamId,
-    handleViewTeam,
-    handleBackToList,
-    updateTeam,
-    removePokemonFromTeam,
-    clearAllPokemonFromTeam,
+    total,
+    page,
+    limit,
+    search,
+    filter,
+    listLoading,
+    listError,
+    fetchTeams,
+    setSearch,
+    setFilter,
+    setPage,
+    createTeam,
   };
 }
 
