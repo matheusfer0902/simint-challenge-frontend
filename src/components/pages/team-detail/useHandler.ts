@@ -14,6 +14,16 @@ function dtoToTeam(dto: TeamDto): Team {
       pokemonId: m.pokemonId,
       nickname: m.nickname,
       level: m.level,
+      pokemon: m.pokemon
+        ? {
+            id: m.pokemon.id,
+            name: m.pokemon.name,
+            spriteUrl: m.pokemon.spriteUrl,
+            types: m.pokemon.types ?? [],
+            level: m.pokemon.level,
+            region: m.pokemon.region ?? null,
+          }
+        : undefined,
     })
   );
   return {
@@ -127,6 +137,34 @@ export function useTeamDetailHandler() {
     [id, refetch]
   );
 
+  const addMember = useCallback(
+    async (teamId: string, pokemonId: number) => {
+      const dto = await teamService.update(teamId, {
+        addMembers: [{ pokemonId }],
+      });
+      const updated = dtoToTeam(dto);
+      setTeam((prev) => {
+        if (prev?.id !== teamId) return prev;
+        return { ...updated, accessRole: updated.accessRole ?? prev.accessRole };
+      });
+    },
+    []
+  );
+
+  const removeMember = useCallback(
+    async (teamId: string, memberId: string) => {
+      const dto = await teamService.update(teamId, {
+        removeMemberIds: [memberId],
+      });
+      const updated = dtoToTeam(dto);
+      setTeam((prev) => {
+        if (prev?.id !== teamId) return prev;
+        return { ...updated, accessRole: updated.accessRole ?? prev.accessRole };
+      });
+    },
+    []
+  );
+
   return {
     team,
     teamId: id,
@@ -138,5 +176,7 @@ export function useTeamDetailHandler() {
     deleteTeam,
     shareTeam,
     registerBattle,
+    addMember,
+    removeMember,
   };
 }

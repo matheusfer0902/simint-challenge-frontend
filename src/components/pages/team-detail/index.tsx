@@ -15,6 +15,8 @@ export function TeamDetailPage() {
     deleteTeam,
     shareTeam,
     registerBattle,
+    addMember,
+    removeMember,
   } = useTeamDetailHandler();
 
   return (
@@ -30,6 +32,8 @@ export function TeamDetailPage() {
           onShareTeam={shareTeam}
           onRegisterBattle={registerBattle}
           onRefresh={refetch}
+          onAddMember={addMember}
+          onRemoveMember={removeMember}
         />
       </div>
       <style>{`

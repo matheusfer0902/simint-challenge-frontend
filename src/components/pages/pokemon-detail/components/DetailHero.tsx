@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Globe, Pencil, Zap } from "lucide-react";
+import { ArrowLeft, Globe, Pencil, Trash2, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/auth.context";
 import { getDetailTypeStyle } from "../data";
 import type { PokemonDetail } from "../types";
@@ -11,9 +11,11 @@ interface DetailHeroProps {
   pokemon: PokemonDetail;
   onBack: () => void;
   onEditClick?: () => void;
+  onDeleteClick?: () => void;
+  isDeleting?: boolean;
 }
 
-export function DetailHero({ pokemon, onBack, onEditClick }: DetailHeroProps) {
+export function DetailHero({ pokemon, onBack, onEditClick, onDeleteClick, isDeleting }: DetailHeroProps) {
   const { user } = useAuth();
   const primaryType = getDetailTypeStyle(pokemon.types[0]);
   const canEdit =
@@ -62,6 +64,17 @@ export function DetailHero({ pokemon, onBack, onEditClick }: DetailHeroProps) {
             >
               <Pencil className="h-4 w-4" />
               Edit Pokémon
+            </button>
+          )}
+          {canEdit && onDeleteClick && (
+            <button
+              type="button"
+              onClick={onDeleteClick}
+              disabled={isDeleting}
+              className="flex items-center gap-2 rounded-xl bg-red-500/80 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-red-500 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <Trash2 className="h-4 w-4" />
+              {isDeleting ? "Excluindo…" : "Delete Pokémon"}
             </button>
           )}
         </div>

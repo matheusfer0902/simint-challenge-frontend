@@ -24,11 +24,17 @@ export function TeamCard({ team, onView }: TeamCardProps) {
 
   return (
     <article
-      className={`relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition-all duration-300 ${hovered ? "-translate-y-1.5 shadow-xl shadow-slate-200/80" : ""}`}
+      className={`relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition-all duration-300 ease-out ${
+        hovered ? "-translate-y-1 shadow-lg shadow-slate-200/60" : ""
+      }`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div className={`h-1.5 w-full bg-gradient-to-r ${RANK_STYLE[team.grade]}`} />
+      <div
+        className={`h-1 w-full bg-gradient-to-r ${RANK_STYLE[team.grade]} transition-all duration-300 ease-out ${
+          hovered ? "opacity-100" : "opacity-70"
+        }`}
+      />
       <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 opacity-[0.04]">
         <svg viewBox="0 0 100 100" className="h-full w-full">
           <path d="M50 5 A45 45 0 0 1 95 50 L50 50 Z" fill="#000" />

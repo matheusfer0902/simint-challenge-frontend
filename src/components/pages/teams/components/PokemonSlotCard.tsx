@@ -9,9 +9,10 @@ interface PokemonSlotCardProps {
   pokemon: PokemonSummary | null;
   slot: number;
   onRemove?: () => void;
+  onAddClick?: () => void;
 }
 
-export function PokemonSlotCard({ pokemon, slot, onRemove }: PokemonSlotCardProps) {
+export function PokemonSlotCard({ pokemon, slot, onRemove, onAddClick }: PokemonSlotCardProps) {
   const [loaded, setLoaded] = useState(false);
 
   if (!pokemon) {
@@ -26,7 +27,8 @@ export function PokemonSlotCard({ pokemon, slot, onRemove }: PokemonSlotCardProp
         </div>
         <button
           type="button"
-          className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-semibold text-slate-500 transition-all hover:border-poke-red/30 hover:text-poke-red"
+          onClick={onAddClick}
+          className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-semibold text-slate-500 transition-all hover:border-poke-red/30 hover:text-poke-red focus:outline-none focus-visible:ring-2 focus-visible:ring-poke-red focus-visible:ring-offset-2"
         >
           + Add Pokémon
         </button>
@@ -66,10 +68,15 @@ export function PokemonSlotCard({ pokemon, slot, onRemove }: PokemonSlotCardProp
         />
       </div>
       <div className="w-full p-4">
-        <h4 className="font-pixel text-[10px] truncate text-slate-800">
-          {pokemon.name}
-        </h4>
-        <div className="mt-1.5 flex items-center justify-between">
+        <div className="flex items-baseline justify-between gap-1">
+          <h4 className="font-pixel text-[10px] truncate text-slate-800 capitalize">
+            {pokemon.name}
+          </h4>
+          <span className="shrink-0 font-pixel text-[8px] text-slate-400">
+            #{String(pokemon.id).padStart(3, "0")}
+          </span>
+        </div>
+        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
           <span
             className={`rounded-full px-2 py-0.5 text-[8px] font-bold uppercase ${getTypeBadge(pokemon.type)}`}
           >
@@ -80,6 +87,11 @@ export function PokemonSlotCard({ pokemon, slot, onRemove }: PokemonSlotCardProp
           >
             Lv.{pokemon.level}
           </span>
+          {pokemon.region && (
+            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[8px] font-semibold text-slate-600 capitalize">
+              {pokemon.region}
+            </span>
+          )}
         </div>
       </div>
     </div>

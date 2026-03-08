@@ -1,11 +1,25 @@
 "use client";
 
-import { Bell, Menu, Search, X } from "lucide-react";
+import Link from "next/link";
+import { Menu, Search, X, ChevronDown, Pencil, Mail } from "lucide-react";
 import { useAuth } from "@/contexts/auth.context";
 import { AppInput } from "@/components/shared/AppInput";
 import { AppButton } from "@/components/shared/AppButton";
 import { Avatar } from "@/components/shared/Avatar";
 import { avatarBg } from "@/lib/utils/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+
+function formatRole(role: string): string {
+  return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+}
 
 interface AppHeaderProps {
   onMobileMenuOpen: () => void;
@@ -55,20 +69,61 @@ export function AppHeader({
       </div>
 
       <div className="flex items-center gap-2 ml-auto">
-        <div className="flex items-center gap-2 rounded-xl px-3 py-1.5 transition-colors hover:border-slate-300">
-          <Avatar
-            src={avatarBg(user?.username ?? "Trainer")}
-            alt={user?.username ?? "Trainer"}
-            size={28}
-            online
-          />
-          <div className="hidden sm:block">
-            <p className="text-[11px] font-semibold text-slate-800 leading-none">
-              {user?.username ?? "Trainer"}
-            </p>
-            <p className="text-[10px] text-emerald-500 leading-none mt-0.5">● Online</p>
-          </div>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className={cn(
+                "flex items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 transition-colors",
+                "hover:border-slate-300 hover:bg-slate-50/80 focus:outline-none focus:ring-2 focus:ring-poke-red/20 focus:ring-offset-1"
+              )}
+              aria-label="Abrir menu do usuário"
+            >
+              <Avatar
+                src={avatarBg(user?.username ?? "user")}
+                alt={user?.username ?? "User"}
+                size={40}
+              />
+              <div className="hidden sm:block text-left">
+                <p className="text-sm font-semibold text-slate-800 leading-tight">
+                  {user?.username ?? "—"}
+                </p>
+                <p className="text-xs text-slate-500 leading-tight mt-0.5">
+                  {user?.role ? formatRole(user.role) : "—"}
+                </p>
+              </div>
+              <ChevronDown className="h-5 w-5 text-slate-400 shrink-0" aria-hidden />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-64">
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex items-center gap-3 py-1">
+                <Avatar
+                  src={avatarBg(user?.username ?? "user")}
+                  alt={user?.username ?? "User"}
+                  size={44}
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-slate-900 truncate">{user?.username ?? "—"}</p>
+                  <p className="text-xs text-slate-500 truncate flex items-center gap-1 mt-0.5">
+                    <Mail className="h-3 w-3 shrink-0" />
+                    {user?.email ?? "—"}
+                  </p>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    {user?.role ? formatRole(user.role) : "—"}
+                  </p>
+                </div>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/profile" className="flex items-center gap-2 cursor-pointer">
+                <Pencil className="h-4 w-4" />
+                Editar meus dados
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

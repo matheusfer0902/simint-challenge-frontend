@@ -30,6 +30,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { PokemonSlotCard } from "./PokemonSlotCard";
+import { PickPokemonModal } from "./PickPokemonModal";
 import { ShareTeamBox } from "./ShareTeamBox";
 import { EditTeamModal } from "./EditTeamModal";
 import { RegisterBattleButtons } from "./RegisterBattleButtons";
@@ -47,6 +48,8 @@ interface TeamDetailViewProps {
   onShareTeam: (teamId: string, sharedWithUserId: string) => Promise<void>;
   onRegisterBattle: (teamId: string, result: "win" | "loss") => Promise<void>;
   onRefresh: (id: string) => Promise<void>;
+  onAddMember?: (teamId: string, pokemonId: number) => Promise<void>;
+  onRemoveMember?: (teamId: string, memberId: string) => Promise<void>;
 }
 
 export function TeamDetailView({
@@ -58,12 +61,15 @@ export function TeamDetailView({
   onDeleteTeam,
   onShareTeam,
   onRegisterBattle,
+  onAddMember,
+  onRemoveMember,
 }: TeamDetailViewProps) {
   const [editingName, setEditingName] = useState(false);
   const [teamName, setTeamName] = useState(team?.name ?? "");
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [pickerSlot, setPickerSlot] = useState<number | null>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -296,11 +302,36 @@ export function TeamDetailView({
             <PokemonSlotCard
               pokemon={slots[i] ?? null}
               slot={i}
-              onRemove={undefined}
+              onRemove={
+                isOwner && onRemoveMember && team.members[i]
+                  ? () => onRemoveMember(team.id, team.members[i].id)
+                  : undefined
+              }
+              onAddClick={
+                isOwner && onAddMember && !slots[i]
+                  ? () => setPickerSlot(i)
+                  : undefined
+              }
             />
           </div>
         ))}
       </div>
+
+      {isOwner && onAddMember && (
+        <PickPokemonModal
+          isOpen={pickerSlot !== null}
+          onClose={() => setPickerSlot(null)}
+          onSelect={async (pokemon) => {
+            if (pickerSlot === null || !team) return;
+            try {
+              await onAddMember(team.id, pokemon.id);
+              setPickerSlot(null);
+            } catch {
+              // keep modal open on error so user can retry
+            }
+          }}
+        />
+      )}
 
       {isOwner && (
         <EditTeamModal

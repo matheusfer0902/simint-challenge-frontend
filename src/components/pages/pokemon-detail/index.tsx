@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { usePokemonDetailHandler } from "./useHandler";
 import { getDetailTypeStyle } from "./data";
@@ -8,10 +8,25 @@ import { DetailHero } from "./components/DetailHero";
 import { PokedexCard } from "./components/PokedexCard";
 import { DetailTabs } from "./components/DetailTabs";
 import { EditPokemonModal } from "@/components/modal/edit-pokemon";
+import { pokemonService } from "@/lib/api/pokemon.service";
 
 export function PokemonDetailPage() {
   const { pokemon, loading, error, handleBack, refetch } = usePokemonDetailHandler();
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = useCallback(async () => {
+    if (!pokemon) return;
+    if (!confirm("Tem certeza que deseja excluir este Pokémon?")) return;
+    setDeleting(true);
+    try {
+      await pokemonService.delete(pokemon.id);
+      handleBack();
+    } catch {
+      setDeleting(false);
+      alert("Não foi possível excluir o Pokémon. Tente novamente.");
+    }
+  }, [pokemon, handleBack]);
 
   if (loading) {
     return (
@@ -49,6 +64,8 @@ export function PokemonDetailPage() {
           pokemon={pokemon}
           onBack={handleBack}
           onEditClick={() => setEditModalOpen(true)}
+          onDeleteClick={handleDelete}
+          isDeleting={deleting}
         />
 
         <div className="mx-auto -mt-12 max-w-5xl px-4 pb-16 sm:px-6">

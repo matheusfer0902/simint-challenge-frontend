@@ -4,13 +4,24 @@ export type TeamGrade = "S" | "A" | "B" | "C";
 /** Alias para compatibilidade com componentes que usam "rank" */
 export type TeamRank = TeamGrade;
 
-/** Membro do time conforme retornado pela API (detalhe: sem moves) */
+/** Dados do Pokémon aninhado no membro (GET /teams/:id) */
+export interface TeamMemberPokemon {
+  id: number;
+  name: string;
+  spriteUrl: string;
+  types: string[];
+  level: number;
+  region: string | null;
+}
+
+/** Membro do time conforme retornado pela API (detalhe: sem moves, pode incluir pokemon) */
 export interface TeamMember {
   id: string;
   teamId: string;
   pokemonId: number;
   nickname: string | null;
   level: number | null;
+  pokemon?: TeamMemberPokemon;
 }
 
 /** Time conforme retornado pela API (listagem e detalhe) */
@@ -37,6 +48,8 @@ export interface PokemonSummary {
   level: number;
   sprite: string;
   role: string;
+  /** Região (quando vem do GET /teams/:id com pokemon aninhado) */
+  region?: string | null;
 }
 
 const SPRITE_BASE =
@@ -49,13 +62,15 @@ export function getMemberSprite(pokemonId: number): string {
 
 /** Converte um TeamMember em PokemonSummary para exibição nos slots */
 export function memberToSummary(m: TeamMember): PokemonSummary {
+  const pokemon = m.pokemon;
   return {
-    id: m.pokemonId,
-    name: m.nickname?.trim() || `#${m.pokemonId}`,
-    type: "normal",
-    level: m.level ?? 1,
-    sprite: getMemberSprite(m.pokemonId),
+    id: pokemon?.id ?? m.pokemonId,
+    name: m.nickname?.trim() || pokemon?.name || `#${m.pokemonId}`,
+    type: pokemon?.types?.[0] ?? "normal",
+    level: m.level ?? pokemon?.level ?? 1,
+    sprite: pokemon?.spriteUrl ?? getMemberSprite(m.pokemonId),
     role: "",
+    region: pokemon?.region ?? null,
   };
 }
 

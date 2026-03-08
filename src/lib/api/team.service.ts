@@ -1,12 +1,30 @@
 import { httpClient } from "@/lib/api/http-client";
 
-/** Membro do time (detalhe GET /teams/:id — sem moves) */
+/** Pokémon aninhado no membro (GET /teams/:id) */
+export interface TeamMemberPokemonDto {
+  id: number;
+  uuid: string;
+  name: string;
+  spriteUrl: string;
+  types: string[];
+  level: number;
+  hp: number;
+  currentHp: number;
+  baseAttack: number;
+  baseDefense: number;
+  baseSpeed: number;
+  region: string | null;
+  locations: string[];
+}
+
+/** Membro do time (detalhe GET /teams/:id — sem moves, pode incluir pokemon) */
 export interface TeamMemberSummaryDto {
   id: string;
   teamId: string;
   pokemonId: number;
   nickname: string | null;
   level: number | null;
+  pokemon?: TeamMemberPokemonDto;
 }
 
 /** Membro com moves (listagem GET /teams) */
@@ -52,11 +70,22 @@ export interface CreateTeamPayload {
   members?: CreateTeamMemberPayload[];
 }
 
+/** Item para adicionar membro no PATCH /teams/:id */
+export interface AddMemberItem {
+  pokemonId: number;
+  nickname?: string | null;
+  level?: number | null;
+}
+
 export interface UpdateTeamPayload {
   name?: string;
   description?: string;
   gameVersion?: string | null;
   isPublic?: boolean;
+  /** Adicionar membros ao time (máx. 6 no total) */
+  addMembers?: AddMemberItem[];
+  /** UUIDs dos membros a remover (members[].id do GET) */
+  removeMemberIds?: string[];
 }
 
 export interface ShareTeamPayload {
@@ -124,6 +153,7 @@ class TeamService {
       data
     );
   }
+
 }
 
 export const teamService = new TeamService();

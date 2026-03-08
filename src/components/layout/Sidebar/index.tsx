@@ -105,7 +105,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
               />
               <div className="hidden min-w-0 flex-1 lg:block md:hidden">
                 <p className="truncate text-xs font-semibold text-slate-700">{user.username}</p>
-                <p className="text-[10px] text-slate-400">Trainer</p>
+                <p className="text-[10px] text-slate-400 capitalize">{user.role}</p>
               </div>
             </div>
           )}

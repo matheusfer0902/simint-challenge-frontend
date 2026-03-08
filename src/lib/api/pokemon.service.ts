@@ -128,6 +128,10 @@ class PokemonService {
   ): Promise<{ pokemon: PokemonDetailDto }> {
     return httpClient.patch<{ pokemon: PokemonDetailDto }>(`/pokemon/${pokemonId}`, data);
   }
+
+  async delete(pokemonId: number): Promise<void> {
+    return httpClient.delete<void>(`/pokemon/${pokemonId}`);
+  }
 }
 
 export const pokemonService = new PokemonService();

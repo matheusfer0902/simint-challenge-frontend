@@ -14,6 +14,16 @@ function dtoToTeam(dto: TeamDto): Team {
       pokemonId: m.pokemonId,
       nickname: m.nickname,
       level: m.level,
+      pokemon: m.pokemon
+        ? {
+            id: m.pokemon.id,
+            name: m.pokemon.name,
+            spriteUrl: m.pokemon.spriteUrl,
+            types: m.pokemon.types ?? [],
+            level: m.pokemon.level,
+            region: m.pokemon.region ?? null,
+          }
+        : undefined,
     })
   );
   return {

@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Home, BookOpen, Layers, Dumbbell, List, Heart } from "lucide-react";
+import { Home, BookOpen, Layers, Dumbbell, List, Heart, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useAuth } from "@/contexts/auth.context"; 
 
@@ -19,6 +19,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id: "pokedex", label: "Pokedex", icon: List, href: "/pokedex" },
   { id: "train", label: "Train", icon: Dumbbell, href: "/train" },
   { id: "heal", label: "Heal", icon: Heart, href: "/healing" },
+  { id: "user", label: "Users", icon: Users, href: "/users" },
 ];
 
 export function useSidebarHandler() {
