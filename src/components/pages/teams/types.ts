@@ -20,4 +20,6 @@ export interface Team {
   createdAt: string;
   pokemon: (PokemonSummary | null)[];
   shareSlug: string;
+  /** Se true, o time é público (globo); se false, privado (cadeado). */
+  isPublic: boolean;
 }

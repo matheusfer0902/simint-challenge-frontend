@@ -7,7 +7,7 @@ import { Section } from "./Section";
 import { StatBar } from "./StatBar";
 import { StatRadarChart } from "./StatRadarChart";
 
-const STAT_KEYS: (keyof Stat)[] = ["hp", "attack", "defense", "speed"];
+const STAT_KEYS: (keyof Stat)[] = ["hp", "attack", "defense", "speed"] as const;
 
 const STAT_CONFIG: {
   key: keyof Stat;

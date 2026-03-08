@@ -28,17 +28,25 @@ export function PokedexCard({ pokemon }: PokedexCardProps) {
 
       <div className="p-6">
         <div className="rounded-2xl border border-white/10 bg-slate-800/60 p-5">
-          <div className="mb-4 flex items-center gap-2">
-            <span className="rounded-lg bg-white/10 px-3 py-1.5 font-pixel text-[9px] uppercase tracking-wider text-slate-300">
-              Ability: {pokemon.ability}
-            </span>
-          </div>
-          <p className="text-sm leading-relaxed text-slate-300">
-            {pokemon.description}
-          </p>
-          <p className="mt-3 border-t border-white/10 pt-3 text-[11px] italic text-slate-500">
-            &ldquo;{pokemon.flavourText}&rdquo;
-          </p>
+          {pokemon.region && (
+            <div className="mb-3">
+              <span className="rounded-lg bg-white/10 px-3 py-1.5 font-pixel text-[9px] uppercase tracking-wider text-slate-300">
+                Region: {pokemon.region}
+              </span>
+            </div>
+          )}
+          {pokemon.locations.length > 0 ? (
+            <>
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                Locations
+              </p>
+              <p className="text-sm leading-relaxed text-slate-300">
+                {pokemon.locations.map((loc) => loc.replace(/-/g, " ")).join(" · ")}
+              </p>
+            </>
+          ) : (
+            <p className="text-sm text-slate-500">No location data.</p>
+          )}
         </div>
         <div
           className="pointer-events-none absolute inset-0 rounded-2xl opacity-[0.03]"

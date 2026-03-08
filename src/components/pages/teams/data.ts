@@ -15,6 +15,7 @@ export const MOCK_TEAMS: Team[] = [
     region: "Kanto",
     createdAt: "2024-01-15",
     shareSlug: "crimson-storm-x7k2",
+    isPublic: true,
     pokemon: [
       {
         id: 25,
@@ -77,6 +78,7 @@ export const MOCK_TEAMS: Team[] = [
     region: "Johto",
     createdAt: "2024-02-20",
     shareSlug: "steel-dragons-m3p9",
+    isPublic: false,
     pokemon: [
       {
         id: 149,
@@ -132,6 +134,7 @@ export const MOCK_TEAMS: Team[] = [
     region: "Saffron",
     createdAt: "2024-03-01",
     shareSlug: "psy-force-q1w8",
+    isPublic: true,
     pokemon: [
       {
         id: 150,

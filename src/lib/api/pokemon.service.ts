@@ -17,6 +17,25 @@ export interface PokemonDto {
   location: string | null;
 }
 
+/** Resposta da rota GET /pokemon/:id (detalhe do Pokémon) */
+export interface PokemonDetailDto {
+  id: number;
+  uuid: string;
+  name: string;
+  spriteUrl: string;
+  types: string[];
+  level: number;
+  hp: number;
+  currentHp: number;
+  baseAttack: number;
+  baseDefense: number;
+  baseSpeed: number;
+  region: string | null;
+  locations: string[];
+  /** UUID do usuário criador; null se Pokémon oficial/selvagem */
+  creatorId: string | null;
+}
+
 export interface MyPokemonDto extends PokemonDto {
   status: "captured" | "created";
 }
@@ -96,6 +115,18 @@ class PokemonService {
 
   async catch(data: CatchPokemonDto): Promise<CatchPokemonResponseDto> {
     return httpClient.post<CatchPokemonResponseDto>("/pokemon/catch", data);
+  }
+
+  async getById(id: number): Promise<PokemonDetailDto> {
+    return httpClient.get<PokemonDetailDto>(`/pokemon/${id}`);
+  }
+
+  /** Atualiza nome, HP, tipos, nível e número da Pokédex; pode retornar conflitos como na criação */
+  async update(
+    pokemonId: number,
+    data: { name: string; hp: number; types: string[]; level: number; id: number }
+  ): Promise<{ pokemon: PokemonDetailDto }> {
+    return httpClient.patch<{ pokemon: PokemonDetailDto }>(`/pokemon/${pokemonId}`, data);
   }
 }
 

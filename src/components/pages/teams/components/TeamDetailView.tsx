@@ -10,10 +10,13 @@ import {
   Zap,
   Trash2,
   Pencil,
+  Globe,
+  Lock,
 } from "lucide-react";
 import { RANK_STYLE } from "../data";
 import type { Team } from "../types";
 import type { PokemonSummary } from "../types";
+import { Switch } from "@/components/ui/switch";
 import { PokemonSlotCard } from "./PokemonSlotCard";
 import { ShareLinkBox } from "./ShareLinkBox";
 import { EditTeamModal } from "./EditTeamModal";
@@ -21,7 +24,10 @@ import { EditTeamModal } from "./EditTeamModal";
 interface TeamDetailViewProps {
   team: Team;
   onBack: () => void;
-  onUpdateTeam: (teamId: string, data: { name?: string; description?: string }) => void;
+  onUpdateTeam: (
+    teamId: string,
+    data: { name?: string; description?: string; isPublic?: boolean }
+  ) => void;
   onRemovePokemon: (teamId: string, slotIndex: number) => void;
   onClearAll: (teamId: string) => void;
 }
@@ -168,14 +174,31 @@ export function TeamDetailView({
 
       <div className="mb-6 h-px bg-gradient-to-r from-poke-red/30 via-slate-200 to-transparent" />
 
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <div className="h-4 w-1 rounded-full bg-poke-red" />
           <h2 className="font-pixel text-[11px] uppercase tracking-widest text-slate-600">
             Team Roster ({team.pokemon.filter(Boolean).length}/6)
           </h2>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2">
+            {team.isPublic ? (
+              <Globe className="h-3.5 w-3.5 text-slate-500" />
+            ) : (
+              <Lock className="h-3.5 w-3.5 text-slate-500" />
+            )}
+            <span className="text-[10px] font-semibold text-slate-600">
+              {team.isPublic ? "Público" : "Privado"}
+            </span>
+            <Switch
+              checked={team.isPublic}
+              onCheckedChange={(checked) =>
+                onUpdateTeam(team.id, { isPublic: checked })
+              }
+              className="data-[state=checked]:bg-poke-red"
+            />
+          </div>
           <button
             type="button"
             onClick={() => setEditModalOpen(true)}

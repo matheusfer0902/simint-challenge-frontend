@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles } from "lucide-react";
 import { getDetailTypeStyle } from "../data";
 import type { PokemonDetail } from "../types";
 
@@ -43,18 +42,12 @@ export function PokemonSprite({ pokemon, size = 200 }: PokemonSpriteProps) {
       )}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={pokemon.sprite}
+        src={pokemon.spriteUrl}
         alt={pokemon.name}
         className={`relative z-10 object-contain drop-shadow-2xl transition-all duration-700 hover:scale-110 ${loaded ? "opacity-100 scale-100" : "opacity-0 scale-90"}`}
         style={{ width: size * 0.82, height: size * 0.82 }}
         onLoad={() => setLoaded(true)}
       />
-
-      {pokemon.shiny && (
-        <div className="absolute right-2 top-2 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 shadow-lg">
-          <Sparkles className="h-3.5 w-3.5 text-white" />
-        </div>
-      )}
     </div>
   );
 }

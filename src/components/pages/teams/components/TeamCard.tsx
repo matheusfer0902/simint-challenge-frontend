@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Users } from "lucide-react";
+import { Users, Globe, Lock } from "lucide-react";
 import { RANK_STYLE } from "../data";
 import type { Team } from "../types";
 import { PokemonMiniSlot } from "./PokemonMiniSlot";
@@ -38,10 +38,21 @@ export function TeamCard({ team, onView }: TeamCardProps) {
 
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-4 flex items-start justify-between gap-2">
-          <div className="min-w-0 flex-1">
+          <div className="flex min-w-0 flex-1 items-center gap-2">
             <h3 className="font-pixel text-[11px] truncate text-slate-800">
               {team.name}
             </h3>
+            <span
+              className="shrink-0 text-slate-400"
+              title={team.isPublic ? "Público" : "Privado"}
+              aria-label={team.isPublic ? "Time público" : "Time privado"}
+            >
+              {team.isPublic ? (
+                <Globe className="h-3.5 w-3.5" />
+              ) : (
+                <Lock className="h-3.5 w-3.5" />
+              )}
+            </span>
           </div>
           <RankBadge rank={team.rank} />
         </div>

@@ -1,43 +1,30 @@
+/** Stats derivados da API para exibição (Base Stats) */
 export interface Stat {
   hp: number;
   attack: number;
   defense: number;
-  spAtk: number;
-  spDef: number;
   speed: number;
 }
 
-export interface Evolution {
-  id: number;
-  name: string;
-  level: number;
-  sprite: string;
-}
-
-export interface Move {
-  name: string;
-  type: string;
-  power: number | "—";
-  pp: number;
-}
-
+/** Tipo usado na página de detalhe: dados da API + campos derivados para UI */
 export interface PokemonDetail {
   id: number;
-  dexNumber: string;
+  uuid: string;
   name: string;
+  spriteUrl: string;
   types: string[];
   level: number;
-  height: string;
-  weight: string;
-  region: string;
-  ability: string;
-  description: string;
-  flavourText: string;
+  hp: number;
+  currentHp: number;
+  baseAttack: number;
+  baseDefense: number;
+  baseSpeed: number;
+  region: string | null;
+  locations: string[];
+  /** UUID do usuário criador; null se Pokémon oficial/selvagem */
+  creatorId: string | null;
+  /** Derivado: #001, #026, etc. */
+  dexNumber: string;
+  /** Derivado: { hp, attack, defense, speed } para gráficos e barras */
   stats: Stat;
-  moves: Move[];
-  evolution: Evolution[];
-  sprite: string;
-  shiny: boolean;
-  category: string;
-  generation: string;
 }

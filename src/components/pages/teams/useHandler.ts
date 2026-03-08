@@ -30,7 +30,10 @@ export function useTeamsHandler() {
   }, []);
 
   const updateTeam = useCallback(
-    (teamId: string, patch: { name?: string; description?: string }) => {
+    (
+      teamId: string,
+      patch: { name?: string; description?: string; isPublic?: boolean }
+    ) => {
       setTeams((prev) =>
         prev.map((t) =>
           t.id !== teamId
@@ -41,6 +44,7 @@ export function useTeamsHandler() {
                 ...(patch.description != null && {
                   description: patch.description,
                 }),
+                ...(patch.isPublic != null && { isPublic: patch.isPublic }),
               }
         )
       );
