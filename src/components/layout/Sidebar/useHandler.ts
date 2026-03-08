@@ -18,6 +18,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id: "pokemons", label: "Pokémon", icon: BookOpen, href: "/pokemon" },
   { id: "pokedex", label: "Pokedex", icon: List, href: "/pokedex" },
   { id: "train", label: "Train", icon: Dumbbell, href: "/train" },
+  { id: "heal", label: "Heal", icon: Dumbbell, href: "/healing" },
 ];
 
 export function useSidebarHandler() {

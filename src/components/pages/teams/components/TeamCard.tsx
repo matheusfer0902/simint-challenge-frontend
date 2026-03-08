@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MapPin, Users } from "lucide-react";
+import { Users } from "lucide-react";
 import { RANK_STYLE } from "../data";
 import type { Team } from "../types";
 import { PokemonMiniSlot } from "./PokemonMiniSlot";
@@ -42,10 +42,6 @@ export function TeamCard({ team, onView }: TeamCardProps) {
             <h3 className="font-pixel text-[11px] truncate text-slate-800">
               {team.name}
             </h3>
-            <div className="mt-1 flex items-center gap-1.5 text-[10px] text-slate-400">
-              <MapPin className="h-3 w-3" />
-              {team.region}
-            </div>
           </div>
           <RankBadge rank={team.rank} />
         </div>

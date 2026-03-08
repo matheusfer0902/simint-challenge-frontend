@@ -10,20 +10,18 @@ interface StatRadarChartProps {
 
 export function StatRadarChart({ stats, primaryType }: StatRadarChartProps) {
   const meta = getDetailTypeStyle(primaryType);
-  const labels = ["HP", "ATK", "DEF", "SpA", "SpD", "SPD"];
+  const labels = ["HP", "ATK", "DEF", "SPD"];
   const values = [
     stats.hp,
     stats.attack,
     stats.defense,
-    stats.spAtk,
-    stats.spDef,
     stats.speed,
   ];
   const maxVal = 200;
   const cx = 100;
   const cy = 100;
   const r = 70;
-  const n = 6;
+  const n = 4;
 
   const angleFor = (i: number) =>
     (Math.PI * 2 * i) / n - Math.PI / 2;

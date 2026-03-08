@@ -1,16 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, X } from "lucide-react";
 import { getTypeGradient, getTypeBadge } from "../data";
 import type { PokemonSummary } from "../types";
 
 interface PokemonSlotCardProps {
   pokemon: PokemonSummary | null;
   slot: number;
+  onRemove?: () => void;
 }
 
-export function PokemonSlotCard({ pokemon, slot }: PokemonSlotCardProps) {
+export function PokemonSlotCard({ pokemon, slot, onRemove }: PokemonSlotCardProps) {
   const [loaded, setLoaded] = useState(false);
 
   if (!pokemon) {
@@ -38,13 +39,16 @@ export function PokemonSlotCard({ pokemon, slot }: PokemonSlotCardProps) {
       <div
         className={`h-1.5 w-full bg-gradient-to-r ${getTypeGradient(pokemon.type)}`}
       />
-      <div className="absolute right-3 top-4 z-10">
-        <span
-          className={`rounded-full px-2 py-0.5 text-[8px] font-black uppercase ${getTypeBadge(pokemon.type)}`}
+      {onRemove && (
+        <button
+          type="button"
+          onClick={onRemove}
+          className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-slate-800/80 text-white transition-colors hover:bg-poke-red"
+          aria-label="Remover Pokémon do time"
         >
-          {pokemon.role}
-        </span>
-      </div>
+          <X className="h-3.5 w-3.5" />
+        </button>
+      )}
       <div className="relative flex w-full items-center justify-center py-6">
         <div
           className={`absolute inset-0 bg-gradient-to-br ${getTypeGradient(pokemon.type)} opacity-[0.07]`}

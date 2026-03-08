@@ -9,8 +9,9 @@ export type TeamsView = "list" | "detail";
 export function useTeamsHandler() {
   const [view, setView] = useState<TeamsView>("list");
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
-
-  const teams = MOCK_TEAMS;
+  const [teams, setTeams] = useState<Team[]>(() =>
+    JSON.parse(JSON.stringify(MOCK_TEAMS))
+  );
 
   const selectedTeam =
     selectedTeamId != null
@@ -28,6 +29,44 @@ export function useTeamsHandler() {
     setSelectedTeamId(null);
   }, []);
 
+  const updateTeam = useCallback(
+    (teamId: string, patch: { name?: string; description?: string }) => {
+      setTeams((prev) =>
+        prev.map((t) =>
+          t.id !== teamId
+            ? t
+            : {
+                ...t,
+                ...(patch.name != null && { name: patch.name }),
+                ...(patch.description != null && {
+                  description: patch.description,
+                }),
+              }
+        )
+      );
+    },
+    []
+  );
+
+  const removePokemonFromTeam = useCallback((teamId: string, slotIndex: number) => {
+    setTeams((prev) =>
+      prev.map((t) => {
+        if (t.id !== teamId) return t;
+        const next = [...t.pokemon];
+        next[slotIndex] = null;
+        return { ...t, pokemon: next };
+      })
+    );
+  }, []);
+
+  const clearAllPokemonFromTeam = useCallback((teamId: string) => {
+    setTeams((prev) =>
+      prev.map((t) =>
+        t.id !== teamId ? t : { ...t, pokemon: Array(6).fill(null) }
+      )
+    );
+  }, []);
+
   return {
     view,
     teams,
@@ -35,6 +74,9 @@ export function useTeamsHandler() {
     selectedTeamId,
     handleViewTeam,
     handleBackToList,
+    updateTeam,
+    removePokemonFromTeam,
+    clearAllPokemonFromTeam,
   };
 }
 

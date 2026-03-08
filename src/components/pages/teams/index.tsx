@@ -12,6 +12,9 @@ export function TeamsPage() {
     selectedTeam,
     handleViewTeam,
     handleBackToList,
+    updateTeam,
+    removePokemonFromTeam,
+    clearAllPokemonFromTeam,
   } = useTeamsHandler();
 
   return (
@@ -21,7 +24,13 @@ export function TeamsPage() {
           <TeamListView teams={teams} onViewTeam={handleViewTeam} />
         )}
         {view === "detail" && selectedTeam && (
-          <TeamDetailView team={selectedTeam} onBack={handleBackToList} />
+          <TeamDetailView
+            team={selectedTeam}
+            onBack={handleBackToList}
+            onUpdateTeam={updateTeam}
+            onRemovePokemon={removePokemonFromTeam}
+            onClearAll={clearAllPokemonFromTeam}
+          />
         )}
       </div>
       <style>{`

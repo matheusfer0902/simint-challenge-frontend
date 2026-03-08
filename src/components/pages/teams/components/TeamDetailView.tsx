@@ -4,27 +4,38 @@ import { useState, useRef, useEffect } from "react";
 import {
   ArrowLeft,
   Edit3,
-  MapPin,
   Star,
   Trophy,
   TrendingUp,
   Zap,
   Trash2,
+  Pencil,
 } from "lucide-react";
 import { RANK_STYLE } from "../data";
 import type { Team } from "../types";
 import type { PokemonSummary } from "../types";
 import { PokemonSlotCard } from "./PokemonSlotCard";
 import { ShareLinkBox } from "./ShareLinkBox";
+import { EditTeamModal } from "./EditTeamModal";
 
 interface TeamDetailViewProps {
   team: Team;
   onBack: () => void;
+  onUpdateTeam: (teamId: string, data: { name?: string; description?: string }) => void;
+  onRemovePokemon: (teamId: string, slotIndex: number) => void;
+  onClearAll: (teamId: string) => void;
 }
 
-export function TeamDetailView({ team, onBack }: TeamDetailViewProps) {
+export function TeamDetailView({
+  team,
+  onBack,
+  onUpdateTeam,
+  onRemovePokemon,
+  onClearAll,
+}: TeamDetailViewProps) {
   const [editingName, setEditingName] = useState(false);
   const [teamName, setTeamName] = useState(team.name);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -76,10 +87,16 @@ export function TeamDetailView({ team, onBack }: TeamDetailViewProps) {
                     autoFocus
                     value={teamName}
                     onChange={(e) => setTeamName(e.target.value)}
-                    onBlur={() => setEditingName(false)}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" && setEditingName(false)
-                    }
+                    onBlur={() => {
+                      setEditingName(false);
+                      if (teamName.trim()) onUpdateTeam(team.id, { name: teamName.trim() });
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setEditingName(false);
+                        if (teamName.trim()) onUpdateTeam(team.id, { name: teamName.trim() });
+                      }
+                    }}
                     className="border-b-2 border-poke-red/60 bg-transparent font-pixel text-xl text-white outline-none sm:text-2xl"
                   />
                 ) : (
@@ -100,12 +117,6 @@ export function TeamDetailView({ team, onBack }: TeamDetailViewProps) {
                 {team.description}
               </p>
               <div className="flex flex-wrap gap-2">
-                <div className="flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-1.5">
-                  <MapPin className="h-3.5 w-3.5 text-white/70" />
-                  <span className="text-xs font-semibold text-white/80">
-                    {team.region}
-                  </span>
-                </div>
                 <div
                   className={`flex items-center gap-1.5 rounded-xl bg-gradient-to-r ${RANK_STYLE[team.rank]} px-3 py-1.5`}
                 >
@@ -164,13 +175,24 @@ export function TeamDetailView({ team, onBack }: TeamDetailViewProps) {
             Team Roster ({team.pokemon.filter(Boolean).length}/6)
           </h2>
         </div>
-        <button
-          type="button"
-          className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-[10px] font-semibold text-slate-500 transition-all hover:border-poke-red/30 hover:text-poke-red"
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-          Clear All
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setEditModalOpen(true)}
+            className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-[10px] font-semibold text-slate-500 transition-all hover:border-poke-red/30 hover:text-poke-red"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+            Edit Team
+          </button>
+          <button
+            type="button"
+            onClick={() => onClearAll(team.id)}
+            className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-[10px] font-semibold text-slate-500 transition-all hover:border-poke-red/30 hover:text-poke-red"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+            Clear All
+          </button>
+        </div>
       </div>
 
       <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
@@ -183,10 +205,24 @@ export function TeamDetailView({ team, onBack }: TeamDetailViewProps) {
             <PokemonSlotCard
               pokemon={team.pokemon[i] ?? null}
               slot={i}
+              onRemove={
+                team.pokemon[i]
+                  ? () => onRemovePokemon(team.id, i)
+                  : undefined
+              }
             />
           </div>
         ))}
       </div>
+
+      <EditTeamModal
+        team={team}
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSave={({ name, description }) =>
+          onUpdateTeam(team.id, { name, description })
+        }
+      />
 
       <div className="mb-6 flex items-center gap-2">
         <div className="h-4 w-1 rounded-full bg-poke-red" />
