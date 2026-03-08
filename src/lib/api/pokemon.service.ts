@@ -12,9 +12,9 @@ export interface PokemonDto {
   baseAttack: number;
   baseDefense: number;
   baseSpeed: number;
-  region: string;
+  region: string | null;
   creatorId: string | null;
-  location: string;
+  location: string | null;
 }
 
 export interface MyPokemonDto extends PokemonDto {
@@ -55,6 +55,8 @@ export interface CreatePokemonConflictsDto {
 
 export interface CreatePokemonResponseDto {
   message: string;
+  /** Pokémon criado (quando o backend retorna no body da criação) */
+  pokemon?: PokemonDto;
 }
 
 export interface CatchPokemonResponseDto {
@@ -63,8 +65,11 @@ export interface CatchPokemonResponseDto {
 }
 
 class PokemonService {
-  async getMyPokemons(filter?: MyPokemonFilter): Promise<MyPokemonDto[]> {
-    const qs = filter ? `?filter=${filter}` : "";
+  async getMyPokemons(params?: { filter?: MyPokemonFilter; search?: string }): Promise<MyPokemonDto[]> {
+    const searchParams = new URLSearchParams();
+    if (params?.filter) searchParams.set("filter", params.filter);
+    if (params?.search?.trim()) searchParams.set("search", params.search.trim());
+    const qs = searchParams.toString() ? `?${searchParams.toString()}` : "";
     return httpClient.get<MyPokemonDto[]>(`/pokemon/me${qs}`);
   }
 

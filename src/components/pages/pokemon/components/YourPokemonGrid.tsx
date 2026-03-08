@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import type { FilterOption, PokemonData } from "../types";
+import type { CountsByFilter } from "../useHandler";
 import { FilterBar } from "./FilterBar";
 import { PokemonCard } from "./PokemonCard";
 
@@ -9,6 +9,9 @@ interface YourPokemonGridProps {
   pokemon: PokemonData[];
   loading: boolean;
   onDetails: (p: PokemonData) => void;
+  filter: FilterOption;
+  onFilterChange: (f: FilterOption) => void;
+  counts: CountsByFilter;
 }
 
 function PokemonCardSkeleton() {
@@ -22,7 +25,7 @@ function PokemonCardSkeleton() {
         <div className="h-3 w-20 rounded bg-slate-200 animate-pulse" />
         <div className="h-2.5 w-14 rounded bg-slate-100 animate-pulse" />
         <div className="flex gap-1">
-          <div className="h-4 w-12 rounded-full bg-slate-200 animate-pulse" />
+          <div className="h-4 w-12 rounded-full bg-slate-200" />
         </div>
         <div className="mt-2 h-8 w-full rounded-xl bg-slate-200 animate-pulse" />
       </div>
@@ -30,41 +33,21 @@ function PokemonCardSkeleton() {
   );
 }
 
-export function YourPokemonGrid({ pokemon, loading, onDetails }: YourPokemonGridProps) {
-  const [filter, setFilter] = useState<FilterOption>("all");
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-
-  useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(search), 250);
-    return () => clearTimeout(t);
-  }, [search]);
-
-  const filtered = pokemon.filter((p) => {
-    const matchFilter = filter === "all" || p.tag === filter;
-    const matchSearch =
-      !debouncedSearch ||
-      p.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-      p.types.some((t) => t.toLowerCase().includes(debouncedSearch.toLowerCase())) ||
-      p.location.toLowerCase().includes(debouncedSearch.toLowerCase());
-    return matchFilter && matchSearch;
-  });
-
-  const counts: Record<FilterOption, number> = {
-    all:      pokemon.length,
-    created:  pokemon.filter((p) => p.tag === "created").length,
-    captured: pokemon.filter((p) => p.tag === "captured").length,
-  };
-
+export function YourPokemonGrid({
+  pokemon,
+  loading,
+  onDetails,
+  filter,
+  onFilterChange,
+  counts,
+}: YourPokemonGridProps) {
   return (
     <div>
       <div className="mb-5">
         <FilterBar
           active={filter}
-          onChange={setFilter}
+          onChange={onFilterChange}
           counts={counts}
-          search={search}
-          onSearchChange={setSearch}
         />
       </div>
 
@@ -74,7 +57,7 @@ export function YourPokemonGrid({ pokemon, loading, onDetails }: YourPokemonGrid
             <PokemonCardSkeleton key={i} />
           ))}
         </div>
-      ) : filtered.length === 0 ? (
+      ) : pokemon.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="mb-4 opacity-25">
             <svg viewBox="0 0 100 100" className="mx-auto h-16 w-16">
@@ -91,7 +74,7 @@ export function YourPokemonGrid({ pokemon, loading, onDetails }: YourPokemonGrid
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-          {filtered.map((p, i) => (
+          {pokemon.map((p, i) => (
             <PokemonCard key={p.uuid} pokemon={p} index={i} onAction={onDetails} />
           ))}
         </div>

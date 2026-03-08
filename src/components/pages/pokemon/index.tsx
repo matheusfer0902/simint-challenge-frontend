@@ -5,7 +5,7 @@ import { usePokemonHandler } from "./useHandler";
 import { PokemonTabBar } from "./components/PokemonTabBar";
 import { YourPokemonGrid } from "./components/YourPokemonGrid";
 import { WildAreaGrid } from "./components/WildAreaGrid";
-import { NewPokemonModal } from "./components/NewPokemonModal";
+import { CreatePokemonModal } from "@/components/modal/create-pokemon";
 import { DetailModal } from "./components/DetailModal";
 
 export function PokemonPage() {
@@ -21,6 +21,10 @@ export function PokemonPage() {
     handleCreateSuccess,
     search,
     handleSearchChange,
+    filter,
+    setFilterParam,
+    counts,
+    countsLoaded,
     myPokemon,
     wildPokemon,
     myLoading,
@@ -28,9 +32,9 @@ export function PokemonPage() {
   } = usePokemonHandler();
 
   const stats = [
-    { label: "Total",    value: myLoading   ? "—" : myPokemon.length,                                     color: "text-slate-700" },
-    { label: "Created",  value: myLoading   ? "—" : myPokemon.filter((p) => p.tag === "created").length,  color: "text-emerald-600" },
-    { label: "Captured", value: myLoading   ? "—" : myPokemon.filter((p) => p.tag === "captured").length, color: "text-blue-600" },
+    { label: "Total",    value: countsLoaded ? counts.all     : "—", color: "text-slate-700" },
+    { label: "Created",  value: countsLoaded ? counts.created : "—", color: "text-emerald-600" },
+    { label: "Captured", value: countsLoaded ? counts.captured : "—", color: "text-blue-600" },
   ];
 
   return (
@@ -63,6 +67,9 @@ export function PokemonPage() {
             pokemon={myPokemon}
             loading={myLoading}
             onDetails={handleDetails}
+            filter={filter}
+            onFilterChange={setFilterParam}
+            counts={counts}
           />
         )}
         {activeTab === "wild-area" && (
@@ -74,7 +81,7 @@ export function PokemonPage() {
         )}
       </div>
 
-      <NewPokemonModal
+      <CreatePokemonModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onSuccess={handleCreateSuccess}
