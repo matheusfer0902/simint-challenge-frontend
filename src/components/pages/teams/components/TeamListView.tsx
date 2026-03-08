@@ -4,8 +4,10 @@ import { useState, useCallback } from "react";
 import { Plus, Trophy, TrendingUp, Star, Loader2 } from "lucide-react";
 import type { Team } from "../types";
 import type { TeamFilter } from "@/lib/api/team.service";
+import type { PaginationMeta } from "@/lib/pagination";
 import { TeamCard } from "./TeamCard";
 import { CreateTeamModal } from "./CreateTeamModal";
+import { PaginationControls } from "@/components/ui/PaginationControls";
 
 interface TeamListViewProps {
   teams: Team[];
@@ -19,13 +21,14 @@ interface TeamListViewProps {
   onViewTeam: (id: string) => void;
   onFilterChange: (value: TeamFilter | "") => void;
   onPageChange: (page: number) => void;
-  onFetchTeams: (opts?: { page?: number; search?: string; filter?: TeamFilter | "" }) => void;
+  onFetchTeams: (opts?: { search?: string; filter?: TeamFilter | "" }) => void;
   onCreateTeam: (data: {
     name: string;
     description: string;
     isPublic?: boolean;
     members?: { pokemonId: number }[];
   }) => Promise<Team>;
+  paginationMeta: PaginationMeta;
 }
 
 export function TeamListView({
@@ -42,21 +45,20 @@ export function TeamListView({
   onPageChange,
   onFetchTeams,
   onCreateTeam,
+  paginationMeta,
 }: TeamListViewProps) {
   const [createOpen, setCreateOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const totalPages = Math.max(1, Math.ceil(total / limit));
   const totalWins = teams.reduce((acc, t) => acc + t.wins, 0);
   const sRankCount = teams.filter((t) => t.grade === "S").length;
 
   const handleFilterClick = useCallback(
     (value: TeamFilter | "") => {
       onFilterChange(value);
-      onFetchTeams({ page: 1, search, filter: value });
-      onPageChange(1);
+      onPageChange(0);
     },
-    [search, onFilterChange, onFetchTeams, onPageChange]
+    [onFilterChange, onPageChange]
   );
 
   const handleCreateSuccess = useCallback(
@@ -167,27 +169,13 @@ export function TeamListView({
             ))}
           </div>
 
-          {totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-center gap-2">
-              <button
-                type="button"
-                onClick={() => onFetchTeams({ page: page - 1 })}
-                disabled={page <= 1}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 disabled:opacity-50 hover:bg-slate-50"
-              >
-                Anterior
-              </button>
-              <span className="px-4 text-sm text-slate-600">
-                Página {page} de {totalPages}
-              </span>
-              <button
-                type="button"
-                onClick={() => onFetchTeams({ page: page + 1 })}
-                disabled={page >= totalPages}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 disabled:opacity-50 hover:bg-slate-50"
-              >
-                Próxima
-              </button>
+          {paginationMeta.totalPages > 1 && (
+            <div className="mt-8">
+              <PaginationControls
+                meta={paginationMeta}
+                onPageChange={onPageChange}
+                showLimitSelector={false}
+              />
             </div>
           )}
         </>

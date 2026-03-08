@@ -9,6 +9,8 @@ import {
   type UpdateUserDto,
 } from "@/lib/api/user.service";
 import { HttpError } from "@/lib/api/http-client";
+import { usePaginationParams } from "@/lib/pagination";
+import { createPaginationMeta } from "@/lib/pagination";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPES — alinhados à API (username, sem status/region/createdAt)
@@ -57,11 +59,10 @@ export function useUsersHandler() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { page, limit, setPage } = usePaginationParams();
 
   const [users, setUsers] = useState<AppUser[]>([]);
   const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [limit] = useState(10);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,7 +78,7 @@ export function useUsersHandler() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const updateUrl = useCallback(
-    (opts: { search?: string; filter?: UserFilter | "" }) => {
+    (opts: { search?: string; filter?: UserFilter | ""; page?: number }) => {
       const next = new URLSearchParams(searchParams.toString());
       if (opts.search !== undefined) {
         if (opts.search.trim()) next.set("search", opts.search.trim());
@@ -87,29 +88,29 @@ export function useUsersHandler() {
         if (opts.filter) next.set("filter", opts.filter);
         else next.delete("filter");
       }
+      if (opts.page !== undefined) next.set("page", String(opts.page));
+      next.set("limit", String(limit));
       const q = next.toString();
       router.replace(`${pathname}${q ? `?${q}` : ""}`, { scroll: false });
     },
-    [pathname, router, searchParams]
+    [pathname, router, searchParams, limit]
   );
 
   const fetchUsers = useCallback(
-    async (opts?: { page?: number; search?: string; filter?: UserFilter | "" }) => {
+    async (opts?: { search?: string; filter?: UserFilter | "" }) => {
       setLoading(true);
       setError(null);
-      const nextPage = opts?.page ?? page;
       const nextSearch = opts?.search !== undefined ? opts.search : search;
       const nextFilter = opts?.filter !== undefined ? opts.filter : filter;
       try {
         const res = await userService.getUsers({
-          page: nextPage,
+          page: page + 1,
           limit,
           search: nextSearch.trim() || undefined,
           filter: nextFilter || undefined,
         });
         setUsers(res.data.map(dtoToAppUser));
         setTotal(res.total);
-        setPage(res.page);
         if (opts?.search !== undefined) setSearchState(opts.search);
         if (opts?.filter !== undefined) setFilterState(opts.filter);
       } catch (err) {
@@ -128,20 +129,18 @@ export function useUsersHandler() {
     [page, limit, search, filter]
   );
 
-  // Sincronizar estado com URL e buscar (montagem e quando URL mudar, ex.: voltar)
   useEffect(() => {
     const s = searchParams.get("search") ?? "";
     const f = parseFilter(searchParams.get("filter"));
     setSearchState(s);
     setFilterState(f);
-    fetchUsers({ page: 1, search: s, filter: f });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- só refetch quando a URL mudar
+    fetchUsers({ search: s, filter: f });
   }, [searchParams]);
 
   const setSearch = useCallback(
     (value: string) => {
       setSearchState(value);
-      updateUrl({ search: value });
+      updateUrl({ search: value, page: 0 });
     },
     [updateUrl]
   );
@@ -149,7 +148,7 @@ export function useUsersHandler() {
   const setFilter = useCallback(
     (value: UserFilter | "") => {
       setFilterState(value);
-      updateUrl({ filter: value });
+      updateUrl({ filter: value, page: 0 });
     },
     [updateUrl]
   );
@@ -203,7 +202,7 @@ export function useUsersHandler() {
         }
         setFormOpen(false);
         setEditTarget(null);
-        await fetchUsers({ page, search, filter });
+        await fetchUsers();
       } catch (err) {
         if (err instanceof HttpError) {
           setSaveError(err.apiError.message ?? "Erro ao salvar.");
@@ -212,7 +211,7 @@ export function useUsersHandler() {
         }
       }
     },
-    [editTarget, page, search, filter, fetchUsers]
+    [editTarget, fetchUsers]
   );
 
   const handleConfirmDelete = useCallback(async () => {
@@ -222,7 +221,7 @@ export function useUsersHandler() {
       await userService.deleteUser(delTarget.id);
       setDeleteOpen(false);
       setDelTarget(null);
-      await fetchUsers({ page, search, filter });
+      await fetchUsers();
     } catch (err) {
       if (err instanceof HttpError) {
         setDeleteError(err.apiError.message ?? "Erro ao excluir.");
@@ -230,7 +229,7 @@ export function useUsersHandler() {
         setDeleteError("Erro ao excluir usuário.");
       }
     }
-  }, [delTarget, page, search, filter, fetchUsers]);
+  }, [delTarget, fetchUsers]);
 
   const closeForm = useCallback(() => {
     setFormOpen(false);
@@ -253,12 +252,7 @@ export function useUsersHandler() {
     return 0;
   });
 
-  const totals = {
-    total,
-    page,
-    limit,
-    totalPages: Math.max(1, Math.ceil(total / limit)),
-  };
+  const totals = createPaginationMeta(total, page, limit);
 
   return {
     users: sortedUsers,

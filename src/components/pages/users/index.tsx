@@ -26,6 +26,7 @@ import {
   type SortField,
   avatarUrl,
 } from "./useHandler";
+import { PaginationControls } from "@/components/ui/PaginationControls";
 
 const SEARCH_DEBOUNCE_MS = 400;
 
@@ -552,16 +553,6 @@ export function UsersPage() {
     [setFilter]
   );
 
-  const handlePagePrev = useCallback(() => {
-    const next = Math.max(1, page - 1);
-    fetchUsers({ page: next, search, filter });
-  }, [page, fetchUsers, search, filter]);
-
-  const handlePageNext = useCallback(() => {
-    const next = Math.min(totals.totalPages, page + 1);
-    fetchUsers({ page: next, search, filter });
-  }, [page, totals.totalPages, fetchUsers, search, filter]);
-
   return (
     <AppLayout
       search={displaySearch}
@@ -584,7 +575,7 @@ export function UsersPage() {
               {totals.total} total
             </div>
             <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm">
-              Página {totals.page} de {totals.totalPages}
+              Página {page + 1} de {totals.totalPages}
             </div>
           </div>
         </div>
@@ -646,24 +637,12 @@ export function UsersPage() {
             </div>
 
             {totals.totalPages > 1 && (
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-                <button
-                  onClick={handlePagePrev}
-                  disabled={page <= 1}
-                  className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 disabled:opacity-50"
-                >
-                  Anterior
-                </button>
-                <span className="text-xs text-slate-500">
-                  Página {page} de {totals.totalPages}
-                </span>
-                <button
-                  onClick={handlePageNext}
-                  disabled={page >= totals.totalPages}
-                  className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 disabled:opacity-50"
-                >
-                  Próxima
-                </button>
+              <div className="mt-4">
+                <PaginationControls
+                  meta={totals}
+                  onPageChange={setPage}
+                  showLimitSelector={false}
+                />
               </div>
             )}
           </>

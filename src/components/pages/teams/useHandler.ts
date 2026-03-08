@@ -5,6 +5,8 @@ import { teamService } from "@/lib/api/team.service";
 import type { TeamDto, TeamMemberSummaryDto } from "@/lib/api/team.service";
 import type { Team } from "./types";
 import type { TeamFilter } from "@/lib/api/team.service";
+import { usePaginationParams } from "@/lib/pagination";
+import { createPaginationMeta } from "@/lib/pagination";
 
 function dtoToTeam(dto: TeamDto): Team {
   const members: Team["members"] = (dto.members ?? []).map(
@@ -42,35 +44,30 @@ function dtoToTeam(dto: TeamDto): Team {
   };
 }
 
-const DEFAULT_PAGE = 1;
-const DEFAULT_LIMIT = 10;
-
 export function useTeamsHandler() {
+  const { page, limit, setPage } = usePaginationParams();
   const [teams, setTeams] = useState<Team[]>([]);
   const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(DEFAULT_PAGE);
-  const [limit] = useState(DEFAULT_LIMIT);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<TeamFilter | "">("");
   const [listLoading, setListLoading] = useState(false);
   const [listError, setListError] = useState<string | null>(null);
 
   const fetchTeams = useCallback(
-    async (opts?: { page?: number; search?: string; filter?: TeamFilter | "" }) => {
+    async (opts?: { search?: string; filter?: TeamFilter | "" }) => {
       setListLoading(true);
       setListError(null);
       try {
         const nextSearch = opts?.search !== undefined ? opts.search : search;
         const nextFilter = opts?.filter !== undefined ? opts.filter : filter;
         const res = await teamService.list({
-          page: opts?.page ?? page,
+          page: page + 1,
           limit,
           search: nextSearch.trim() || undefined,
           filter: nextFilter === "" ? undefined : nextFilter || undefined,
         });
         setTeams(res.data.map(dtoToTeam));
         setTotal(res.total);
-        if (opts?.page != null) setPage(opts.page);
         if (opts?.search !== undefined) setSearch(opts.search);
         if (opts?.filter !== undefined) setFilter(opts.filter);
       } catch (e) {
@@ -87,11 +84,13 @@ export function useTeamsHandler() {
 
   useEffect(() => {
     fetchTeams();
-  }, []);
+  }, [page, limit, search, filter]);
 
   const refreshList = useCallback(() => {
-    fetchTeams({ page, search, filter });
-  }, [fetchTeams, page, search, filter]);
+    fetchTeams({ search, filter });
+  }, [fetchTeams, search, filter]);
+
+  const paginationMeta = createPaginationMeta(total, page, limit);
 
   const createTeam = useCallback(
     async (data: {
@@ -126,6 +125,7 @@ export function useTeamsHandler() {
     setFilter,
     setPage,
     createTeam,
+    paginationMeta,
   };
 }
 

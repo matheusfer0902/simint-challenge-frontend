@@ -24,6 +24,7 @@ export function TeamsPage() {
     setFilter,
     setPage,
     createTeam,
+    paginationMeta,
   } = useTeamsHandler();
 
   const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -33,10 +34,11 @@ export function TeamsPage() {
       if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
       searchDebounceRef.current = setTimeout(() => {
         searchDebounceRef.current = null;
-        fetchTeams({ page: 1, search: value, filter });
+        setSearch(value);
+        setPage(0);
       }, SEARCH_DEBOUNCE_MS);
     },
-    [setSearch, fetchTeams, filter]
+    [setSearch, setPage, fetchTeams, filter]
   );
 
   const handleViewTeam = useCallback(
@@ -67,6 +69,7 @@ export function TeamsPage() {
           onPageChange={setPage}
           onFetchTeams={fetchTeams}
           onCreateTeam={createTeam}
+          paginationMeta={paginationMeta}
         />
       </div>
       <style>{`
