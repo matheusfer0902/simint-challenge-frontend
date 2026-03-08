@@ -6,15 +6,12 @@ import { PokemonTabBar } from "./components/PokemonTabBar";
 import { YourPokemonGrid } from "./components/YourPokemonGrid";
 import { WildAreaGrid } from "./components/WildAreaGrid";
 import { CreatePokemonModal } from "@/components/modal/create-pokemon";
-import { DetailModal } from "./components/DetailModal";
 
 export function PokemonPage() {
   const {
     activeTab,
     modalOpen,
     setModalOpen,
-    detailPokemon,
-    setDetailPokemon,
     handleTabChange,
     handleDetails,
     handleCatch,
@@ -86,7 +83,6 @@ export function PokemonPage() {
         onClose={() => setModalOpen(false)}
         onSuccess={handleCreateSuccess}
       />
-      <DetailModal pokemon={detailPokemon} onClose={() => setDetailPokemon(null)} />
 
       <style>{`
         @keyframes fadeSlideUp {

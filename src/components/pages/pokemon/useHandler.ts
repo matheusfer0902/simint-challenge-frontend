@@ -26,7 +26,6 @@ export function usePokemonHandler() {
 
   const [activeTab, setActiveTab] = useState<PageTab>("your-pokemon");
   const [modalOpen, setModalOpen] = useState(false);
-  const [detailPokemon, setDetailPokemon] = useState<PokemonData | null>(null);
   const [searchInput, setSearchInput] = useState(searchFromUrl);
 
   const [myPokemon, setMyPokemon] = useState<PokemonData[]>([]);
@@ -169,9 +168,12 @@ export function usePokemonHandler() {
     [searchParams, router, pathname]
   );
 
-  const handleDetails = useCallback((p: PokemonData) => {
-    setDetailPokemon(p);
-  }, []);
+  const handleDetails = useCallback(
+    (p: PokemonData) => {
+      router.push(`/pokemon/${p.id}`);
+    },
+    [router]
+  );
 
   const handleCatch = useCallback(
     async (pokemon: PokemonData): Promise<boolean> => {
@@ -213,8 +215,6 @@ export function usePokemonHandler() {
     activeTab,
     modalOpen,
     setModalOpen,
-    detailPokemon,
-    setDetailPokemon,
     handleTabChange,
     handleDetails,
     search: searchInput,
