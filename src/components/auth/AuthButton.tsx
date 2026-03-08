@@ -9,10 +9,6 @@ interface AuthButtonProps {
   icon?: React.ReactNode;
 }
 
-/**
- * Auth submit button.
- * Thin wrapper around AppButton with primary variant, fullWidth and Pokeball loading indicator.
- */
 export function AuthButton({ isPending, label, icon }: AuthButtonProps) {
   return (
     <AppButton

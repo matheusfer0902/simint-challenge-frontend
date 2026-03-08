@@ -85,15 +85,15 @@ export function RegisterPage() {
         </div>
 
         <AuthInput
-          id="name"
+          id="username"
           type="text"
-          label="Full name"
+          label="Username"
           placeholder="Ash Ketchum"
-          value={values.name}
-          onChange={(v) => handleChange("name", v)}
-          error={errors.name}
+          value={values.username}
+          onChange={(v) => handleChange("username", v)}
+          error={errors.username}
           icon={<User className="h-4 w-4" />}
-          autoComplete="name"
+          autoComplete="username"
           disabled={isPending}
         />
 

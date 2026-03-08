@@ -8,10 +8,6 @@ export type AppButtonSize = "sm" | "md" | "lg";
 
 export interface AppButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /**
-   * "primary"   → red gradient + shimmer. Main CTAs, submit, battle.
-   * "secondary" → white background with border. Less prominent actions, outline state.
-   * "ghost"     → transparent background with hover. Nav links, subtle actions.
-   * "icon"      → square/circle icon-only button with subtle hover background.
    * @default "primary"
    */
   variant?: AppButtonVariant;
@@ -19,18 +15,10 @@ export interface AppButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> 
    * @default "md"
    */
   size?: AppButtonSize;
-  /** Shows a loading spinner and disables the button. */
   loading?: boolean;
-  /**
-   * Custom element shown when loading=true.
-   * Defaults to a CSS spinner. Pass <Pokeball size={16} /> for auth-style loading.
-   */
   loadingIndicator?: ReactNode;
-  /** Leading icon rendered before children. */
   icon?: ReactNode;
-  /** Trailing icon rendered after children. Shifts right on hover. */
   trailingIcon?: ReactNode;
-  /** Makes the button take the full width of its container. */
   fullWidth?: boolean;
   children?: ReactNode;
 }

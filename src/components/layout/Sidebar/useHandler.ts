@@ -9,14 +9,9 @@ export interface NavItem {
   id: string;
   label: string;
   icon: LucideIcon;
-  /** Full pathname this item links to. Used to detect the active route. */
   href: string;
 }
 
-/**
- * Single source of truth for all sidebar navigation items.
- * To add or remove a route, edit only this array.
- */
 export const NAV_ITEMS: NavItem[] = [
   { id: "home", label: "Home", icon: Home, href: "/dashboard" },
   { id: "collections", label: "Collections", icon: Layers, href: "/collections" },

@@ -1,26 +1,26 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME ?? "session";
+const AUTH_INDICATOR_COOKIE = "app_auth";
 
-const PROTECTED_ROUTES = ["/dashboard"];
+const PROTECTED_ROUTES = ["/dashboard", "/pokemon"];
 const AUTH_ROUTES = ["/auth/login", "/auth/register"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const hasSession = request.cookies.has(SESSION_COOKIE_NAME);
+  const isAuthenticated = request.cookies.has(AUTH_INDICATOR_COOKIE);
 
   const isProtectedRoute = PROTECTED_ROUTES.some((route) =>
     pathname.startsWith(route)
   );
   const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route));
 
-  if (isProtectedRoute && !hasSession) {
+  if (isProtectedRoute && !isAuthenticated) {
     const loginUrl = new URL("/auth/login", request.url);
     loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isAuthRoute && hasSession) {
+  if (isAuthRoute && isAuthenticated) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
@@ -28,5 +28,8 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/auth/:path*"],
+  matcher: [
+    "/(dashboard|pokemon)/:path*",
+    "/auth/:path*",
+  ],
 };

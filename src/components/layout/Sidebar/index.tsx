@@ -17,7 +17,6 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile backdrop */}
       {mobileOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
@@ -33,7 +32,6 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           ${mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"}
         `}
       >
-        {/* Logo */}
         <div className="flex h-16 items-center gap-3 border-b border-slate-100 px-4">
           <div className="relative h-9 w-9 shrink-0">
             <svg viewBox="0 0 100 100" className="h-full w-full drop-shadow">
@@ -59,7 +57,6 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           </button>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           <p className="mb-3 hidden px-2 text-[9px] font-semibold uppercase tracking-widest text-slate-400 lg:block">
             Navigation
@@ -102,12 +99,12 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           {user && (
             <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-2.5">
               <Avatar
-                src={avatarBg(user.name)}
-                alt={user.name}
+                src={avatarBg(user.username)}
+                alt={user.username}
                 size={36}
               />
               <div className="hidden min-w-0 flex-1 lg:block md:hidden">
-                <p className="truncate text-xs font-semibold text-slate-700">{user.name}</p>
+                <p className="truncate text-xs font-semibold text-slate-700">{user.username}</p>
                 <p className="text-[10px] text-slate-400">Trainer</p>
               </div>
             </div>

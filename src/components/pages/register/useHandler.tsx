@@ -27,16 +27,20 @@ export function passwordStrength(password: string): {
 
 function validate(values: RegisterFields): Partial<RegisterFields> {
   const errors: Partial<RegisterFields> = {};
-  if (!values.name || values.name.trim().length < 2)
-    errors.name = "Name must have at least 2 characters.";
+  if (!values.username || values.username.trim().length < 2)
+    errors.username = "Name must have at least 2 characters.";
+
   if (!values.email) errors.email = "Email is required.";
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email))
     errors.email = "Invalid email format.";
+
   if (!values.password) errors.password = "Password is required.";
   else if (values.password.length < 6)
     errors.password = "Minimum 6 characters.";
+
   if (values.confirmPassword !== values.password)
     errors.confirmPassword = "Passwords do not match.";
+  
   if (!values.role) errors.role = "Select an account type.";
   return errors;
 }
@@ -48,7 +52,7 @@ export function useRegisterHandler() {
   const onSubmit = useCallback(
     async (values: RegisterFields) => {
       await register({
-        name: values.name,
+        username: values.username,
         email: values.email,
         password: values.password,
         role: values.role as "trainer" | "researcher",
@@ -60,7 +64,7 @@ export function useRegisterHandler() {
   const { values, errors, globalError, isPending, handleChange, handleSubmit } =
     useAuthForm<RegisterFields>({
       initialValues: {
-        name: "",
+        username: "",
         email: "",
         password: "",
         confirmPassword: "",

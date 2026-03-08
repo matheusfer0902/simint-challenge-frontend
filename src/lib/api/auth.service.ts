@@ -6,7 +6,7 @@ export interface LoginDto {
 }
 
 export interface RegisterDto {
-  name: string;
+  username: string;
   email: string;
   password: string;
   role: "trainer" | "researcher";
@@ -14,7 +14,7 @@ export interface RegisterDto {
 
 export interface UserDto {
   id: string;
-  name: string;
+  username: string;
   email: string;
   role: "trainer" | "researcher";
   avatarUrl?: string;

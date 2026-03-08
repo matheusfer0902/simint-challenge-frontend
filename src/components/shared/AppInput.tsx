@@ -35,6 +35,7 @@ export function AppInput({
   onChange,
   variant = "form",
   className,
+  value,
   ...rest
 }: AppInputProps) {
   const errorId = id ? `${id}-error` : undefined;
@@ -86,6 +87,7 @@ export function AppInput({
           id={id}
           aria-invalid={hasError || undefined}
           aria-describedby={hasError && errorId ? errorId : undefined}
+          value={onChange !== undefined ? (value ?? "") : value}
           onChange={onChange ? (e) => onChange(e.target.value) : undefined}
           className={inputCls}
           {...rest}

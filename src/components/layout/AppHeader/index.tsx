@@ -9,11 +9,8 @@ import { avatarBg } from "@/lib/utils/avatar";
 
 interface AppHeaderProps {
   onMobileMenuOpen: () => void;
-  /** Search value controlled by the parent page. */
   search?: string;
-  /** Called when the user types in the search bar. */
   onSearchChange?: (v: string) => void;
-  /** Placeholder text for the search bar. Defaults to "Search…" */
   searchPlaceholder?: string;
 }
 
@@ -60,14 +57,14 @@ export function AppHeader({
       <div className="flex items-center gap-2 ml-auto">
         <div className="flex items-center gap-2 rounded-xl px-3 py-1.5 transition-colors hover:border-slate-300">
           <Avatar
-            src={avatarBg(user?.name ?? "Trainer")}
-            alt={user?.name ?? "Trainer"}
+            src={avatarBg(user?.username ?? "Trainer")}
+            alt={user?.username ?? "Trainer"}
             size={28}
             online
           />
           <div className="hidden sm:block">
             <p className="text-[11px] font-semibold text-slate-800 leading-none">
-              {user?.name ?? "Trainer"}
+              {user?.username ?? "Trainer"}
             </p>
             <p className="text-[10px] text-emerald-500 leading-none mt-0.5">● Online</p>
           </div>

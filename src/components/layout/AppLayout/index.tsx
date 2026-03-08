@@ -7,35 +7,11 @@ import { useAppLayoutHandler } from "./useHandler";
 
 interface AppLayoutProps {
   children: ReactNode;
-  /**
-   * Search value owned and controlled by the page.
-   * Pass it down so the header search bar stays in sync with the page's filter logic.
-   */
   search?: string;
-  /** Called when the user types in the header search bar. */
   onSearchChange?: (v: string) => void;
-  /** Overrides the default search bar placeholder text. */
   searchPlaceholder?: string;
 }
 
-/**
- * AppLayout — the authenticated shell.
- *
- * Wraps every protected page with the Sidebar + AppHeader.
- * Pages control their own search state and pass it down via props.
- *
- * Usage:
- * ```tsx
- * export function SomePage() {
- *   const { search, setSearch, ... } = useSomePageHandler();
- *   return (
- *     <AppLayout search={search} onSearchChange={setSearch} searchPlaceholder="Search pokémon...">
- *       {content}
- *     </AppLayout>
- *   );
- * }
- * ```
- */
 export function AppLayout({
   children,
   search,
