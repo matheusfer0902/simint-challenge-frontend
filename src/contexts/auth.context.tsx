@@ -135,6 +135,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       suppressUnauthorized.current = true;
       try {
         await authService.register(data);
+        // The register endpoint does not open a session — login explicitly so
+        // the session cookie is set before calling GET /me.
+        await authService.login({ email: data.email, password: data.password });
         const user = await userService.getMe();
         setAuthIndicatorCookie();
         dispatch({ type: "LOGIN_SUCCESS", payload: user });
