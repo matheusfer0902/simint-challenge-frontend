@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
-import { authService, type LoginDto, type RegisterDto, type UserDto } from "@/lib/api/auth.service";
+import { authService, type LoginDto, type RegisterDto } from "@/lib/api/auth.service";
 import { userService, type MeDto } from "@/lib/api/user.service";
 import { HttpError } from "@/lib/api/http-client";
 
@@ -111,69 +111,39 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
   }, [router]);
 
-  // Extracts user data from the auth response regardless of whether the backend
-  // returns { user: UserDto } or UserDto directly. Falls back to GET /me when
-  // the response body doesn't contain recognisable user fields (same-origin dev).
-  const resolveUser = useCallback(
-    async (response: { user?: UserDto } | UserDto): Promise<MeDto> => {
-      if (process.env.NODE_ENV !== "production") {
-        console.log("[auth] resolveUser response:", JSON.stringify(response));
-      } else {
-        console.log("[auth] resolveUser keys:", Object.keys(response as object));
-      }
-
-      const candidate =
-        (response as { user?: UserDto }).user ??
-        (response as unknown as UserDto);
-
-      if (candidate?.id && candidate?.username && candidate?.email && candidate?.role) {
-        return {
-          id: candidate.id,
-          username: candidate.username,
-          email: candidate.email,
-          role: candidate.role,
-          followedBy: [],
-          following: [],
-        };
-      }
-
-      // Fallback for same-origin development environments where the login
-      // response may not carry user fields but the session cookie works.
-      return userService.getMe();
-    },
-    []
-  );
-
   const login = useCallback(
     async (credentials: LoginDto) => {
+      // Suppress the global unauthorized handler for the duration of the login
+      // flow so that the GET /me call doesn't trigger a redirect to /auth/login
+      // on the rare occasion that the session cookie hasn't propagated yet.
       suppressUnauthorized.current = true;
       try {
-        const response = await authService.login(credentials);
-        const meData = await resolveUser(response as { user?: UserDto } | UserDto);
+        await authService.login(credentials);
+        const user = await userService.getMe();
         setAuthIndicatorCookie();
-        dispatch({ type: "LOGIN_SUCCESS", payload: meData });
+        dispatch({ type: "LOGIN_SUCCESS", payload: user });
         router.push("/dashboard");
       } finally {
         suppressUnauthorized.current = false;
       }
     },
-    [router, resolveUser]
+    [router]
   );
 
   const register = useCallback(
     async (data: RegisterDto) => {
       suppressUnauthorized.current = true;
       try {
-        const response = await authService.register(data);
-        const meData = await resolveUser(response as { user?: UserDto } | UserDto);
+        await authService.register(data);
+        const user = await userService.getMe();
         setAuthIndicatorCookie();
-        dispatch({ type: "LOGIN_SUCCESS", payload: meData });
+        dispatch({ type: "LOGIN_SUCCESS", payload: user });
         router.push("/dashboard");
       } finally {
         suppressUnauthorized.current = false;
       }
     },
-    [router, resolveUser]
+    [router]
   );
 
   const logout = useCallback(async () => {
