@@ -85,8 +85,8 @@ export function UsersContentView({
       />
 
       <p className="mb-3 text-xs text-slate-400">
-        Exibindo <span className="font-semibold text-slate-600">{users.length}</span> de {total}{" "}
-        usuários
+        Showing <span className="font-semibold text-slate-600">{users.length}</span> of {total}{" "}
+        users
       </p>
 
       {loading ? (

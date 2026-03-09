@@ -28,7 +28,7 @@ export function PokedexPage() {
     <AppLayout
       search={filters.search}
       onSearchChange={v => setFilter("search", v)}
-      searchPlaceholder="Nome ou número da Pokédex..."
+      searchPlaceholder="Search Pokémon..."
     >
       <PokedexListView
         list={list}

@@ -42,7 +42,7 @@ export function UsersToolbar({ filter, onFilterChange, onNewUser }: UsersToolbar
       >
         <UsersToolbarShimmer />
         <Plus className="h-4 w-4" />
-        NOVO USUÁRIO
+        NEW USER
       </button>
     </div>
   );

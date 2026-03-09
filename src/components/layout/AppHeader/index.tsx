@@ -77,7 +77,7 @@ export function AppHeader({
                 "flex items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 transition-colors",
                 "hover:border-slate-300 hover:bg-slate-50/80 focus:outline-none focus:ring-2 focus:ring-poke-red/20 focus:ring-offset-1"
               )}
-              aria-label="Abrir menu do usuário"
+              aria-label="Open user menu"
             >
               <Avatar
                 src={avatarBg(user?.username ?? "user")}
@@ -119,7 +119,7 @@ export function AppHeader({
             <DropdownMenuItem asChild>
               <Link href="/profile" className="flex items-center gap-2 cursor-pointer">
                 <Pencil className="h-4 w-4" />
-                Editar meus dados
+                Edit my data
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

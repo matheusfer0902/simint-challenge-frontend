@@ -109,7 +109,7 @@ export function UsersFormModal({
                 Poke Center Admin
               </p>
               <h2 className="font-pixel text-[13px] text-white">
-                {isEdit ? "EDITAR USUÁRIO" : "NOVO USUÁRIO"}
+                {isEdit ? "EDIT USER" : "NEW USER"}
               </h2>
             </div>
             <button
@@ -129,7 +129,7 @@ export function UsersFormModal({
             </div>
           )}
 
-          <Field label="Nome de usuário (3–100 caracteres)">
+          <Field label="Username">
             <input
               required
               minLength={3}
@@ -141,7 +141,7 @@ export function UsersFormModal({
             />
           </Field>
 
-          <Field label="E-mail">
+          <Field label="Email">
             <input
               required
               type="email"
@@ -153,7 +153,7 @@ export function UsersFormModal({
           </Field>
 
           {!isEdit ? (
-            <Field label="Senha (mín. 8 caracteres, 1 maiúscula, 1 minúscula, 1 especial . , @ - _)">
+            <Field label="Password (min. 8 characters, 1 uppercase, 1 lowercase, 1 special character . , @ - _)">
               <div className="relative">
                 <input
                   required
@@ -174,7 +174,7 @@ export function UsersFormModal({
               </div>
             </Field>
           ) : (
-            <Field label="Nova senha (deixe em branco para não alterar)">
+            <Field label="New password (leave blank to not change)">
               <div className="relative">
                 <input
                   type={showPwd ? "text" : "password"}
@@ -194,7 +194,7 @@ export function UsersFormModal({
             </Field>
           )}
 
-          <Field label="Função (apenas trainer ou researcher)">
+          <Field label="Role">
             <div className="relative">
               <select
                 value={form.role}
@@ -203,7 +203,7 @@ export function UsersFormModal({
               >
                 {EDITABLE_ROLES.map((r) => (
                   <option key={r} value={r}>
-                    {r === "trainer" ? "Treinador" : "Pesquisador"}
+                    {r === "trainer" ? "Trainer" : "Researcher"}
                   </option>
                 ))}
               </select>
@@ -221,12 +221,12 @@ export function UsersFormModal({
               {saving ? (
                 <>
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Salvando…
+                  Saving…
                 </>
               ) : isEdit ? (
-                "ATUALIZAR"
+                "UPDATE"
               ) : (
-                "CRIAR USUÁRIO"
+                "CREATE USER"
               )}
             </span>
           </button>

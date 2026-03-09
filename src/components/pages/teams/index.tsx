@@ -63,7 +63,7 @@ export function TeamsPage() {
     <AppLayout
       search={searchInput}
       onSearchChange={handleHeaderSearchChange}
-      searchPlaceholder="Buscar times…"
+      searchPlaceholder="Search teams…"
     >
       <div className="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
         <TeamListView

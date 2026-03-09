@@ -65,7 +65,7 @@ export function UsersPage() {
     <AppLayout
       search={displaySearch}
       onSearchChange={handleHeaderSearchChange}
-      searchPlaceholder="Buscar usuários…"
+      searchPlaceholder="Search users…"
     >
       <UsersContentView
         users={users}

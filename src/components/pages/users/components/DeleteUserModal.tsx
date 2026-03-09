@@ -35,8 +35,8 @@ export function DeleteUserModal({
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
             <AlertTriangle className="h-8 w-8 text-red-500" />
           </div>
-          <h2 className="font-pixel text-[12px] text-slate-800">EXCLUIR USUÁRIO?</h2>
-          <p className="mt-2 text-sm text-slate-600">Você está prestes a excluir</p>
+          <h2 className="font-pixel text-[12px] text-slate-800">DELETE USER?</h2>
+          <p className="mt-2 text-sm text-slate-600">You are about to delete</p>
           <p className="mt-0.5 font-bold text-slate-800">&quot;{user.username}&quot;</p>
           {deleteError && (
             <div className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600">
@@ -45,8 +45,8 @@ export function DeleteUserModal({
           )}
           <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3">
             <p className="text-xs font-semibold text-red-600">
-              ⚠ Esta ação não pode ser desfeita. Todos os dados deste usuário serão removidos
-              permanentemente.
+              ⚠ This action cannot be undone. All data for this user will be permanently removed
+              permanently.
             </p>
           </div>
           <div className="mt-5 flex gap-3">
@@ -55,14 +55,14 @@ export function DeleteUserModal({
               onClick={onClose}
               className="flex-1 rounded-xl border-2 border-slate-200 bg-white py-3 font-pixel text-[9px] tracking-wider text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
             >
-              CANCELAR
+              CANCEL
             </button>
             <button
               type="button"
               onClick={onConfirm}
               className="flex-1 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 py-3 font-pixel text-[9px] tracking-wider text-white shadow-lg transition hover:shadow-xl hover:shadow-red-500/25 active:scale-[0.97]"
             >
-              EXCLUIR
+              DELETE
             </button>
           </div>
         </div>

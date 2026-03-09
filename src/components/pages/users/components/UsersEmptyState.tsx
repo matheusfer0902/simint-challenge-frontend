@@ -13,8 +13,8 @@ export function UsersEmptyState() {
           <circle cx="50" cy="50" r="6" fill="#cbd5e1" />
         </svg>
       </div>
-      <p className="font-pixel text-[10px] text-slate-500">Nenhum usuário encontrado</p>
-      <p className="mt-1 text-sm text-slate-400">Tente ajustar os filtros ou o termo de busca.</p>
+      <p className="font-pixel text-[10px] text-slate-500">No user found</p>
+      <p className="mt-1 text-sm text-slate-400">Try adjusting the filters or search term.</p>
     </div>
   );
 }

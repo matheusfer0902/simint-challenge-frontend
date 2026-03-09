@@ -32,7 +32,7 @@ export function UsersDataTable({ users, sort, onSort, onEdit, onDelete }: UsersD
             </th>
             <th className="sticky right-0 bg-slate-50/90 px-5 py-3.5 text-right">
               <span className="font-pixel text-[8px] uppercase tracking-widest text-slate-400">
-                Ações
+                Actions
               </span>
             </th>
           </tr>
@@ -69,7 +69,7 @@ export function UsersDataTable({ users, sort, onSort, onEdit, onDelete }: UsersD
                     type="button"
                     onClick={() => onEdit(u)}
                     className="rounded-lg p-2 text-slate-400 transition-all hover:bg-sky-50 hover:text-sky-600"
-                    title="Editar"
+                    title="Edit"
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
@@ -77,7 +77,7 @@ export function UsersDataTable({ users, sort, onSort, onEdit, onDelete }: UsersD
                     type="button"
                     onClick={() => onDelete(u)}
                     className="rounded-lg p-2 text-slate-400 transition-all hover:bg-red-50 hover:text-red-600"
-                    title="Excluir"
+                    title="Delete"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

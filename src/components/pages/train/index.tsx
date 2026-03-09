@@ -30,7 +30,7 @@ export function TrainingPage() {
     <AppLayout
       search={searchInput}
       onSearchChange={handleSearchChange}
-      searchPlaceholder="Buscar Pokémon..."
+      searchPlaceholder="Search Pokémon..."
     >
       <TrainContentView
         loading={loading}

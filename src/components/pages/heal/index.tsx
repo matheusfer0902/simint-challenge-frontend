@@ -32,7 +32,7 @@ export function HealPage() {
     <AppLayout
       search={searchInput}
       onSearchChange={handleSearchChange}
-      searchPlaceholder="Buscar Pokémon..."
+      searchPlaceholder="Search Pokémon..."
     >
       <HealContentView
         loading={loading}

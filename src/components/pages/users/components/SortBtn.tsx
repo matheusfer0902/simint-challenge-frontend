@@ -10,9 +10,9 @@ export interface SortBtnProps {
 }
 
 const FIELD_LABEL: Record<SortField, string> = {
-  name: "Usuário",
-  role: "Função",
-  email: "E-mail",
+  name: "User",
+  role: "Role",
+  email: "Email",
 };
 
 export function SortBtn({ field, current, onSort }: SortBtnProps) {
