@@ -31,7 +31,6 @@ export function usePokedexHandler() {
 
   const debSearch = useDebounce(filters.search, 400);
   const lastDebSearchRef = useRef(debSearch);
-  const lastFetchKeyRef = useRef("");
 
   useEffect(() => {
     const searchJustChanged = debSearch !== lastDebSearchRef.current;
@@ -40,12 +39,6 @@ export function usePokedexHandler() {
       setPage(0);
     }
     const pageToFetch = searchJustChanged ? 0 : page;
-    const fetchKey = `${debSearch}|${pageToFetch}|${filters.type}|${filters.captured}|${limit}`;
-    if (fetchKey === lastFetchKeyRef.current) {
-      setLoading(false);
-      return;
-    }
-    lastFetchKeyRef.current = fetchKey;
 
     let cancelled = false;
     setLoading(true);
