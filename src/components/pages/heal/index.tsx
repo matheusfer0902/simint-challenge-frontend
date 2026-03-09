@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Heart, CheckCircle2, Sparkles, Zap } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { useHealHandler, type HealPokemon, type HealState, type PokeStatus } from "./useHandler";
@@ -345,18 +345,39 @@ const HEAL_CSS = `
   .animate-shimmerHp { animation: shimmerHp 1.8s ease-in-out infinite; }
 `;
 
+const SEARCH_DEBOUNCE_MS = 400;
+
+function useDebounce<T>(value: T, ms: number): T {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), ms);
+    return () => clearTimeout(t);
+  }, [value, ms]);
+  return debounced;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // HEAL PAGE
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function HealPage() {
-  const { team, loading, tray, addToTray, removeFromTray, isInTray, trayIndex, state, heal, healError, clearHealError } = useHealHandler();
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearch = useDebounce(searchInput, SEARCH_DEBOUNCE_MS);
+  const { team, loading, tray, addToTray, removeFromTray, isInTray, trayIndex, state, heal, healError, clearHealError } = useHealHandler(debouncedSearch);
+
+  const handleSearchChange = useCallback((v: string) => {
+    setSearchInput(v);
+  }, []);
 
   const isRunning = ["loading", "sequencing", "filling"].includes(state.phase);
   const isDone = state.phase === "done";
 
   return (
-    <AppLayout>
+    <AppLayout
+      search={searchInput}
+      onSearchChange={handleSearchChange}
+      searchPlaceholder="Buscar Pokémon..."
+    >
       <div className="px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-6">
           <nav className="mb-1.5 flex items-center gap-1.5 text-[10px] text-slate-400">
@@ -418,9 +439,23 @@ export function HealPage() {
               </div>
               <p className="mb-3 text-[10px] text-slate-500">Clique em um Pokémon para colocá-lo na bandeja de recuperação (máx. 6).</p>
               {team.length === 0 ? (
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 py-12 text-center">
-                  <p className="text-slate-600">Você ainda não tem Pokémon.</p>
-                  <p className="mt-1 text-sm text-slate-400">Capture ou crie Pokémon na área de Pokémon.</p>
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                  <div className="mb-4 opacity-25">
+                    <svg viewBox="0 0 100 100" className="mx-auto h-16 w-16">
+                      <path d="M50 5 A45 45 0 0 1 95 50 L50 50 Z" fill="#ef4444" />
+                      <path d="M50 95 A45 45 0 0 1 5 50 L50 50 Z" fill="#e2e8f0" />
+                      <rect x="5" y="47" width="90" height="6" fill="#94a3b8" />
+                      <circle cx="50" cy="50" r="14" fill="#94a3b8" />
+                      <circle cx="50" cy="50" r="10" fill="#f1f5f9" />
+                      <circle cx="50" cy="50" r="6" fill="#cbd5e1" />
+                    </svg>
+                  </div>
+                  <p className="font-pixel text-[10px] text-slate-500">
+                    {debouncedSearch.trim() ? "Nenhum Pokémon encontrado." : "Você ainda não tem Pokémon."}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-400">
+                    {debouncedSearch.trim() ? "Tente ajustar o termo de busca." : "Capture ou crie Pokémon na área de Pokémon."}
+                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">

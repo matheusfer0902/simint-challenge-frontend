@@ -7,11 +7,11 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 import {
-  useState, useMemo, useCallback, useEffect,
+  useState, useMemo, useCallback, useEffect, useRef,
   type ReactNode, type ChangeEvent,
 } from "react";
 import {
-  Search, X, ChevronDown, Grid3X3, List, Dna, BookOpen,
+  X, ChevronDown, Grid3X3, List, Dna, BookOpen,
   Zap, Globe, CheckCircle2, TrendingUp, SlidersHorizontal,
   Microscope, Lock, HelpCircle, BarChart2, Shield,
 } from "lucide-react";
@@ -283,17 +283,26 @@ function ListRow({ pokemon, idx, captured, onSelect }: { pokemon: PokemonDetailD
   );
 }
 
+const EmptyStateNotFound = () => (
+  <div className="flex flex-col items-center justify-center py-20 text-center">
+    <div className="mb-4 opacity-25">
+      <svg viewBox="0 0 100 100" className="mx-auto h-16 w-16">
+        <path d="M50 5 A45 45 0 0 1 95 50 L50 50 Z" fill="#ef4444" />
+        <path d="M50 95 A45 45 0 0 1 5 50 L50 50 Z" fill="#e2e8f0" />
+        <rect x="5" y="47" width="90" height="6" fill="#94a3b8" />
+        <circle cx="50" cy="50" r="14" fill="#94a3b8" />
+        <circle cx="50" cy="50" r="10" fill="#f1f5f9" />
+        <circle cx="50" cy="50" r="6" fill="#cbd5e1" />
+      </svg>
+    </div>
+    <p className="font-pixel text-[10px] text-slate-500">Nenhum Pokémon encontrado</p>
+    <p className="mt-1 text-sm text-slate-400">Tente ajustar os filtros ou o termo de busca.</p>
+  </div>
+);
+
 export function PokedexGrid({ pokemon, capturedIds, viewMode, onSelect }: GridProps) {
   if (pokemon.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-slate-100">
-          <Search className="h-9 w-9 text-slate-300" />
-        </div>
-        <p className="font-pixel text-[10px] uppercase tracking-widest text-slate-400">Nenhum Pokémon encontrado</p>
-        <p className="mt-1.5 text-sm text-slate-400">Tente ajustar os filtros de pesquisa</p>
-      </div>
-    );
+    return <EmptyStateNotFound />;
   }
 
   if (viewMode === "list") {
@@ -627,10 +636,22 @@ export function PokedexPage() {
   const [panelOpen,   setPanelOpen]   = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const debSearch = useDebounce(filters.search, 350);
+  const debSearch = useDebounce(filters.search, 400);
+  const lastDebSearchRef = useRef(debSearch);
+  const lastFetchKeyRef = useRef("");
 
-  // Fetch list GET /pokemon/all
+  // Quando o termo de busca (debounced) muda, ir para página 0; uma única requisição por combinação (debSearch, page, filtros)
   useEffect(() => {
+    const searchJustChanged = debSearch !== lastDebSearchRef.current;
+    if (searchJustChanged) {
+      lastDebSearchRef.current = debSearch;
+      setPage(0);
+    }
+    const pageToFetch = searchJustChanged ? 0 : page;
+    const fetchKey = `${debSearch}|${pageToFetch}|${filters.type}|${filters.captured}|${limit}`;
+    if (fetchKey === lastFetchKeyRef.current) return;
+    lastFetchKeyRef.current = fetchKey;
+
     let cancelled = false;
     setLoading(true);
     pokemonService
@@ -638,7 +659,7 @@ export function PokedexPage() {
         search: debSearch.trim() || undefined,
         type: filters.type || undefined,
         captured: filters.captured === "all" ? undefined : filters.captured === "captured",
-        page,
+        page: pageToFetch,
         limit,
       })
       .then(res => {
@@ -655,7 +676,7 @@ export function PokedexPage() {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [debSearch, filters.type, filters.captured, page, limit]);
+  }, [debSearch, filters.type, filters.captured, page, limit, setPage]);
 
   // Fetch detail GET /pokemon/{id} when opening panel
   useEffect(() => {
@@ -675,7 +696,8 @@ export function PokedexPage() {
 
   const setF = useCallback(<K extends keyof Filters>(k: K, v: Filters[K]) => {
     setFilters(p => ({ ...p, [k]: v }));
-    setPage(0);
+    // Só reseta página ao mudar tipo/captured; para search o reset é no useEffect quando debSearch muda
+    if (k !== "search") setPage(0);
   }, [setPage]);
 
   const onSelect = useCallback((id: number) => {
@@ -697,7 +719,11 @@ export function PokedexPage() {
   );
 
   return (
-    <AppLayout>
+    <AppLayout
+      search={filters.search}
+      onSearchChange={v => setF("search", v)}
+      searchPlaceholder="Nome ou número da Pokédex..."
+    >
       <div className="min-h-screen bg-slate-50">
 
         {/* ═════════════════════ HERO HEADER ══════════════════════ */}
@@ -732,21 +758,6 @@ export function PokedexPage() {
       <div className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 shadow-sm backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-
-            {/* Search */}
-            <div className="relative flex-1 max-w-sm">
-              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <input
-                value={filters.search} onChange={e => setF("search", e.target.value)}
-                placeholder="Nome ou número da Pokédex..."
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-9 text-sm text-slate-700 outline-none transition focus:border-red-300 focus:bg-white focus:shadow-[0_0_0_3px_rgba(239,68,68,0.08)]"
-              />
-              {filters.search && (
-                <button onClick={() => setF("search","")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              )}
-            </div>
 
             {/* Mobile toggle */}
             <button

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { useTeamsHandler } from "./useHandler";
@@ -27,10 +27,15 @@ export function TeamsPage() {
     paginationMeta,
   } = useTeamsHandler();
 
+  const [searchInput, setSearchInput] = useState(search);
+  useEffect(() => {
+    setSearchInput(search);
+  }, [search]);
+
   const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const handleHeaderSearchChange = useCallback(
     (value: string) => {
-      setSearch(value);
+      setSearchInput(value);
       if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
       searchDebounceRef.current = setTimeout(() => {
         searchDebounceRef.current = null;
@@ -38,8 +43,14 @@ export function TeamsPage() {
         setPage(0);
       }, SEARCH_DEBOUNCE_MS);
     },
-    [setSearch, setPage, fetchTeams, filter]
+    [setSearch, setPage]
   );
+
+  useEffect(() => {
+    return () => {
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    };
+  }, []);
 
   const handleViewTeam = useCallback(
     (id: string) => {
@@ -50,7 +61,7 @@ export function TeamsPage() {
 
   return (
     <AppLayout
-      search={search}
+      search={searchInput}
       onSearchChange={handleHeaderSearchChange}
       searchPlaceholder="Buscar times…"
     >

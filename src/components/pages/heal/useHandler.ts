@@ -191,7 +191,7 @@ function useHeal(tray: HealPokemon[], onDone?: () => void) {
 
 const MAX_TRAY = 6;
 
-export function useHealHandler() {
+export function useHealHandler(debouncedSearch: string) {
   const [team, setTeam] = useState<HealPokemon[]>([]);
   const [loading, setLoading] = useState(true);
   const [tray, setTray] = useState<HealPokemon[]>([]);
@@ -199,8 +199,9 @@ export function useHealHandler() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+    const search = debouncedSearch.trim() || undefined;
     pokemonService
-      .getMyPokemons()
+      .getMyPokemons(search ? { search } : {})
       .then((list) => {
         if (cancelled) return;
         setTeam(list.map(mapMyPokemonToHeal));
@@ -211,7 +212,7 @@ export function useHealHandler() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [debouncedSearch]);
 
   const onHealDone = useCallback(() => {
     setTeam((prev) =>

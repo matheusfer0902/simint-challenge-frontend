@@ -161,7 +161,7 @@ function useTraining(
   return { state, train };
 }
 
-export function useTrainHandler() {
+export function useTrainHandler(debouncedSearch: string) {
   const [roster, setRoster] = useState<TrainPokemon[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedIdx, setSelectedIdx] = useState(0);
@@ -170,8 +170,9 @@ export function useTrainHandler() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+    const search = debouncedSearch.trim() || undefined;
     pokemonService
-      .getMyPokemons()
+      .getMyPokemons(search ? { search } : {})
       .then((list) => {
         if (cancelled) return;
         const mapped = list.map(mapMyPokemonToTrain);
@@ -184,7 +185,7 @@ export function useTrainHandler() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [debouncedSearch]);
 
   const onLevelUpComplete = useCallback((pokemonId: number, newLevel: number) => {
     setRoster((prev) =>

@@ -14,7 +14,6 @@ import {
   AlertTriangle,
   Users,
   Shield,
-  UserX,
   SlidersHorizontal,
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -137,8 +136,20 @@ function DataTable({
           {users.length === 0 && (
             <tr>
               <td colSpan={4} className="py-20 text-center">
-                <UserX className="mx-auto mb-3 h-10 w-10 text-slate-200" />
-                <p className="font-pixel text-[9px] text-slate-400">Nenhum usuário encontrado</p>
+                <div className="flex flex-col items-center justify-center">
+                  <div className="mb-4 opacity-25">
+                    <svg viewBox="0 0 100 100" className="mx-auto h-16 w-16">
+                      <path d="M50 5 A45 45 0 0 1 95 50 L50 50 Z" fill="#ef4444" />
+                      <path d="M50 95 A45 45 0 0 1 5 50 L50 50 Z" fill="#e2e8f0" />
+                      <rect x="5" y="47" width="90" height="6" fill="#94a3b8" />
+                      <circle cx="50" cy="50" r="14" fill="#94a3b8" />
+                      <circle cx="50" cy="50" r="10" fill="#f1f5f9" />
+                      <circle cx="50" cy="50" r="6" fill="#cbd5e1" />
+                    </svg>
+                  </div>
+                  <p className="font-pixel text-[10px] text-slate-500">Nenhum usuário encontrado</p>
+                  <p className="mt-1 text-sm text-slate-400">Tente ajustar os filtros ou o termo de busca.</p>
+                </div>
               </td>
             </tr>
           )}
@@ -546,6 +557,12 @@ export function UsersPage() {
     [setSearch]
   );
 
+  useEffect(() => {
+    return () => {
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    };
+  }, []);
+
   const handleFilterChange = useCallback(
     (value: UserFilter | "") => {
       setFilter(value);
@@ -626,9 +643,19 @@ export function UsersPage() {
 
             <div className="space-y-3 sm:hidden">
               {users.length === 0 && (
-                <div className="rounded-2xl border border-slate-200 bg-white py-16 text-center">
-                  <UserX className="mx-auto mb-3 h-10 w-10 text-slate-200" />
-                  <p className="font-pixel text-[9px] text-slate-400">Nenhum usuário encontrado</p>
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white py-20 text-center">
+                  <div className="mb-4 opacity-25">
+                    <svg viewBox="0 0 100 100" className="mx-auto h-16 w-16">
+                      <path d="M50 5 A45 45 0 0 1 95 50 L50 50 Z" fill="#ef4444" />
+                      <path d="M50 95 A45 45 0 0 1 5 50 L50 50 Z" fill="#e2e8f0" />
+                      <rect x="5" y="47" width="90" height="6" fill="#94a3b8" />
+                      <circle cx="50" cy="50" r="14" fill="#94a3b8" />
+                      <circle cx="50" cy="50" r="10" fill="#f1f5f9" />
+                      <circle cx="50" cy="50" r="6" fill="#cbd5e1" />
+                    </svg>
+                  </div>
+                  <p className="font-pixel text-[10px] text-slate-500">Nenhum usuário encontrado</p>
+                  <p className="mt-1 text-sm text-slate-400">Tente ajustar os filtros ou o termo de busca.</p>
                 </div>
               )}
               {users.map((u) => (
