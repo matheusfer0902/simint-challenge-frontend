@@ -78,11 +78,6 @@ export function TeamListView({
     <div>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="mb-1 flex items-center gap-1.5 text-[10px] text-slate-400">
-            <span>Dashboard</span>
-            <span>›</span>
-            <span className="font-semibold text-poke-red">My Teams</span>
-          </div>
           <h1 className="font-pixel text-2xl text-poke-red sm:text-3xl">
             MY TEAMS
           </h1>
@@ -139,7 +134,7 @@ export function TeamListView({
                   : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
               }`}
             >
-              {f === "" ? "Todos" : f === "public" ? "Públicos" : "Privados"}
+              {f === "" ? "All" : f === "public" ? "Public" : "Private"}
             </button>
           ))}
         </div>
@@ -154,6 +149,21 @@ export function TeamListView({
       {loading ? (
         <div className="flex min-h-[200px] items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-poke-red" />
+        </div>
+      ) : !error && teams.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="mb-4 opacity-25">
+            <svg viewBox="0 0 100 100" className="mx-auto h-16 w-16">
+              <path d="M50 5 A45 45 0 0 1 95 50 L50 50 Z" fill="#ef4444" />
+              <path d="M50 95 A45 45 0 0 1 5 50 L50 50 Z" fill="#e2e8f0" />
+              <rect x="5" y="47" width="90" height="6" fill="#94a3b8" />
+              <circle cx="50" cy="50" r="14" fill="#94a3b8" />
+              <circle cx="50" cy="50" r="10" fill="#f1f5f9" />
+              <circle cx="50" cy="50" r="6" fill="#cbd5e1" />
+            </svg>
+          </div>
+          <p className="font-pixel text-[10px] text-slate-500">No teams found</p>
+          <p className="mt-1 text-sm text-slate-400">Try adjusting your filters or search term.</p>
         </div>
       ) : (
         <>

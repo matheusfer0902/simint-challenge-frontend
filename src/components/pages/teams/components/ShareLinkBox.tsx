@@ -64,11 +64,11 @@ export function ShareLinkBox({ teamId }: ShareLinkBoxProps) {
         </div>
         <div>
           <h3 className="font-pixel text-[11px] text-slate-800">
-            COMPARTILHAR POR LINK
+            SHARE BY LINK
           </h3>
           <p className="text-xs text-slate-500">
-            Gere um link para qualquer pessoa ver este time (somente leitura).
-            Ao gerar um novo link, o anterior deixa de funcionar.
+            Generate a link for anyone to view this team (read-only).
+            When generating a new link, the previous one stops working.
           </p>
         </div>
       </div>
@@ -90,14 +90,14 @@ export function ShareLinkBox({ teamId }: ShareLinkBoxProps) {
             ) : (
               <>
                 <Link2 className="h-4 w-4" />
-                Gerar link
+                Generate Link
               </>
             )}
           </button>
         ) : (
           <div className="space-y-3">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-              Link gerado — copie e compartilhe
+              Link generated — copy and share
             </p>
             <div className="flex gap-2">
               <input
@@ -116,12 +116,11 @@ export function ShareLinkBox({ teamId }: ShareLinkBoxProps) {
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}
-                {copied ? "Copiado!" : "Copiar link"}
+                {copied ? "Copied!" : "Copy Link"}
               </button>
             </div>
             <p className="text-xs text-slate-500">
-              Qualquer pessoa com o link poderá ver este time. O link não
-              expira até você gerar um novo.
+              Anyone with the link can view this team. The link does not expire until you generate a new one.
             </p>
             <button
               type="button"
@@ -129,7 +128,7 @@ export function ShareLinkBox({ teamId }: ShareLinkBoxProps) {
               disabled={loading}
               className="text-xs font-medium text-poke-red hover:underline disabled:opacity-70"
             >
-              Gerar novo link (invalida o anterior)
+              Generate new link
             </button>
           </div>
         )}

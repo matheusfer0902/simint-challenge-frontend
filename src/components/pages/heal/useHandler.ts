@@ -3,22 +3,16 @@
 import { useState, useReducer, useCallback, useRef, useEffect } from "react";
 import { pokemonService } from "@/lib/api/pokemon.service";
 import type { MyPokemonDto } from "@/lib/api/pokemon.service";
+import type { HealPokemon, HealState, HealPhase, PokeStatus } from "./types";
+import { MAX_TRAY } from "./data";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TYPES & DATA
-// ─────────────────────────────────────────────────────────────────────────────
-
-export type PokeStatus = "healthy" | "fainted" | "poisoned" | "burned" | "frozen" | "paralyzed";
-
-export interface HealPokemon {
-  id: number;
-  name: string;
-  type: string;
-  level: number;
-  hp: number;
-  maxHp: number;
-  sprite: string;
-  status: PokeStatus;
+export function useDebounce<T>(value: T, ms: number): T {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), ms);
+    return () => clearTimeout(t);
+  }, [value, ms]);
+  return debounced;
 }
 
 function mapMyPokemonToHeal(dto: MyPokemonDto): HealPokemon {
@@ -36,17 +30,6 @@ function mapMyPokemonToHeal(dto: MyPokemonDto): HealPokemon {
     sprite: dto.spriteUrl ?? "",
     status,
   };
-}
-
-export type HealPhase = "idle" | "loading" | "sequencing" | "filling" | "done";
-
-export interface HealState {
-  phase: HealPhase;
-  loadedSlots: boolean[];
-  activeSlot: number;
-  litSlots: boolean[];
-  displayHp: number[];
-  showToast: boolean;
 }
 
 type HealAction =
@@ -189,9 +172,7 @@ function useHeal(tray: HealPokemon[], onDone?: () => void) {
   return { state, heal };
 }
 
-const MAX_TRAY = 6;
-
-export function useHealHandler() {
+export function useHealHandler(debouncedSearch: string) {
   const [team, setTeam] = useState<HealPokemon[]>([]);
   const [loading, setLoading] = useState(true);
   const [tray, setTray] = useState<HealPokemon[]>([]);
@@ -199,8 +180,9 @@ export function useHealHandler() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+    const search = debouncedSearch.trim() || undefined;
     pokemonService
-      .getMyPokemons()
+      .getMyPokemons(search ? { search } : {})
       .then((list) => {
         if (cancelled) return;
         setTeam(list.map(mapMyPokemonToHeal));
@@ -211,7 +193,7 @@ export function useHealHandler() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [debouncedSearch]);
 
   const onHealDone = useCallback(() => {
     setTeam((prev) =>
@@ -268,3 +250,5 @@ export function useHealHandler() {
     clearHealError: () => setHealError(null),
   };
 }
+
+export type { HealPokemon, HealState, HealPhase, PokeStatus };

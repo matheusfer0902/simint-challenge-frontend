@@ -33,7 +33,7 @@ export function ProfilePage() {
           className="mb-6 inline-flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-poke-red"
         >
           <ArrowLeft className="h-4 w-4" />
-          Voltar ao dashboard
+          Back to dashboard
         </Link>
 
         <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
@@ -42,8 +42,8 @@ export function ProfilePage() {
               <Pencil className="h-6 w-6 text-poke-red" />
             </div>
             <div>
-              <h1 className="font-pixel text-base text-slate-800 sm:text-lg">Meus dados</h1>
-              <p className="mt-1 text-sm text-slate-500">Atualize seu perfil. Deixe a senha em branco para não alterar.</p>
+              <h1 className="font-pixel text-base text-slate-800 sm:text-lg">My data</h1>
+              <p className="mt-1 text-sm text-slate-500">Update your profile. Leave the password blank to not change.</p>
             </div>
           </div>
 
@@ -55,14 +55,14 @@ export function ProfilePage() {
             )}
             {success && (
               <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 font-pixel text-[10px] text-emerald-800">
-                Dados atualizados com sucesso.
+                Data updated successfully.
               </div>
             )}
 
             {canEditRole ? (
               <div>
                 <label className="mb-2 block font-pixel text-[9px] uppercase tracking-widest text-slate-500">
-                  Tipo de conta
+                  Account type
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   {(
@@ -99,7 +99,7 @@ export function ProfilePage() {
             ) : (
               <div>
                 <label className="mb-2 block font-pixel text-[9px] uppercase tracking-widest text-slate-500">
-                  Tipo de conta
+                  Account type
                 </label>
                 <p className="rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 font-pixel text-[11px] text-slate-700">
                   {formatRole(values.role)}
@@ -110,7 +110,7 @@ export function ProfilePage() {
             <AppInput
               id="username"
               label="Username"
-              placeholder="seu_usuario"
+              placeholder="your_username"
               value={values.username}
               onChange={(v) => handleChange("username", v)}
               error={errors.username}
@@ -123,7 +123,7 @@ export function ProfilePage() {
               id="email"
               type="email"
               label="Email"
-              placeholder="email@exemplo.com"
+              placeholder="email@example.com"
               value={values.email}
               onChange={(v) => handleChange("email", v)}
               error={errors.email}
@@ -133,11 +133,11 @@ export function ProfilePage() {
             />
 
             <div className="space-y-1">
-              <p className="font-pixel text-[9px] uppercase tracking-widest text-slate-500">Deixe em branco para não alterar a senha.</p>
+              <p className="font-pixel text-[9px] uppercase tracking-widest text-slate-500">Leave blank to not change the password.</p>
               <AppInput
                 id="password"
                 type={showPassword ? "text" : "password"}
-                label="Nova senha"
+                label="New password"
                 placeholder="••••••••"
                 value={values.password}
                 onChange={(v) => handleChange("password", v)}
@@ -149,7 +149,7 @@ export function ProfilePage() {
                     type="button"
                     onClick={() => setShowPassword((s) => !s)}
                     className="text-slate-400 transition-colors hover:text-poke-red"
-                    aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -158,7 +158,7 @@ export function ProfilePage() {
               <AppInput
                 id="confirmPassword"
                 type={showPassword ? "text" : "password"}
-                label="Confirmar nova senha"
+                label="Confirm new password"
                 placeholder="••••••••"
                 value={values.confirmPassword}
                 onChange={(v) => handleChange("confirmPassword", v)}
@@ -174,7 +174,7 @@ export function ProfilePage() {
               className="w-full"
             >
               <span className="font-pixel text-[10px] tracking-wider">
-                {isPending ? "SALVANDO…" : "SALVAR ALTERAÇÕES"}
+                {isPending ? "SAVING…" : "SAVE CHANGES"}
               </span>
             </AppButton>
           </form>

@@ -11,28 +11,11 @@ import {
 import { HttpError } from "@/lib/api/http-client";
 import { usePaginationParams } from "@/lib/pagination";
 import { createPaginationMeta } from "@/lib/pagination";
+import type { AppUser, UserRole, UserFilter, SortField, SortDir, SortState } from "./types";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TYPES — alinhados à API (username, sem status/region/createdAt)
-// ─────────────────────────────────────────────────────────────────────────────
-
-export type UserRole = "admin" | "trainer" | "researcher";
-export type SortField = "name" | "role" | "email";
-export type SortDir = "asc" | "desc";
-
-export type UserFilter = "trainer" | "researcher" | "admin";
-
-/** Tipo usado na UI; avatar é derivado para exibição. */
-export interface AppUser {
-  id: string;
-  username: string;
-  email: string;
-  role: UserRole;
-  avatar: string;
+export function avatarUrl(seed: string): string {
+  return `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(seed)}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
 }
-
-const avatarUrl = (seed: string) =>
-  `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(seed)}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
 
 function dtoToAppUser(d: UserListItemDto): AppUser {
   return {
@@ -49,12 +32,6 @@ function parseFilter(value: string | null): UserFilter | "" {
   return "";
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// HANDLER — busca e filtro só no backend; query params ?search=&filter=
-// ─────────────────────────────────────────────────────────────────────────────
-
-export { avatarUrl };
-
 export function useUsersHandler() {
   const router = useRouter();
   const pathname = usePathname();
@@ -68,7 +45,7 @@ export function useUsersHandler() {
 
   const [search, setSearchState] = useState("");
   const [filter, setFilterState] = useState<UserFilter | "">("");
-  const [sort, setSort] = useState<{ field: SortField; dir: SortDir }>({ field: "name", dir: "asc" });
+  const [sort, setSort] = useState<SortState>({ field: "name", dir: "asc" });
 
   const [formOpen, setFormOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -115,7 +92,8 @@ export function useUsersHandler() {
         if (opts?.filter !== undefined) setFilterState(opts.filter);
       } catch (err) {
         if (err instanceof HttpError) {
-          if (err.apiError.status === 403) setError("Acesso negado. Apenas administradores podem listar usuários.");
+          if (err.apiError.status === 403)
+            setError("Acesso negado. Apenas administradores podem listar usuários.");
           else setError(err.apiError.message ?? "Erro ao carregar usuários.");
         } else {
           setError("Erro ao carregar usuários.");
@@ -243,7 +221,6 @@ export function useUsersHandler() {
     setDeleteError(null);
   }, []);
 
-  // Ordenação apenas no cliente (sobre a lista retornada pelo backend)
   const sortedUsers = [...users].sort((a, b) => {
     const dir = sort.dir === "asc" ? 1 : -1;
     if (sort.field === "name") return a.username.localeCompare(b.username) * dir;
@@ -285,3 +262,5 @@ export function useUsersHandler() {
     totals,
   };
 }
+
+export type { AppUser, UserRole, UserFilter, SortField, SortDir, SortState };
