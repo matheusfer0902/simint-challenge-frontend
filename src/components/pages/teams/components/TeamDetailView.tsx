@@ -41,7 +41,6 @@ interface TeamDetailViewProps {
   loading: boolean;
   error: string | null;
   onBack: () => void;
-  /** Rótulo do botão voltar (ex.: "Voltar" na página de time compartilhado) */
   backLabel?: string;
   onUpdateTeam: (
     teamId: string,
@@ -100,7 +99,7 @@ export function TeamDetailView({
           {backLabel}
         </button>
         <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-6 text-center text-red-700">
-          {error || "Time não encontrado."}
+          {error || "Team not found."}
         </div>
       </div>
     );
@@ -261,7 +260,7 @@ export function TeamDetailView({
                 <Lock className="h-3.5 w-3.5 text-slate-500" />
               )}
               <span className="text-[10px] font-semibold text-slate-600">
-                {team.isPublic ? "Público" : "Privado"}
+                {team.isPublic ? "Public" : "Private"}
               </span>
               <Switch
                 checked={team.isPublic}
@@ -290,7 +289,7 @@ export function TeamDetailView({
               ) : (
                 <Trash2 className="h-3.5 w-3.5" />
               )}
-              Excluir time
+              Delete Team
             </button>
           </div>
         )}
@@ -331,7 +330,6 @@ export function TeamDetailView({
               await onAddMember(team.id, pokemon.id);
               setPickerSlot(null);
             } catch {
-              // keep modal open on error so user can retry
             }
           }}
         />
@@ -353,7 +351,7 @@ export function TeamDetailView({
           <div className="mb-6 flex items-center gap-2">
             <div className="h-4 w-1 rounded-full bg-poke-red" />
             <h2 className="font-pixel text-[11px] uppercase tracking-widest text-slate-600">
-              Compartilhar time
+              Share Team
             </h2>
           </div>
           <div className="mb-6 space-y-6">
@@ -366,15 +364,15 @@ export function TeamDetailView({
         <AlertDialogContent className="max-w-md rounded-2xl border-slate-200 bg-white p-0 shadow-xl">
           <AlertDialogHeader className="gap-2 px-6 pt-6 text-left">
             <AlertDialogTitle className="font-pixel text-base text-slate-800">
-              Excluir time?
+              Delete team?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-sm text-slate-500">
-              Esta ação não pode ser desfeita. O time <strong>{team.name}</strong> e todos os dados associados serão removidos permanentemente.
+              This action cannot be undone. The team <strong>{team.name}</strong> and all associated data will be permanently removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-row justify-end gap-2 px-6 pb-6 pt-4">
             <AlertDialogCancel className="rounded-xl border-slate-200 bg-white px-4 text-slate-600 hover:bg-slate-50">
-              Cancelar
+              Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={async (e) => {
@@ -388,7 +386,7 @@ export function TeamDetailView({
               }}
               className="rounded-xl bg-red-600 px-4 text-white hover:bg-red-700 focus:ring-red-500"
             >
-              Excluir time
+              Delete Team
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

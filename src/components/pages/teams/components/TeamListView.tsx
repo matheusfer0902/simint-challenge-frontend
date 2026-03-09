@@ -78,11 +78,6 @@ export function TeamListView({
     <div>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="mb-1 flex items-center gap-1.5 text-[10px] text-slate-400">
-            <span>Dashboard</span>
-            <span>›</span>
-            <span className="font-semibold text-poke-red">My Teams</span>
-          </div>
           <h1 className="font-pixel text-2xl text-poke-red sm:text-3xl">
             MY TEAMS
           </h1>
@@ -139,7 +134,7 @@ export function TeamListView({
                   : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
               }`}
             >
-              {f === "" ? "Todos" : f === "public" ? "Públicos" : "Privados"}
+              {f === "" ? "All" : f === "public" ? "Public" : "Private"}
             </button>
           ))}
         </div>

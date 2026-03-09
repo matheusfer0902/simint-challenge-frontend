@@ -201,9 +201,6 @@ export function CreateTeamModal({
                 );
               })}
             </div>
-            <p className="mt-1.5 text-[10px] text-slate-400">
-              Clique em um slot para escolher um Pokémon. Você pode editar o time após criar.
-            </p>
           </div>
           <button
             type="submit"

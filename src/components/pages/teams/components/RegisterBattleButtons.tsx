@@ -26,7 +26,7 @@ export function RegisterBattleButtons({
   return (
     <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3">
       <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-        Registrar batalha
+       Register Battle 
       </span>
       <button
         type="button"
@@ -39,7 +39,7 @@ export function RegisterBattleButtons({
         ) : (
           <Trophy className="h-3.5 w-3.5" />
         )}
-        Vitória
+        Win
       </button>
       <button
         type="button"
@@ -52,7 +52,7 @@ export function RegisterBattleButtons({
         ) : (
           <XCircle className="h-3.5 w-3.5" />
         )}
-        Derrota
+        Loss
       </button>
     </div>
   );
