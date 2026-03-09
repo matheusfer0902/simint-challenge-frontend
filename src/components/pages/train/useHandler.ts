@@ -3,42 +3,17 @@
 import { useState, useEffect, useReducer, useCallback } from "react";
 import { pokemonService } from "@/lib/api/pokemon.service";
 import type { MyPokemonDto } from "@/lib/api/pokemon.service";
+import type { TrainPokemon, TrainState, Phase } from "./types";
+import { DEFAULT_TRAIN_POKEMON } from "./data";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TYPES & DATA
-// ─────────────────────────────────────────────────────────────────────────────
-
-export interface TrainPokemon {
-  id: number;
-  name: string;
-  type: string;
-  secondType?: string;
-  level: number;
-  hp: number;
-  maxHp: number;
-  attack: number;
-  defense: number;
-  speed: number;
-  xp: number;
-  xpToNext: number;
-  sprite: string;
-  cry?: string;
+export function useDebounce<T>(value: T, ms: number): T {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), ms);
+    return () => clearTimeout(t);
+  }, [value, ms]);
+  return debounced;
 }
-
-const DEFAULT_TRAIN_POKEMON: TrainPokemon = {
-  id: 0,
-  name: "",
-  type: "normal",
-  level: 1,
-  hp: 0,
-  maxHp: 1,
-  attack: 0,
-  defense: 0,
-  speed: 0,
-  xp: 0,
-  xpToNext: 1000,
-  sprite: "",
-};
 
 function mapMyPokemonToTrain(dto: MyPokemonDto): TrainPokemon {
   const [type] = dto.types ?? ["normal"];
@@ -57,16 +32,6 @@ function mapMyPokemonToTrain(dto: MyPokemonDto): TrainPokemon {
     xpToNext: 1000,
     sprite: dto.spriteUrl ?? "",
   };
-}
-
-export type Phase = "idle" | "bouncing" | "xp-fill" | "level-up" | "celebrating";
-
-export interface TrainState {
-  phase: Phase;
-  xp: number;
-  level: number;
-  xpGained: number;
-  particles: boolean;
 }
 
 type TrainAction =
@@ -224,3 +189,5 @@ export function useTrainHandler(debouncedSearch: string) {
     clearTrainError: () => setTrainError(null),
   };
 }
+
+export type { TrainPokemon, TrainState, Phase };
