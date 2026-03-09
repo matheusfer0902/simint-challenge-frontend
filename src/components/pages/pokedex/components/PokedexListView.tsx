@@ -64,7 +64,7 @@ export function PokedexListView({
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24">
             <div className="h-10 w-10 animate-spin rounded-full border-2 border-red-500 border-t-transparent" />
-            <p className="mt-4 font-pixel text-[10px] text-slate-500">Carregando...</p>
+            <p className="mt-4 font-pixel text-[10px] text-slate-500">Loading...</p>
           </div>
         ) : (
           <>
@@ -72,11 +72,11 @@ export function PokedexListView({
               <div className="hidden items-center gap-4 text-[10px] text-slate-400 sm:flex">
                 <span className="flex items-center gap-1.5">
                   <span className="h-3 w-3 rounded-full bg-gradient-to-br from-red-400 to-rose-500" />
-                  Capturado — clique para analisar
+                  Captured
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="h-3 w-3 rounded-full bg-slate-700" />
-                  Não capturado — capture para revelar
+                  Not captured
                 </span>
               </div>
             </div>

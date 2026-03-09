@@ -36,7 +36,7 @@ export function PokedexToolbar({
             className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-semibold transition sm:hidden ${filtersOpen || activeFilterCount > 0 ? "border-red-300 bg-red-50 text-red-600" : "border-slate-200 bg-white text-slate-600"}`}
           >
             <SlidersHorizontal className="h-3.5 w-3.5" />
-            Filtros
+            Filters
             {activeFilterCount > 0 && (
               <span className="flex h-4 w-4 items-center justify-center rounded-full bg-red-500 font-pixel text-[6px] text-white">
                 {activeFilterCount}
@@ -52,7 +52,7 @@ export function PokedexToolbar({
               onChange={v => onFilterChange("type", v)}
               icon={<Zap className="h-3.5 w-3.5" />}
             >
-              <option value="">Todos Tipos</option>
+              <option value="">All Types</option>
               {TYPE_FILTER_OPTIONS.map(t => (
                 <option key={t.slug} value={t.slug}>
                   {t.name}
@@ -65,9 +65,9 @@ export function PokedexToolbar({
               onChange={v => onFilterChange("captured", v as CapturedFilter)}
               icon={<CheckCircle2 className="h-3.5 w-3.5" />}
             >
-              <option value="all">Todos</option>
-              <option value="captured">Capturados</option>
-              <option value="not_captured">Não capturados</option>
+              <option value="all">All</option>
+              <option value="captured">Captured</option>
+              <option value="not_captured">Not captured</option>
             </FilterSelect>
 
             {activeFilterCount > 0 && (
@@ -76,7 +76,7 @@ export function PokedexToolbar({
                 onClick={onClearFilters}
                 className="flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-600 transition hover:bg-red-100"
               >
-                <X className="h-3.5 w-3.5" /> Limpar ({activeFilterCount})
+                <X className="h-3.5 w-3.5" /> Clear ({activeFilterCount})
               </button>
             )}
           </div>

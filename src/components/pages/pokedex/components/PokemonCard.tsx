@@ -36,7 +36,7 @@ export function PokemonCard({ pokemon, index, captured, onSelect }: PokemonCardP
           onSelect(pokemon.id);
         }
       }}
-      aria-label={captured ? `${displayName} — analisar` : "Pokémon não capturado"}
+      aria-label={captured ? `${displayName} — analyze` : "Pokemon not captured"}
     >
       {captured ? (
         <>
@@ -86,7 +86,7 @@ export function PokemonCard({ pokemon, index, captured, onSelect }: PokemonCardP
               }}
               tabIndex={-1}
             >
-              <Microscope className="h-3 w-3" /> ANALISAR
+              <Microscope className="h-3 w-3" /> ANALYZE
             </button>
           </div>
           <div className="absolute left-2 top-2 z-20 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-400/90 shadow">
@@ -153,7 +153,7 @@ export function PokemonCard({ pokemon, index, captured, onSelect }: PokemonCardP
               disabled
               className="mt-auto flex w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/60 py-2 font-pixel text-[7px] tracking-wider text-slate-600"
             >
-              <Lock className="h-2.5 w-2.5" /> NÃO CAPTURADO
+              <Lock className="h-2.5 w-2.5" /> NOT CAPTURED
             </button>
           </div>
         </>

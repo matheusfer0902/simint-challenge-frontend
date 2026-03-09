@@ -26,9 +26,9 @@ export function getTypeMeta(slug: string): TypeMeta {
 }
 
 export const TYPE_SLUG_TO_NAME: Record<string, string> = {
-  fire:"Fogo", water:"Água", grass:"Planta", electric:"Elétrico", psychic:"Psíquico", ghost:"Fantasma",
-  dragon:"Dragão", dark:"Sombrio", steel:"Aço", ice:"Gelo", normal:"Normal", fighting:"Lutador",
-  poison:"Veneno", ground:"Terra", flying:"Voador", rock:"Pedra", bug:"Inseto", fairy:"Fada",
+  fire:"Fire", water:"Water", grass:"Grass", electric:"Electric", psychic:"Psychic", ghost:"Ghost",
+  dragon:"Dragon", dark:"Dark", steel:"Steel", ice:"Ice", normal:"Normal", fighting:"Fighting",
+  poison:"Poison", ground:"Ground", flying:"Flying", rock:"Rock", bug:"Bug", fairy:"Fairy",
 };
 
 export const TYPE_FILTER_OPTIONS = Object.entries(TYPE_SLUG_TO_NAME).map(([slug, name]) => ({ slug, name }));

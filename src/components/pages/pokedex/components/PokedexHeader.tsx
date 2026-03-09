@@ -26,14 +26,14 @@ export function PokedexHeader() {
           <div>
             <div className="mb-2 flex items-center gap-2">
               <span className="rounded-full border border-red-500/30 bg-red-500/10 px-3 py-0.5 font-pixel text-[7px] uppercase tracking-widest text-red-400">
-                Laboratório do Pesquisador
+                Researcher Lab
               </span>
             </div>
             <h1 className="font-pixel text-3xl leading-tight text-white sm:text-4xl">
-              POKÉDEX GLOBAL
+              GLOBAL POKÉDEX
             </h1>
             <p className="mt-1.5 text-sm text-slate-400">
-              Arquivo de Pesquisa — Banco de Dados Nacional
+              Research Archive — National Database
             </p>
           </div>
         </div>

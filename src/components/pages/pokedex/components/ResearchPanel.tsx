@@ -16,9 +16,9 @@ export interface ResearchPanelProps {
 }
 
 const TABS: { id: PanelTab; icon: React.ReactNode; label: string }[] = [
-  { id: "overview", icon: <Globe className="h-3.5 w-3.5" />, label: "Visão Geral" },
-  { id: "stats", icon: <BarChart2 className="h-3.5 w-3.5" />, label: "Atributos" },
-  { id: "research", icon: <BookOpen className="h-3.5 w-3.5" />, label: "Pesquisa" },
+  { id: "overview", icon: <Globe className="h-3.5 w-3.5" />, label: "Overview" },
+  { id: "stats", icon: <BarChart2 className="h-3.5 w-3.5" />, label: "Stats" },
+  { id: "research", icon: <BookOpen className="h-3.5 w-3.5" />, label: "Research" },
 ];
 
 export function ResearchPanel({ detail, isOpen, onClose }: ResearchPanelProps) {
@@ -146,9 +146,9 @@ export function ResearchPanel({ detail, isOpen, onClose }: ResearchPanelProps) {
                 className={`flex items-center justify-around rounded-2xl bg-gradient-to-r ${tm.gradient} p-4 text-white`}
               >
                 {[
-                  ["Nível", String(detail.level)],
+                  ["Level", String(detail.level)],
                   ["HP", `${detail.currentHp} / ${detail.hp}`],
-                  ["Região", detail.region ?? "—"],
+                  ["Region", detail.region ?? "—"],
                 ].map(([k, v]) => (
                   <div key={k} className="flex flex-col items-center gap-0.5">
                     <span className="font-pixel text-[7px] uppercase tracking-wider text-white/70">
@@ -160,7 +160,7 @@ export function ResearchPanel({ detail, isOpen, onClose }: ResearchPanelProps) {
               </div>
               {detail.locations.length > 0 && (
                 <div className="rounded-2xl border border-slate-200/80 bg-white p-4">
-                  <Section title="Localizações" icon={<Globe className="h-3.5 w-3.5" />}>
+                  <Section title="Locations" icon={<Globe className="h-3.5 w-3.5" />}>
                     <ul className="mt-2 space-y-2">
                       {detail.locations.map((loc, i) => (
                         <li
@@ -183,7 +183,7 @@ export function ResearchPanel({ detail, isOpen, onClose }: ResearchPanelProps) {
           {tab === "stats" && (
             <div className="space-y-4 p-5">
               <div className="rounded-2xl border border-slate-200/80 bg-white p-5">
-                <Section title="Atributos base" icon={<TrendingUp className="h-3.5 w-3.5" />}>
+                <Section title="Base Stats" icon={<TrendingUp className="h-3.5 w-3.5" />}>
                   <div className="mt-1 space-y-3">
                     <StatBar
                       label="HP"
@@ -192,19 +192,19 @@ export function ResearchPanel({ detail, isOpen, onClose }: ResearchPanelProps) {
                       maxStat={DETAIL_STAT_MAX}
                     />
                     <StatBar
-                      label="Ataque"
+                      label="Attack"
                       value={detail.baseAttack}
                       animate={animate}
                       maxStat={DETAIL_STAT_MAX}
                     />
                     <StatBar
-                      label="Defesa"
+                      label="Defense"
                       value={detail.baseDefense}
                       animate={animate}
                       maxStat={DETAIL_STAT_MAX}
                     />
                     <StatBar
-                      label="Velocidade"
+                      label="Speed"
                       value={detail.baseSpeed}
                       animate={animate}
                       maxStat={DETAIL_STAT_MAX}
@@ -218,16 +218,16 @@ export function ResearchPanel({ detail, isOpen, onClose }: ResearchPanelProps) {
           {tab === "research" && (
             <div className="space-y-4 p-5">
               <div className="rounded-2xl border border-slate-200/80 bg-white p-5">
-                <Section title="Dados do registro" icon={<Dna className="h-3.5 w-3.5" />}>
+                <Section title="Registration Data" icon={<Dna className="h-3.5 w-3.5" />}>
                   <div className="mt-2 space-y-2.5">
                     {[
-                      ["Nº Nacional", `#${String(detail.id).padStart(4, "0")}`],
+                      ["National Number", `#${String(detail.id).padStart(4, "0")}`],
                       [
-                        "Tipos",
+                        "Types",
                         detail.types.map(s => TYPE_SLUG_TO_NAME[s] ?? s).join(" / "),
                       ],
-                      ["Região", detail.region ?? "—"],
-                      ["Criador", detail.creatorId ? detail.creatorId : "Oficial / Selvagem"],
+                      ["Region", detail.region ?? "—"],
+                      ["Creator", detail.creatorId ? detail.creatorId : "Official / Wild"],
                     ].map(([l, v]) => (
                       <div
                         key={l}
@@ -243,7 +243,7 @@ export function ResearchPanel({ detail, isOpen, onClose }: ResearchPanelProps) {
                 </Section>
               </div>
               <div className="rounded-2xl border border-slate-200/80 bg-white p-5">
-                <Section title="Análise de Tipos" icon={<Shield className="h-3.5 w-3.5" />}>
+                <Section title="Type Analysis" icon={<Shield className="h-3.5 w-3.5" />}>
                   <div className="mt-2 flex gap-2">
                     {detail.types.map(slug => {
                       const m = getTypeMeta(slug);
@@ -271,7 +271,7 @@ export function ResearchPanel({ detail, isOpen, onClose }: ResearchPanelProps) {
           <div className="flex items-center justify-between text-[9px] text-slate-400">
             <span className="font-pixel tracking-wider">RESEARCH LAB · POKE CENTER</span>
             <div className="flex items-center gap-1.5">
-              <span>Fechar</span>
+              <span>Close</span>
               <kbd className="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-[8px]">
                 ESC
               </kbd>
