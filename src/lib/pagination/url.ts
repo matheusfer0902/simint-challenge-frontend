@@ -1,16 +1,10 @@
 import type { PaginationParams } from "./types";
 import { DEFAULT_PAGE, DEFAULT_LIMIT } from "./constants";
-
-/** Readonly view dos search params (Next.js useSearchParams().get etc.) */
 export interface SearchParamsLike {
   get(name: string): string | null;
   toString(): string;
 }
 
-/**
- * Lê page e limit dos query params. Valores inválidos usam o padrão.
- * Page 0-based; limit entre 1 e 100.
- */
 export function parsePaginationFromSearchParams(
   searchParams: SearchParamsLike
 ): PaginationParams {
@@ -29,10 +23,6 @@ export function parsePaginationFromSearchParams(
   return { page, limit };
 }
 
-/**
- * Gera a string de query para page e limit (?page=0&limit=10).
- * Útil para montar URLs em serviços ou links.
- */
 export function buildPaginationQueryString(params: PaginationParams): string {
   const q = new URLSearchParams();
   q.set("page", String(params.page));
@@ -40,10 +30,6 @@ export function buildPaginationQueryString(params: PaginationParams): string {
   return q.toString();
 }
 
-/**
- * Mescla os search params atuais com novos valores de paginação.
- * Preserva outros params (search, filter, etc.).
- */
 export function mergeSearchParamsWithPagination(
   current: SearchParamsLike,
   pagination: Partial<PaginationParams>

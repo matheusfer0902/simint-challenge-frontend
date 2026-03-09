@@ -12,15 +12,9 @@ export interface UsePaginationParamsReturn extends PaginationParams {
   setPage: (page: number) => void;
   setLimit: (limit: number) => void;
   setPageAndLimit: (params: Partial<PaginationParams>) => void;
-  /** Atualiza a URL com os params de paginação mantendo os demais (search, filter, etc.) */
   updateUrl: (params: Partial<PaginationParams>) => void;
 }
 
-/**
- * Hook que mantém page e limit sincronizados com os query params da URL.
- * Padrão: page=0, limit=10. Pronto para usar em qualquer rota.
- * Princípio: Single source of truth na URL (compartilhável, voltar/avançar do browser).
- */
 export function usePaginationParams(): UsePaginationParamsReturn {
   const router = useRouter();
   const pathname = usePathname();

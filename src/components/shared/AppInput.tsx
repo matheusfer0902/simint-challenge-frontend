@@ -8,15 +8,10 @@ export type AppInputVariant = "form" | "search";
 export interface AppInputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> {
   id?: string;
-  /** Label displayed above the input. Only rendered in the "form" variant. */
   label?: string;
-  /** Validation error message. Only rendered in the "form" variant. */
   error?: string;
-  /** Leading icon rendered inside the left side of the input. */
   icon?: ReactNode;
-  /** Trailing element rendered inside the right side of the input (e.g. clear button, eye toggle). */
   suffix?: ReactNode;
-  /** Simplified onChange that receives the string value directly. */
   onChange?: (value: string) => void;
   /**
    * "form"   → auth-style: labeled, poke-red focus, border-2, error state, shake animation.

@@ -41,7 +41,6 @@ function mapSharedTeamToTeam(dto: TeamSharedResponseDto): Team {
     members,
     createdAt: dto.createdAt,
     updatedAt: dto.updatedAt,
-    // sem accessRole → isOwner será false na view (somente leitura)
   };
 }
 

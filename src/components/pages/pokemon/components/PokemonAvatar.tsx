@@ -36,8 +36,6 @@ export function PokemonAvatar({ pokemon, size = 96 }: PokemonAvatarProps) {
           <ImageOff className="h-1/2 w-1/2" strokeWidth={1.5} />
         </div>
       ) : (
-        /* referrerPolicy evita bloqueio por política de referrer em buckets S3 */
-        /* eslint-disable-next-line @next/next/no-img-element */
         <img
           src={pokemon.spriteUrl}
           alt={pokemon.name}

@@ -1,6 +1,5 @@
 import { httpClient } from "@/lib/api/http-client";
 
-/** Pokémon aninhado no membro (GET /teams/:id) */
 export interface TeamMemberPokemonDto {
   id: number;
   uuid: string;
@@ -17,7 +16,6 @@ export interface TeamMemberPokemonDto {
   locations: string[];
 }
 
-/** Membro do time (detalhe GET /teams/:id — sem moves, pode incluir pokemon) */
 export interface TeamMemberSummaryDto {
   id: string;
   teamId: string;
@@ -27,7 +25,6 @@ export interface TeamMemberSummaryDto {
   pokemon?: TeamMemberPokemonDto;
 }
 
-/** Membro com moves (listagem GET /teams) */
 export interface TeamMemberDto extends TeamMemberSummaryDto {
   move1?: string | null;
   move2?: string | null;
@@ -35,7 +32,6 @@ export interface TeamMemberDto extends TeamMemberSummaryDto {
   move4?: string | null;
 }
 
-/** Time (listagem, criar, editar) — sem gameVersion e userId */
 export interface TeamDto {
   id: string;
   name: string;
@@ -48,7 +44,6 @@ export interface TeamDto {
   members: TeamMemberDto[] | TeamMemberSummaryDto[];
   createdAt: string;
   updatedAt: string;
-  /** Apenas em GET /teams e GET /teams/:id */
   accessRole?: "owner" | "shared";
 }
 
@@ -70,7 +65,6 @@ export interface CreateTeamPayload {
   members?: CreateTeamMemberPayload[];
 }
 
-/** Item para adicionar membro no PATCH /teams/:id */
 export interface AddMemberItem {
   pokemonId: number;
   nickname?: string | null;
@@ -82,9 +76,7 @@ export interface UpdateTeamPayload {
   description?: string;
   gameVersion?: string | null;
   isPublic?: boolean;
-  /** Adicionar membros ao time (máx. 6 no total) */
   addMembers?: AddMemberItem[];
-  /** UUIDs dos membros a remover (members[].id do GET) */
   removeMemberIds?: string[];
 }
 
@@ -104,17 +96,14 @@ export interface RegisterBattleResponseDto {
   message: string;
 }
 
-/** Body opcional para POST /teams/:id/share-link */
 export interface ShareLinkBody {
   expiresInDays?: number;
 }
 
-/** Resposta 201 de POST /teams/:id/share-link */
 export interface ShareLinkResponseDto {
   token: string;
 }
 
-/** Pokémon no time compartilhado (GET /teams/shared/:token) */
 export interface PokemonSummarySharedDto {
   id: number;
   uuid: string;
@@ -131,7 +120,6 @@ export interface PokemonSummarySharedDto {
   locations: string[];
 }
 
-/** Membro no time compartilhado */
 export interface TeamMemberDetailSharedDto {
   id: string;
   teamId: string;
@@ -141,7 +129,6 @@ export interface TeamMemberDetailSharedDto {
   pokemon: PokemonSummarySharedDto;
 }
 
-/** Resposta 200 de GET /teams/shared/:token */
 export interface TeamSharedResponseDto {
   id: string;
   name: string;
@@ -206,7 +193,6 @@ class TeamService {
     );
   }
 
-  /** Gera link de compartilhamento (apenas dono, time privado). Retorna a URL completa. */
   async createShareLink(
     teamId: string,
     options?: { expiresInDays?: number }
@@ -225,7 +211,6 @@ class TeamService {
     return { token: res.token, shareUrl };
   }
 
-  /** Obtém time por token de compartilhamento (rota pública). Retorna null se 404. */
   async getSharedTeam(token: string): Promise<TeamSharedResponseDto | null> {
     try {
       return await httpClient.get<TeamSharedResponseDto>(
