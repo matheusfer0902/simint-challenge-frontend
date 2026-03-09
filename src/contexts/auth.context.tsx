@@ -113,9 +113,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = useCallback(
     async (credentials: LoginDto) => {
-      // Suppress the global unauthorized handler for the duration of the login
-      // flow so that the GET /me call doesn't trigger a redirect to /auth/login
-      // on the rare occasion that the session cookie hasn't propagated yet.
       suppressUnauthorized.current = true;
       try {
         await authService.login(credentials);
@@ -135,8 +132,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       suppressUnauthorized.current = true;
       try {
         await authService.register(data);
-        // The register endpoint does not open a session — login explicitly so
-        // the session cookie is set before calling GET /me.
         await authService.login({ email: data.email, password: data.password });
         const user = await userService.getMe();
         setAuthIndicatorCookie();

@@ -18,7 +18,6 @@ export interface PokemonDto {
   location: string | null;
 }
 
-/** Resposta da rota GET /pokemon/:id (detalhe do Pokémon) */
 export interface PokemonDetailDto {
   id: number;
   uuid: string;
@@ -33,22 +32,17 @@ export interface PokemonDetailDto {
   baseSpeed: number;
   region: string | null;
   locations: string[];
-  /** UUID do usuário criador; null se Pokémon oficial/selvagem */
   creatorId: string | null;
 }
 
-/** Parâmetros da rota GET /pokemon/all (listagem paginada da Pokédex) */
 export interface PokedexAllParams {
   search?: string;
   page?: number;
   limit?: number;
-  /** Slug do tipo (ex: "fire", "grass") — até 1 filtro de tipo */
   type?: string;
-  /** true = só capturados, false = só não capturados, omitido = todos */
   captured?: boolean;
 }
 
-/** Resposta da rota GET /pokemon/all — inclui ids dos Pokémon capturados pelo usuário */
 export interface PokedexAllResponse extends PaginatedResponse<PokemonDetailDto> {
   capturedIds: number[];
 }
@@ -91,7 +85,6 @@ export interface CreatePokemonConflictsDto {
 
 export interface CreatePokemonResponseDto {
   message: string;
-  /** Pokémon criado (quando o backend retorna no body da criação) */
   pokemon?: PokemonDto;
 }
 
@@ -134,7 +127,6 @@ class PokemonService {
     return httpClient.post<CatchPokemonResponseDto>("/pokemon/catch", data);
   }
 
-  /** Lista todos os Pokémon com paginação e filtros (GET /pokemon/all). page no backend é 1-based. */
   async getAll(params?: PokedexAllParams): Promise<PokedexAllResponse> {
     const searchParams = new URLSearchParams();
     if (params?.search?.trim()) searchParams.set("search", params.search.trim());
@@ -151,7 +143,6 @@ class PokemonService {
     return httpClient.get<PokemonDetailDto>(`/pokemon/${id}`);
   }
 
-  /** Atualiza nome, HP, tipos, nível e número da Pokédex; pode retornar conflitos como na criação */
   async update(
     pokemonId: number,
     data: { name: string; hp: number; types: string[]; level: number; id: number }
@@ -163,12 +154,10 @@ class PokemonService {
     return httpClient.delete<void>(`/pokemon/${pokemonId}`);
   }
 
-  /** Cura até 6 pokémons pelo id. Corpo: { ids: number[] }. Retorna { healed: PokemonDto[] } */
   async heal(ids: number[]): Promise<{ healed: PokemonDto[] }> {
     return httpClient.post<{ healed: PokemonDto[] }>("/pokemon/heal", { ids });
   }
 
-  /** Aumenta o nível do pokémon em 1. :id = id do pokémon. */
   async train(id: number): Promise<{ pokemon: PokemonDto }> {
     return httpClient.post<{ pokemon: PokemonDto }>(`/pokemon/train/${id}`, {});
   }
