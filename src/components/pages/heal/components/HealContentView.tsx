@@ -80,15 +80,15 @@ export function HealContentView({
             <span className="relative flex items-center justify-center gap-3">
               {isRunning ? (
                 <>
-                  <HealSpinner /> CURANDO TIME...
+                  <HealSpinner /> HEALING POKEMONS...
                 </>
               ) : isDone ? (
                 <>
-                  <CheckCircle2 className="h-5 w-5" /> POKEMONS CURADOS! CURAR NOVAMENTE?
+                  <CheckCircle2 className="h-5 w-5" /> POKEMONS HEALED! HEAL AGAIN?
                 </>
               ) : (
                 <>
-                  <Heart className="h-5 w-5" /> CURAR POKEMONS <Sparkles className="h-5 w-5" />
+                  <Heart className="h-5 w-5" /> HEAL POKEMONS <Sparkles className="h-5 w-5" />
                 </>
               )}
             </span>
@@ -98,11 +98,11 @@ export function HealContentView({
             <div className="mb-3 flex items-center gap-2">
               <div className="h-3.5 w-1 rounded-full bg-red-500" />
               <h2 className="font-pixel text-[9px] uppercase tracking-widest text-slate-500">
-                STATUS DOS POKEMONS
+                STATUS OF POKEMONS
               </h2>
             </div>
             <p className="mb-3 text-[10px] text-slate-500">
-              Clique em um Pokémon para colocá-lo na bandeja de recuperação (máx. 6).
+              Click on a Pokémon to add it to the healing tray.
             </p>
             {team.length === 0 ? (
               <HealEmptyState hasSearch={hasSearch} />

@@ -16,12 +16,12 @@ export function getTypeColors(t: string): TypeColors {
 }
 
 export const STATUS_CFG: Record<PokeStatus, StatusConfig> = {
-  healthy: { label: "Saudável", color: "text-emerald-700", bg: "bg-emerald-100" },
-  fainted: { label: "Desmaiado", color: "text-slate-500", bg: "bg-slate-100" },
-  poisoned: { label: "Envenenado", color: "text-fuchsia-700", bg: "bg-fuchsia-100" },
-  burned: { label: "Queimado", color: "text-orange-700", bg: "bg-orange-100" },
-  frozen: { label: "Congelado", color: "text-cyan-700", bg: "bg-cyan-100" },
-  paralyzed: { label: "Paralisado", color: "text-yellow-700", bg: "bg-yellow-100" },
+  healthy: { label: "Healthy", color: "text-emerald-700", bg: "bg-emerald-100" },
+  fainted: { label: "Fainted", color: "text-slate-500", bg: "bg-slate-100" },
+  poisoned: { label: "Poisoned", color: "text-fuchsia-700", bg: "bg-fuchsia-100" },
+  burned: { label: "Burned", color: "text-orange-700", bg: "bg-orange-100" },
+  frozen: { label: "Frozen", color: "text-cyan-700", bg: "bg-cyan-100" },
+  paralyzed: { label: "Paralyzed", color: "text-yellow-700", bg: "bg-yellow-100" },
 };
 
 export function hpBarColor(pct: number): string {

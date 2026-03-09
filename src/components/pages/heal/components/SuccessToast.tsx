@@ -20,8 +20,8 @@ export function SuccessToast({ visible }: SuccessToastProps) {
           <Heart className="h-5 w-5 text-white" />
         </div>
         <div>
-          <p className="font-pixel text-[10px] text-white">CURA COMPLETA!</p>
-          <p className="mt-0.5 text-xs text-white/80">Seu time está em perfeitas condições! ✨</p>
+          <p className="font-pixel text-[10px] text-white">HEAL COMPLETE!</p>
+          <p className="mt-0.5 text-xs text-white/80">Your team is in perfect condition! ✨</p>
         </div>
         <CheckCircle2 className="h-6 w-6 text-white/80" />
       </div>

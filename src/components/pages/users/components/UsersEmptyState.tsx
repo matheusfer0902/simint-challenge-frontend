@@ -1,12 +1,8 @@
 "use client";
 
-export interface HealEmptyStateProps {
-  hasSearch: boolean;
-}
-
-export function HealEmptyState({ hasSearch }: HealEmptyStateProps) {
+export function UsersEmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
+    <div className="flex flex-col items-center justify-center">
       <div className="mb-4 opacity-25">
         <svg viewBox="0 0 100 100" className="mx-auto h-16 w-16">
           <path d="M50 5 A45 45 0 0 1 95 50 L50 50 Z" fill="#ef4444" />
@@ -17,12 +13,8 @@ export function HealEmptyState({ hasSearch }: HealEmptyStateProps) {
           <circle cx="50" cy="50" r="6" fill="#cbd5e1" />
         </svg>
       </div>
-      <p className="font-pixel text-[10px] text-slate-500">
-        {hasSearch ? "No Pokémon found." : "You don't have any Pokémon."}
-      </p>
-      <p className="mt-1 text-sm text-slate-400">
-        {hasSearch ? "Try adjusting the search term." : "Capture or create Pokémon in the Pokémon area."}
-      </p>
+      <p className="font-pixel text-[10px] text-slate-500">Nenhum usuário encontrado</p>
+      <p className="mt-1 text-sm text-slate-400">Tente ajustar os filtros ou o termo de busca.</p>
     </div>
   );
 }

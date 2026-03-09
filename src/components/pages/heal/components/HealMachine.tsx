@@ -38,14 +38,14 @@ export function HealMachine({ state, tray }: HealMachineProps) {
         <div className="rounded-xl bg-slate-900/60 px-4 py-1.5">
           <span className="font-pixel text-[8px] uppercase tracking-widest text-slate-400">
             {state.phase === "idle"
-              ? "EM ESPERA"
+              ? "WAITING"
               : state.phase === "loading"
-                ? "CARREGANDO"
+                ? "LOADING"
                 : state.phase === "sequencing"
-                  ? "CURANDO..."
+                  ? "HEALING..."
                   : state.phase === "filling"
-                    ? "RESTAURANDO"
-                    : "CONCLUÍDO ✓"}
+                    ? "RESTORING"
+                    : "DONE ✓"}
           </span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -70,7 +70,7 @@ export function HealMachine({ state, tray }: HealMachineProps) {
 
         <div className="rounded-2xl bg-slate-950/50 p-5">
           <p className="mb-4 text-center font-pixel text-[8px] uppercase tracking-widest text-slate-500">
-            Bandeja de Recuperação
+            Healing Tray
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             {Array.from({ length: 6 }).map((_, i) => (
