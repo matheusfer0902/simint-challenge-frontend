@@ -5,13 +5,19 @@ import { Sparkles, Shield, Database, Search, Zap, Heart, ChevronRight } from "lu
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Pokeball } from "@/components/landing/Pokeball";
+import { useRouter } from "next/navigation";
 
 export function HeroSection() {
   const [isLoaded, setIsLoaded] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsLoaded(true);
   }, []);
+
+  const scrollToHowItWorks = () => {
+    document.getElementById("como-funciona")?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
@@ -55,6 +61,7 @@ export function HeroSection() {
               <Button
                 size="lg"
                 className="bg-poke-red hover:bg-poke-dark-red text-white btn-glow text-base px-8"
+                onClick={() => router.push("/auth/register")}
               >
                 <Sparkles className="w-5 h-5 mr-2" />
                 Get Started
@@ -64,6 +71,7 @@ export function HeroSection() {
                 size="lg"
                 variant="outline"
                 className="border-2 border-poke-dark-gray/20 text-poke-dark-gray hover:bg-poke-gray text-base px-8"
+                onClick={scrollToHowItWorks}
               >
                 <Search className="w-5 h-5 mr-2" />
                 Learn More
