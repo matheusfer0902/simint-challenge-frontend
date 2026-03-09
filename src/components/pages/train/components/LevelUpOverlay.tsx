@@ -37,7 +37,7 @@ export function LevelUpOverlay({ level, isActive }: LevelUpOverlayProps) {
           LEVEL UP!
         </p>
         <p className="font-pixel text-6xl leading-none text-white drop-shadow-2xl">{level}</p>
-        <p className="text-sm font-semibold text-white/70">Parabéns! 🎉</p>
+        <p className="text-sm font-semibold text-white/70">Congratulations! 🎉</p>
       </div>
     </div>
   );

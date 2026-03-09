@@ -50,7 +50,7 @@ export function TrainContentView({
         <>
           <div className="mb-6">
             <p className="mb-3 font-pixel text-[8px] uppercase tracking-widest text-slate-400">
-              Selecione o Pokémon
+              Select a Pokémon
             </p>
             <PokemonSelector
               roster={roster}
@@ -69,7 +69,7 @@ export function TrainContentView({
                     onClick={onClearTrainError}
                     className="ml-2 underline"
                   >
-                    Fechar
+                    Close
                   </button>
                 </div>
               )}

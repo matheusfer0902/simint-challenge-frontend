@@ -18,10 +18,10 @@ export function TrainEmptyState({ hasSearch }: TrainEmptyStateProps) {
         </svg>
       </div>
       <p className="font-pixel text-[10px] text-slate-500">
-        {hasSearch ? "Nenhum Pokémon encontrado." : "Você ainda não tem Pokémon para treinar."}
+        {hasSearch ? "No Pokémon found." : "You don't have any Pokémon to train."}
       </p>
       <p className="mt-1 text-sm text-slate-400">
-        {hasSearch ? "Tente ajustar o termo de busca." : "Capture ou crie Pokémon na área de Pokémon."}
+        {hasSearch ? "Try adjusting the search term." : "Capture or create Pokémon in the Pokémon area."}
       </p>
     </div>
   );

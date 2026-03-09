@@ -170,11 +170,11 @@ export function GymStage({ pokemon, state, onTrain }: GymStageProps) {
             <span className="relative flex items-center justify-center gap-2.5">
               {state.phase === "bouncing" || state.phase === "xp-fill" ? (
                 <>
-                  <Spinner /> TREINANDO...
+                  <Spinner /> TRAINING...
                 </>
               ) : (
                 <>
-                  <Candy className="h-4 w-4" /> DAR RARE CANDY{" "}
+                  <Candy className="h-4 w-4" /> GIVE RARE CANDY{" "}
                   <TrendingUp className="h-4 w-4" />
                 </>
               )}
