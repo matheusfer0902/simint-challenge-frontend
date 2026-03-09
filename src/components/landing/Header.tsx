@@ -36,7 +36,7 @@ export function Header() {
         isScrolled
           ? "bg-white/95 backdrop-blur-md shadow-lg py-3"
           : "bg-transparent py-5"
-      }`}
+      } ${isMobileMenuOpen ? "md:bg-transparent bg-white shadow-lg" : ""}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
@@ -95,7 +95,7 @@ export function Header() {
         </div>
 
         {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-poke-gray/50 pt-4">
+          <div className="md:hidden mt-4 pb-4 border-t border-poke-gray/50 pt-4 bg-white rounded-b-lg -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
             <nav className="flex flex-col gap-3">
               {navItems.map((item) => (
                 <button
@@ -110,11 +110,15 @@ export function Header() {
                 <Button
                   variant="outline"
                   className="flex-1 border-poke-red text-poke-red hover:bg-poke-red/10"
+                  onClick={() => router.push("/auth/login")}
                 >
                   <Lock className="w-4 h-4 mr-2" />
                   Login
                 </Button>
-                <Button className="flex-1 bg-poke-red hover:bg-poke-dark-red text-white">
+                <Button
+                  className="flex-1 bg-poke-red hover:bg-poke-dark-red text-white"
+                  onClick={() => router.push("/auth/register")}
+                >
                   <Sparkles className="w-4 h-4 mr-2" />
                   Register
                 </Button>
