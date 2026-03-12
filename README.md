@@ -150,82 +150,65 @@ Acesso é validado no layout protegido; rotas não permitidas redirecionam para 
 
 ## Screenshots
 
-Use as seções abaixo para colocar imagens do site. Recomendação: salvar screenshots em `docs/screenshots/` e referenciar com caminhos relativos, por exemplo `docs/screenshots/landing-hero.png`.
+Principais funcionalidades da aplicação em uso. As imagens estão em `docs/screenshots/`.
 
 ### Landing
 
-| Seção | Descrição | Imagem |
-|-------|-----------|--------|
-| Hero | Primeira dobra da landing | *Adicione `docs/screenshots/landing-hero.png`* |
-| Features | Bloco de funcionalidades | *Adicione `docs/screenshots/landing-features.png`* |
-| Como funciona | Passo a passo | *Adicione `docs/screenshots/landing-how-it-works.png`* |
-| Pokémons | Galeria/lista de Pokémons | *Adicione `docs/screenshots/landing-pokemons.png`* |
-| CTA | Chamada para ação final | *Adicione `docs/screenshots/landing-cta.png`* |
+Primeira dobra da landing: hero com título, badge "Restricted System" e CTA.
 
-Exemplo de uso no README (descomente e ajuste os caminhos quando tiver as imagens):
-
-```markdown
-#### Hero
-![Landing Hero](docs/screenshots/landing-hero.png)
-```
-
-### Autenticação
-
-| Tela | Descrição | Imagem |
-|------|-----------|--------|
-| Login | Página de login | *Adicione `docs/screenshots/auth-login.png`* |
-| Registro | Página de cadastro | *Adicione `docs/screenshots/auth-register.png`* |
-
-### Área logada
-
-| Página | Descrição | Imagem |
-|--------|-----------|--------|
-| Dashboard | Arena (batalhas e usuários) | *Adicione `docs/screenshots/dashboard.png`* |
-| Times | Lista de times | *Adicione `docs/screenshots/teams-list.png`* |
-| Detalhe do time | Time com membros e ações | *Adicione `docs/screenshots/team-detail.png`* |
-| Pokémon | Lista dos meus Pokémons | *Adicione `docs/screenshots/pokemon-list.png`* |
-| Detalhe do Pokémon | Edição de Pokémon | *Adicione `docs/screenshots/pokemon-detail.png`* |
-| Pokedex | Catálogo (researcher/admin) | *Adicione `docs/screenshots/pokedex.png`* |
-| Treino | Tela de treino (trainer/admin) | *Adicione `docs/screenshots/train.png`* |
-| Cura | Máquina de cura | *Adicione `docs/screenshots/healing.png`* |
-| Usuários | Lista de usuários (admin) | *Adicione `docs/screenshots/users.png`* |
-| Perfil | Edição do meu perfil | *Adicione `docs/screenshots/profile.png`* |
-| Time compartilhado | Visualização por link | *Adicione `docs/screenshots/shared-team.png`* |
+![Landing — Hero](docs/screenshots/landingpage.png)
 
 ---
 
-## Estrutura sugerida para as imagens
+### Autenticação
 
-Crie a pasta e adicione os arquivos conforme for tirando os screenshots:
+**Login** (`/auth/login`) — Acesso com e-mail e senha.
 
-```
-docs/
-  screenshots/
-    landing-hero.png
-    landing-features.png
-    landing-how-it-works.png
-    landing-pokemons.png
-    landing-cta.png
-    auth-login.png
-    auth-register.png
-    dashboard.png
-    teams-list.png
-    team-detail.png
-    pokemon-list.png
-    pokemon-detail.png
-    pokedex.png
-    train.png
-    healing.png
-    users.png
-    profile.png
-    shared-team.png
-```
+![Login](docs/screenshots/login.png)
 
-Assim que uma imagem existir, substitua no README o texto *"Adicione ..."* pela marcação:
+**Registro** (`/auth/register`) — Cadastro com escolha de tipo de conta (Treinador ou Pesquisador).
 
-```markdown
-![Descrição](docs/screenshots/nome-do-arquivo.png)
-```
+![Registro](docs/screenshots/register.png)
+
+---
+
+### Área logada — por perfil
+
+A sidebar e as rotas mudam conforme o perfil (Trainer, Researcher). As telas abaixo ilustram as duas roles principais.
+
+#### Dashboard (Arena)
+
+![Dashboard — Treinador](docs/screenshots/arena.png)
+
+#### Times
+
+Lista de times do usuário: busca, filtros (All / Public / Private), botão "Create new team" e cards de times.
+
+![Times — Minhas equipes](docs/screenshots/team.png)
+
+#### Pokémon
+
+Gerenciador de Pokémons: abas *Your Pokémon*, *Wild Area*, *New Pokémon*, filtros (All / Created by Me / Captured) e busca.
+
+![Pokémon — Gerenciador](docs/screenshots/pokemon.png)
+
+#### Treino (Trainer)
+
+Área de treino para ganhar XP; exibida apenas para **Trainer**. Estado vazio quando não há Pokémon para treinar.
+
+![Treino](docs/screenshots/train.png)
+
+#### Cura (Healing)
+
+Máquina de cura para recuperar HP dos Pokémons; disponível para todos os perfis. Bandeja de cura e status dos Pokémons.
+
+![Cura — Healing Center](docs/screenshots/heal.png)
+
+#### Pokedex (Researcher)
+
+Catálogo global: filtro por tipo, filtro Captured/Not captured, visualização em grade ou lista e paginação. Acesso **Researcher** (não aparece para Trainer).
+
+![Pokedex — Pesquisador](docs/screenshots/pokedex.png)
 
 ---
 
