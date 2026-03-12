@@ -184,7 +184,7 @@ A sidebar e as rotas mudam conforme o perfil (Trainer, Researcher). As telas aba
 
 Lista de times do usuário: busca, filtros (All / Public / Private), botão "Create new team" e cards de times.
 
-![Times — Minhas equipes](docs/screenshots/teams.png)
+![Times — Minhas equipes](docs/screenshots/team.png)
 
 #### Pokémon
 
