@@ -156,9 +156,7 @@ Principais funcionalidades da aplicação em uso. As imagens estão em `docs/scr
 
 Primeira dobra da landing: hero com título, badge "Restricted System" e CTA.
 
-![Landing — Hero](docs/screenshots/landing-hero.png)
-
-**O que você pode adicionar:** screenshots das seções *Features*, *Como funciona*, *Galeria de Pokémons* e *CTA* (scroll na `/`), salvos como `landing-features.png`, `landing-how-it-works.png`, `landing-pokemons.png` e `landing-cta.png`.
+![Landing — Hero](docs/screenshots/landingpage.png)
 
 ---
 
@@ -166,47 +164,37 @@ Primeira dobra da landing: hero com título, badge "Restricted System" e CTA.
 
 **Login** (`/auth/login`) — Acesso com e-mail e senha.
 
-![Login](docs/screenshots/auth-login.png)
+![Login](docs/screenshots/login.png)
 
 **Registro** (`/auth/register`) — Cadastro com escolha de tipo de conta (Treinador ou Pesquisador).
 
-![Registro](docs/screenshots/auth-register.png)
+![Registro](docs/screenshots/register.png)
 
 ---
 
 ### Área logada — por perfil
 
-A sidebar e as rotas mudam conforme o perfil (Trainer, Researcher, Admin). As telas abaixo ilustram as duas roles principais.
+A sidebar e as rotas mudam conforme o perfil (Trainer, Researcher). As telas abaixo ilustram as duas roles principais.
 
 #### Dashboard (Arena)
 
-**Treinador** — Abas *Battles* e *Users*, botão "Battle Now" nos times.
-
-![Dashboard — Treinador](docs/screenshots/dashboard-trainer.png)
-
-**Pesquisador** — Mesma Arena; no menu lateral aparece **Pokedex** e não aparece **Train**.
-
-![Dashboard — Pesquisador](docs/screenshots/dashboard-researcher.png)
+![Dashboard — Treinador](docs/screenshots/arena.png)
 
 #### Times
 
 Lista de times do usuário: busca, filtros (All / Public / Private), botão "Create new team" e cards de times.
 
-![Times — Minhas equipes](docs/screenshots/teams-list.png)
-
-**O que adicionar:** screenshot da página de **detalhe do time** (`/teams/[id]`) com membros e ações (compartilhar, editar), como `team-detail.png`.
+![Times — Minhas equipes](docs/screenshots/teams.png)
 
 #### Pokémon
 
 Gerenciador de Pokémons: abas *Your Pokémon*, *Wild Area*, *New Pokémon*, filtros (All / Created by Me / Captured) e busca.
 
-![Pokémon — Gerenciador](docs/screenshots/pokemon-list.png)
+![Pokémon — Gerenciador](docs/screenshots/pokemon.png)
 
-**O que adicionar:** screenshot da página **detalhe do Pokémon** (`/pokemon/[id]`) com edição (sprite, nickname, stats), como `pokemon-detail.png`.
+#### Treino (Trainer)
 
-#### Treino (Trainer / Admin)
-
-Área de treino para ganhar XP; exibida apenas para **Trainer** e **Admin**. Estado vazio quando não há Pokémon para treinar.
+Área de treino para ganhar XP; exibida apenas para **Trainer**. Estado vazio quando não há Pokémon para treinar.
 
 ![Treino](docs/screenshots/train.png)
 
@@ -214,28 +202,13 @@ Gerenciador de Pokémons: abas *Your Pokémon*, *Wild Area*, *New Pokémon*, fil
 
 Máquina de cura para recuperar HP dos Pokémons; disponível para todos os perfis. Bandeja de cura e status dos Pokémons.
 
-![Cura — Healing Center](docs/screenshots/healing.png)
+![Cura — Healing Center](docs/screenshots/heal.png)
 
-#### Pokedex (Researcher / Admin)
+#### Pokedex (Researcher)
 
-Catálogo global: filtro por tipo, filtro Captured/Not captured, visualização em grade ou lista e paginação. Acesso **Researcher** e **Admin** (não aparece para Trainer).
+Catálogo global: filtro por tipo, filtro Captured/Not captured, visualização em grade ou lista e paginação. Acesso **Researcher** (não aparece para Trainer).
 
 ![Pokedex — Pesquisador](docs/screenshots/pokedex.png)
-
-#### Perfil
-
-Edição dos dados do usuário logado: username, e-mail, senha (opcional). Admin pode alterar o role na mesma tela.
-
-![Perfil — Meus dados](docs/screenshots/profile.png)
-
-#### Outras telas para documentar
-
-| Tela | Rota | O que mostrar | Sugestão de arquivo |
-|------|------|----------------|---------------------|
-| Detalhe do time | `/teams/[id]` | Time com slots, Pokémon, compartilhar/editar | `team-detail.png` |
-| Detalhe do Pokémon | `/pokemon/[id]` | Edição de sprite, nickname, stats | `pokemon-detail.png` |
-| Usuários (Admin) | `/users` | Listagem, filtro por role, criar/editar/excluir | `users.png` |
-| Time compartilhado | `/teams/shared/[token]` | Visualização somente leitura do time por link | `shared-team.png` |
 
 ---
 
